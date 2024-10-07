@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{Shalev-Shwartz2014}
+Shai {Shalev-Shwartz} and Shai {Ben-David}.
+\newblock {\em Understanding Machine Learning: From Theory to Algorithms}.
+\newblock Cambridge University Press, New York, NY, USA, 2014.
+
+\bibitem{Devroye1996}
+Luc Devroye, L{\'a}szl{\'o} Gy{\"o}rfi, and G{\'a}bor Lugosi.
+\newblock {\em A Probabilistic Theory of Pattern Recognition}.
+\newblock Springer, New York, 1996.
+
+\bibitem{Hastie2017}
+Trevor Hastie, Robert Tibshirani, and Jerome~H. Friedman.
+\newblock {\em The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
+\newblock Springer Series in Statistics. Springer, New York, NY, second edition, corrected at 12th printing 2017 edition, 2017.
+
+\bibitem{selvarajuGradCAMVisualExplanations2020}
+Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, and Dhruv Batra.
+\newblock Grad-{{CAM}}: {{Visual Explanations}} from {{Deep Networks}} via {{Gradient-based Localization}}.
+\newblock {\em International Journal of Computer Vision}, 128(2):336--359, February 2020.
+
+\end{thebibliography}

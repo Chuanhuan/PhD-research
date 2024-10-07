@@ -1,10 +1,15 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[12pt]{article}
+\usepackage[a4paper, margin=2cm]{geometry} %Annina style
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{hyperref}
+\usepackage{setspace} % Add this package for spacing commands
+\usepackage[numbers]{natbib} % Add this package for bibliography management
+
+\setlength{\parindent}{0pt}
 
 \title{XAI: Variational Inference for Cluster}
 \author{Jack Li}
@@ -17,12 +22,25 @@
 \begin{abstract}
 The purpose of this report is to introduce the Cluster algorithm and experiment with it.
 \end{abstract}
-
 \section{Introduction}
-The key tasks of Machine Learning composit of variety field such as classification, segmentation and moden techenique, generative model.  
-One of the foundamental skill for machine Learning is classification. To be more specific, two category can be divided is labeled data and unlableled data. 
-This have many techenique from supervice and unsupervice learning. One of key feature is clustering which is an algorithm to cluster the data into different groups.
-Generallly speaking, clustering is a unsupervise learning. The goal of clustering is to group the data into different clusters. 
+
+
+The primary tasks of Machine Learning encompass a variety of fields, including classification, segmentation, and modern techniques such as generative models. 
+One of the fundamental skills in machine learning is classification. Specifically, data can be categorized into labeled and unlabeled datasets. 
+This encompasses numerous techniques from supervised and unsupervised learning. A key feature of unsupervised learning is clustering, which is an algorithm designed to group data into distinct clusters.
+Generally speaking, clustering is an unsupervised learning technique. The objective of clustering is to partition the data into different clusters based on inherent similarities.
+One of the most challege is poepole offen share same experience that it is hard to understand how model works anaylitically.
+It will cause unpredictable results like medical diagnosis, financial fraud detection, and autonomous driving after industrial adoption. 
+It is important to understand the model and how it works. This is where the concept of explainable AI (XAI) comes in. XAI is a subfield of artificial intelligence (AI) that focuses on making AI models more transparent and understandable to humans.\\ 
+
+In this paper, we explore some state of the art XAI techniques and how they can be interpret the features in images. 
+We learn from foundation of machine learning and deep learning that the imporved predicitive accuracy has often been increased model complexity. 
+The obvious drawback is the $E_{in}$ decrease error, however, it might increase the $E_{out}$ error \cite{Shalev-Shwartz2014, Devroye1996, Hastie2017}.
+To better understand the model, we need to interfere the model's decision-making process.
+While we persuade the idea of XAI, we will introduce the Variational Inference Clustering algorithm and experiment with it.
+The Variational Inference Clustering algorithm is a popular XAI algorithm that can be used to interpret the features in images. 
+
+
 
 
 
@@ -30,17 +48,21 @@ Generallly speaking, clustering is a unsupervise learning. The goal of clusterin
 \section{Related Work}
 \ldots
 
+The GradCAM,\cite{selvarajuGradCAMVisualExplanations2020}, algorithm is a popular XAI algorithm. 
 \section{Experiments}
 \ldots
 
-$$
-E = mc^2
-$$
-
-\[
-E = mc^2
-\]
 \section{Conclusion}
 \ldots
+
+\newpage
+\begin{footnotesize} %%Makes bib footnotesize text size
+\singlespacing %%Makes single spaced
+\bibliographystyle{unsrt} %% Change to unsrt for ordered references
+% \bibliographystyle{Phil_Review} %%bib style found in bst folder, in bibtex folder, in texmf folder.
+\setlength{\bibsep}{5pt} %%Changes spacing between bib entries
+\bibliography{Zotero} %%bib database found in bib folder, in bibtex folder
+\thispagestyle{empty} %%Removes page numbers
+\end{footnotesize} %%End makes bib small text size
 
 \end{document}
