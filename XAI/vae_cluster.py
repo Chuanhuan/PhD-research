@@ -20,10 +20,10 @@ intermediate_dim = 256
 # Dataset preparation (MNIST)
 transform = transforms.Compose([transforms.ToTensor()])
 train_dataset = datasets.MNIST(
-    root="./data", train=True, download=True, transform=transform
+    root="~/Documents/data", train=True, download=True, transform=transform
 )
 test_dataset = datasets.MNIST(
-    root="./data", train=False, download=True, transform=transform
+    root="~/Documents/data", train=False, download=True, transform=transform
 )
 train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
@@ -232,4 +232,3 @@ for epoch in range(epochs):
 # for i in range(10):
 #     cluster_sample(f"samples/cluster_category_{i}.png", i)
 #     random_sample(f"samples/sample_category_{i}.png", i)
-

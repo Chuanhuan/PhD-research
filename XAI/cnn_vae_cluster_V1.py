@@ -54,10 +54,14 @@ transform = transforms.Compose(
     [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
 )
 
-trainset = MNIST(root="./data", train=True, download=True, transform=transform)
+trainset = MNIST(
+    root="~/Documents//data", train=True, download=True, transform=transform
+)
 trainloader = DataLoader(trainset, batch_size=64, shuffle=True)
 
-testset = MNIST(root="./data", train=False, download=True, transform=transform)
+testset = MNIST(
+    root="~/Documents//data", train=False, download=True, transform=transform
+)
 testloader = DataLoader(testset, batch_size=1000, shuffle=True)
 
 # %%
@@ -129,6 +133,7 @@ class VI(nn.Module):
             nn.Linear(h2_dim, h2_dim),
             nn.ReLU(),
             nn.Linear(h2_dim, self.K * self.q_dim),
+            # nn.Linear(h2_dim, self.q_dim),
         )
         self.q_mu = nn.Sequential(
             nn.Linear(self.q_dim, h1_dim),
@@ -169,9 +174,11 @@ class VI(nn.Module):
     def forward(self, x):
         phi = self.q_c(x) ** 2
         phi = phi.view(self.q_dim, self.K)
-        # NOTE: softmax winner takes all
+
+        # NOTE: method1: softmax winner takes all
         phi = F.softmax(phi, dim=1)
 
+        # NOTE: method2: softmax winner takes all
         # phi = phi / phi.sum(dim=1).view(-1, 1)
 
         mu = self.q_mu(x)
@@ -194,8 +201,8 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
 
     t1 = -0.5 * (mu.view(1, -1) - mu_y.view(-1, 1)) ** 2
     t1 = phi * t1
-    # t1 = t1.mean()
-    t1 = t1.sum()
+    t1 = t1.mean()
+    # t1 = t1.sum()
 
     # t1 = torch.outer(mu_y, mu) - 0.5 * mu.view(1, -1) **2
     # t1 = -0.5  * (log_var.exp() + mu**2).view(1, -1) + t1
@@ -203,24 +210,24 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
     # t1 = t1.sum()
 
     # NOTE: Alternative implementation
-    # t2 = 0.5 * (x - x_recon) ** 2
-    # t2 = -torch.mean(t2)
+    t2 = 0.5 * (x * high_mu_index - x_recon) ** 2
+    t2 = -torch.sum(t2)
     # t2_1 = 0.5 * (x - x_recon) ** 2
     # t2_1 = -torch.mean(t2_1[high_mu_index])
 
     # NOTE: this is correct
-    t2 = torch.outer(x, mu) - 0.5 * x.view(-1, 1) ** 2
-    t2 = -0.5 * (log_var.exp() + mu**2).view(1, -1) + t2
-    t2 = phi * t2
-    # t2 = torch.mean(t2)
-    t2 = torch.sum(t2)
+    # t2 = torch.outer(x, mu) - 0.5 * x.view(-1, 1) ** 2
+    # t2 = -0.5 * (log_var.exp() + mu**2).view(1, -1) + t2
+    # t2 = phi * t2
+    # # t2 = torch.mean(t2)
+    # t2 = torch.sum(t2)
 
-    # t3 = -torch.log(phi).mean()
-    t3 = phi * torch.log(phi)
-    t3 = -torch.sum(t3)
+    t3 = -torch.log(phi).mean()
+    # t3 = phi * torch.log(phi)
+    # t3 = -torch.sum(t3)
 
-    # t4 = 0.5 * log_var.mean()
-    t4 = torch.pi * log_var.sum()
+    t4 = 0.5 * log_var.mean()
+    # t4 = torch.pi * log_var.sum()
 
     # HACK: use the CNN model predition as the input
     # x_recon = x_recon - 10
@@ -232,9 +239,12 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
     outputs = torch.clamp(outputs, 1e-5, 1 - 1e-5)
     t5 = torch.log(outputs[:, predicted])
     # print(f't1: {t1}, t2: {t2}, t3: {t3}, t4: {t4}, t5: {t5}, lamb: {lamb}')
-    return -(t1 + t2 + t3 + t4 - t5)
+    return -(t1 + t2 + t3 + t4 - t5) + lamb
     # return (t1 + t2  + t3 + t4) * (t5)
 
+
+# %%
+print(f"t1: {t1}, t2: {t2}, t3: {t3}, t4: {t4}, t5: {t5}, lamb: {lamb}")
 
 # %%
 
@@ -312,7 +322,7 @@ mu = None
 log_var = None
 predicted = true_y
 q_dim = 784
-epochs = 2000
+epochs = 3000
 m = VI(q_dim, 2).to(device)
 optim = torch.optim.Adam(m.parameters(), lr=0.005)
 
@@ -322,9 +332,9 @@ for epoch in range(epochs + 1):
     x_recon, mu, log_var, phi, mu_y = m(x)
     # Get the index of the max log-probability
 
-    # loss = loss_elbo(x, mu, log_var, phi, x_recon, model, predicted)
+    loss = loss_elbo(x, mu, log_var, phi, x_recon, model, predicted)
     # loss = loss_gau_elbo(x, mu, log_var, phi, x_recon, model, predicted)
-    loss = loss_cluster_elbo(x, mu, log_var, phi, x_recon, model, predicted)
+    # loss = loss_cluster_elbo(x, mu, log_var, phi, x_recon, model, predicted)
 
     if epoch % 500 == 0:
         print(f"epoch: {epoch}, loss: {loss}")
@@ -375,7 +385,7 @@ plt.scatter(
     high_phi_index[1],
     high_phi_index[0],
     s=10,
-    cmap="viridis",
+    # cmap="viridis",
 )
 
 # Add a colorbar to show the mapping from colors to values

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024/Arch Linux) (preloaded format=pdflatex 2024.10.5)  8 OCT 2024 00:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024/Arch Linux) (preloaded format=pdflatex 2024.10.5)  8 OCT 2024 23:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -353,9 +353,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 28--35
 
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--56
+
+ []
+
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./Cluster.bbl) [3] (./Cluster.aux)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+
+ []
+
+[2] (./Cluster.bbl) [3] (./Cluster.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -364,18 +374,18 @@ Package rerunfilecheck Info: File `Cluster.out' has not changed.
 (rerunfilecheck)             Checksum: 439001AF779D8D6AFB4DB8D4527BA246;400.
  ) 
 Here is how much of TeX's memory you used:
- 10513 strings out of 476076
- 157662 string characters out of 5793775
+ 10515 strings out of 476076
+ 157724 string characters out of 5793775
  1937187 words of memory out of 5000000
- 32480 multiletter control sequences out of 15000+600000
+ 32482 multiletter control sequences out of 15000+600000
  567172 words of font info for 71 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 75i,6n,79p,294b,439s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Cluster.pdf (3 pages, 114698 bytes).
+ 75i,6n,79p,294b,444s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on Cluster.pdf (3 pages, 132592 bytes).
 PDF statistics:
- 90 PDF objects out of 1000 (max. 8388607)
- 68 compressed objects within 1 object stream
+ 100 PDF objects out of 1000 (max. 8388607)
+ 74 compressed objects within 1 object stream
  13 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 

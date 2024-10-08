@@ -52,6 +52,31 @@ The GradCAM,\cite{selvarajuGradCAMVisualExplanations2020}, algorithm is a popula
 \section{Experiments}
 \ldots
 
+PyTorch Conv2d Equation \\
+
+The output size of a Conv2d layer can be calculated using the following equation:
+
+\[ \text{Output Size} = \left\lfloor \frac{\text{Input Size} + 2 \times \text{Padding} - \text{Kernel Size}}{\text{Stride}} \right\rfloor + 1 \]
+
+Where:
+- \(\text{Input Size}\) is the size of the input feature map (height or width).
+- \(\text{Padding}\) is the number of zero-padding added to both sides of the input.
+- \(\text{Kernel Size}\) is the size of the convolution kernel (height or width).
+- \(\text{Stride}\) is the stride of the convolution.
+
+PyTorch ConvTranspose2d Equation\\
+
+The output size of a ConvTranspose2d (transposed convolution) layer can be calculated using the following equation:
+
+\[ \text{Output Size} = (\text{Input Size} - 1) \times \text{Stride} - 2 \times \text{Padding} + \text{Kernel Size} + \text{Output Padding} \]
+
+Where:
+- \(\text{Input Size}\) is the size of the input feature map (height or width).
+- \(\text{Stride}\) is the stride of the convolution.
+- \(\text{Padding}\) is the number of zero-padding added to both sides of the input.
+- \(\text{Kernel Size}\) is the size of the convolution kernel (height or width).
+- \(\text{Output Padding}\) is the additional size added to the output (usually used to ensure the output size matches a specific value).
+
 \section{Conclusion}
 \ldots
 
