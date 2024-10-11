@@ -11,48 +11,133 @@
 
 \setlength{\parindent}{0pt}
 
-\title{XAI: Variational Inference for Cluster}
+\title{XAI: Cluster Variational Inference}
 \author{Jack Li}
-\date{March 2023}
+\date{October 2023}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-The purpose of this report is to introduce the Cluster algorithm and experiment with it.
+\ldots
+
+
 \end{abstract}
+
+\section{Workflow}
+
+Variational Inference model explanation\\
+The purpose of this report is to introduce the Variational Inference Cluster algorithm and experiment with it. \\
+
+Situations:\\
+1. ML model interpretation is attracting more attention in order to improve model performance and robustness in industrial applications.\\
+2. Briefly outline the importance of machine learning interpretation in the medical field, financial field, and autonomous driving. Explainable AI and adversarial attacks highlight the importance of understanding models.\\
+3. Explainable AI (XAI) aims to understand the model's decision-making process.\\
+4. Adversarial attacks exploit key features to influence the output.\\
+
+Problem:\\
+1. Applying the model in the wrong field.\\
+2. The model outputs something incorrect, and people are not able to understand why.\\
+3. Users blindly trust the model.\\
+4. Do XAI and adversarial attack techniques share the same results?\\
+
+Solution:\\
+1. Examine and compare state-of-the-art techniques.\\
+2. Use Variational Inference for model explanation.\\
+
+Evaluation:\\
+Show the comparison of results.\\
+
+
 \section{Introduction}
 
+Machine learning encompasses a variety of tasks, including classification, segmentation, and modern techniques such as generative models. 
+One fundamental aspect of machine learning is classification, which involves categorizing data into labeled and unlabeled datasets. 
+This process includes techniques from both supervised and unsupervised learning. 
+A key feature of unsupervised learning is clustering, an algorithm designed to group data into distinct clusters based on inherent similarities.
+Clustering is an unsupervised learning technique aimed at partitioning data into different clusters. 
+One of the significant challenges in this field is the difficulty in understanding how models work analytically, which can lead to unpredictable results in critical applications such as medical diagnosis, financial fraud detection, and autonomous driving. 
+Therefore, understanding model interpretation for key features is crucial. This is where the concept of explainable AI (XAI) becomes relevant. 
+XAI is a subfield of artificial intelligence focused on making AI models more transparent and understandable to humans. \\
 
-The primary tasks of Machine Learning encompass a variety of fields, including classification, segmentation, and modern techniques such as generative models. 
-One of the fundamental skills in machine learning is classification. Specifically, data can be categorized into labeled and unlabeled datasets. 
-This encompasses numerous techniques from supervised and unsupervised learning. A key feature of unsupervised learning is clustering, which is an algorithm designed to group data into distinct clusters.
-Generally speaking, clustering is an unsupervised learning technique. The objective of clustering is to partition the data into different clusters based on inherent similarities.
-One of the most challege is poepole offen share same experience that it is hard to understand how model works anaylitically.
-It will cause unpredictable results like medical diagnosis, financial fraud detection, and autonomous driving after industrial adoption. 
-It is important to understand the model and how it works. This is where the concept of explainable AI (XAI) comes in. XAI is a subfield of artificial intelligence (AI) that focuses on making AI models more transparent and understandable to humans.\\ 
+Another important area of research is adversarial attacks, which further underscores the importance of XAI and the need to comprehend model behavior. 
+While XAI aims to elucidate the model's decision-making process, adversarial attacks seek to exploit the model's vulnerabilities.\cite{athalyeSynthesizingRobustAdversarial2018} \cite{moosavi-dezfooliUniversalAdversarialPerturbations2017}
+The robustness of models is crucial for their real-world applications, and understanding the dynamics between XAI and adversarial attacks is essential for improving model interpretability and reliability. 
+Despite their differences, both fields highlight the necessity of understanding AI models.\\
 
-In this paper, we explore some state of the art XAI techniques and how they can be interpret the features in images. 
-We learn from foundation of machine learning and deep learning that the imporved predicitive accuracy has often been increased model complexity. 
-The obvious drawback is the $E_{in}$ decrease error, however, it might increase the $E_{out}$ error \cite{Shalev-Shwartz2014, Devroye1996, Hastie2017}.
-To better understand the model, we need to interfere the model's decision-making process.
-While we persuade the idea of XAI, we will introduce the Variational Inference Clustering algorithm and experiment with it.
-The Variational Inference Clustering algorithm is a popular XAI algorithm that can be used to interpret the features in images. 
-
-
-
+In this paper, we explore state-of-the-art techniques in explainable AI (XAI) and adversarial attacks, focusing on how they interpret features in images differently. 
+Through our exploration, we found that images in high-dimensional spaces significantly contribute to model complexity. This complexity aligns with the challenges posed by both XAI and adversarial attacks. Specifically, while XAI aims to elucidate the decision-making process of complex models, adversarial attacks exploit the vulnerabilities inherent in these high-dimensional representations. Understanding these dynamics is crucial for improving model robustness and interpretability.
+As we advocate for the idea of XAI, we introduce the Variational Inference Clustering algorithm and experiment with it. 
+This algorithm is a popular XAI method used to interpret features in images.
 
 
 
 \section{Related Work}
 \ldots
 
+In this paper, we explore state-of-the-art XAI and adversarial attack techniques and how they interpret features in images differently. 
+From the foundations of machine learning and deep learning, we know that improved predictive accuracy often comes with increased model complexity. 
+This complexity can decrease the in-sample error ($E_{in}$) but may increase the out-of-sample error ($E_{out}$) \cite{Shalev-Shwartz2014, Devroye1996, Hastie2017}. 
+To better understand models, it is essential to interfere with their decision-making processes.
+
 The GradCAM,\cite{selvarajuGradCAMVisualExplanations2020}, algorithm is a popular XAI algorithm. 
 \section{Experiments}
 \ldots
+VI Structures 
 
-PyTorch Conv2d Equation \\
+The variational inference algorithm is a popular XAI method used to interpret features in images.
+The clusters example\cite{bleiVariationalInferenceReview2017} \\
+
+Formulation:
+\begin{align} 
+  \begin{split}
+z_j & \sim \mathcal{N}(m^2, s^2)~\text{for } j = 1, ..., K \\\\
+c_i & \sim \mathcal{U}(K)~\text{for } i = 1, ..., N \\\\ 
+x_i & \sim \mathcal{N}(c_i^T \mu, 1)~\text{for} i = 1, ..., N \\\\
+y  & \sim CNN
+  \end{split}
+\end{align}
+
+ELBO function:
+\begin{align}
+ELBO & = E_q[log~p(x,\hat{z})] - E_q[log~q(\hat{z})]\\
+ &= E_q[log~p(x,z,c,y) - log~q(z,c,y)]
+\end{align}
+
+Encoder $q(.)$:
+
+
+\begin{align}
+  \begin{split}
+log~ q(z,c,y) &= log~[q(z|m, s^2)~q(c| \phi)~q(y|z,c)] \\\\
+ &= log~\left[ \prod_j q(z_{j}| m_j, s_j^2)~\prod_i q(c_i| \phi_i)~q(y| z,c) \right]\\\\
+&= \sum_{j}~\log~q(z_{j}| m_j, s_j^2) +  \sum_{j} \log~ \phi_{j} + \log~ \text{pred}_{y} \\ \\
+&\propto \sum_{j}~ \frac{-1}{2}\left( \log~s^2 + \frac{(z_{j}-m_{j})^2}{s_{j}^2} \right)+\sum_{j} \log~ \phi_{j} + \log~ \text{pred}_{y}
+  \end{split}
+\end{align}
+
+Decoder $p(.)$:
+
+
+$$p(c_i) = \dfrac{1}{K}$$
+
+$$p(y) = N(y|0,1)$$
+
+\begin{align*}
+log~p(x_i~\vert~c_i, z_{j},y) &= log~\prod_j p(x_i~\vert~z_j ,~y)^{c_{ij}} \prod_{j}~p(c,z|y) ~p(y)\\ \\
+ &\propto \sum_j c_{j} log~p(x_i~\vert~z_j)~\sum_{j}c_{j}\log\left( -\frac{1}{2\pi}e^{-\frac{1}{2}\left( \frac{z_{j}-\mu_{y}}{1} \right)^2} \right) \\ \\
+ &\propto \sum_j c_{j} log~p(x_i~\vert~z_j)  -\frac{1}{2}~\sum_{j}c_{j}\left( \frac{z_{j}-\mu_{y}}{1} \right)^2 \\ \\ \\
+&\propto -\frac{1}{2}( \sum_j c_{j}\left( \frac{x_{i}-m_{j}}{1} \right)^2+~\sum_{j}c_{j}\left( \frac{z_{j}-\mu_{y}}{1} \right)^2)
+\end{align*}
+
+
+\begin{align*}
+ELBO  &= E_q[log~p(x,z,c,y) - log~q(z,c,y)] \\ \\
+&= E_{q}[-\frac{1}{2}( \sum_j c_{j}\left( x_{i}-m_{j} \right)^2+~\sum_{j}c_{j}\left( z_{j}-\mu_{y} \right)^2) + \frac{1}{2}\left(\sum_{j} \log~s^2  \right) - \sum_{j} \log~ \phi_{j} - \log~ \text{pred}_{y}] \\ \\
+\end{align*}
+
+--- PyTorch Conv2d Equation \\
 
 The output size of a Conv2d layer can be calculated using the following equation:
 

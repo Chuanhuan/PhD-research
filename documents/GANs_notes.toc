@@ -1,0 +1,16 @@
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {section}{\numberline {2}Basic Math}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Probability Theory}{1}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Linear Algebra}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Optimization}{1}{subsection.2.3}%
+\contentsline {section}{\numberline {3}PyTorch Basics}{1}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Tensors}{1}{subsection.3.1}%
+\contentsline {section}{\numberline {4}PyTorch training gradients}{2}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Autograd}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Building Neural Networks}{4}{subsection.4.2}%
+\contentsline {section}{\numberline {5}GANs Models}{4}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Basic GAN}{4}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}DCGAN}{4}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}WGAN}{4}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}CycleGAN}{4}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Conclusion}{4}{section.6}%

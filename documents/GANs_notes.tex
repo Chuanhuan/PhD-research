@@ -1,0 +1,231 @@
+
+\documentclass{article}
+\usepackage[a4paper, margin=2cm]{geometry} %Annina style
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{ 
+    language=Python, 
+    basicstyle=\ttfamily\small, 
+    keywordstyle=\color{blue}, 
+    stringstyle=\color{red}, 
+    commentstyle=\color{green}, 
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true
+}
+\title{Class Notes on GANs Models}
+\author{Jack Li}
+\date{\today}
+
+\renewcommand{\lstlistingname}{Code}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+\label{sec:introduction}
+Provide an introduction to GANs and their importance in machine learning.
+
+\section{Basic Math}
+\label{sec:basic-math}
+\subsection{Probability Theory}
+\begin{itemize}
+    \item Definitions of probability, random variables, expectation, etc.
+\end{itemize}
+
+\subsection{Linear Algebra}
+\begin{itemize}
+    \item Vectors, matrices, eigenvalues, eigenvectors, etc.
+\end{itemize}
+
+\subsection{Optimization}
+\begin{itemize}
+    \item Gradient descent, stochastic gradient descent, etc.
+\end{itemize}
+
+\section{PyTorch Basics}
+\label{sec:pytorch-basics}
+\subsection{Tensors}
+\begin{itemize}
+    \item Definition and operations on tensors.
+\end{itemize}
+
+\section{PyTorch training gradients}
+  \begin{lstlisting}[language=Python, caption=PyTorch training gradients]
+  #SECTION: Gradient computation
+
+# Step 1: Define a simple model
+model = nn.Linear(1, 1)
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+# Dummy input and target
+input = torch.tensor([[1.0]], requires_grad=True)
+target = torch.tensor([[2.0]])
+
+# Step 2: Print the initial parameters
+print("Initial parameters:")
+for param in model.parameters():
+    print(param.data)
+
+# Step 3: Forward pass
+output = model(input)
+loss = (output - target).pow(2).mean()
+
+# Step 4: Zero the gradients
+optimizer.zero_grad()
+
+# Step 5: Backward pass
+loss.backward()
+
+# Step 6: Update the parameters
+optimizer.step()
+
+# Step 7: Print the parameters after the update
+print("\nParameters after one training step:")
+for param in model.parameters():
+    print(param.data)
+
+\end{lstlisting}
+
+1. \textbf{Initialize Parameters:}\\
+   - Assume initial weights \( w \) and bias \( b \) are both 0.\\
+   - Model: \( y = wx + b \) \\
+
+2. \textbf{Forward Pass:} \\
+   - Compute the output: \( \hat{y} = wx + b \) \\
+   - Given input \( x = 1.0 \) and target \( y = 2.0 \): \\
+     \[
+     \hat{y} = 0 \cdot 1.0 + 0 = 0 \\
+     \]
+
+3. \textbf{Compute Loss:} \\
+   - Loss function: Mean Squared Error (MSE) \\
+     \[
+     \text{Loss} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}_i - y_i)^2 \\
+     \]
+   - For our single data point: \\
+     \[
+     \text{Loss} = (0 - 2.0)^2 = 4.0  \\
+     \]
+
+4. \textbf{Backward Pass (Gradient Calculation):} \\
+   - Compute gradients of the loss with respect to \( w \) and \( b \): \\
+     \[
+     \frac{\partial \text{Loss}}{\partial w} = 2(\hat{y} - y)x = 2(0 - 2.0) \cdot 1.0 = -4.0 
+     \]
+     \[
+     \frac{\partial \text{Loss}}{\partial b} = 2(\hat{y} - y) = 2(0 - 2.0) = -4.0
+     \]
+
+5. \textbf{Parameter Update:}\\
+   - Using Stochastic Gradient Descent (SGD) with learning rate \( \eta = 0.01 \): \\
+     \[
+     w_{\text{new}} = w - \eta \frac{\partial \text{Loss}}{\partial w} = 0 - 0.01 \cdot (-4.0) = 0.04
+     \]
+     \[
+     b_{\text{new}} = b - \eta \frac{\partial \text{Loss}}{\partial b} = 0 - 0.01 \cdot (-4.0) = 0.04
+     \]
+
+6. \textbf{Updated Parameters:}\\
+   - After one training step, the new parameters are:\\
+     \[
+     w = 0.04, \quad b = 0.04
+     \]
+
+\textbf{Summary}
+- Initial parameters: \( w = 0, b = 0 \)
+- After one training step: \( w = 0.04, b = 0.04 \)
+\subsection{Autograd}
+\begin{itemize}
+    \item Automatic differentiation in PyTorch.
+\end{itemize}
+The active selection $gradient.norm(2, dim=1)$ is a PyTorch operation that computes the L2 norm (Euclidean norm) of the $gradient$ tensor along a specified dimension. 
+In this case, the dimension specified is $dim=1$.
+$$\begin{array}{c}{{\Theta=\!\operatorname*{argmin}_{\Theta}\frac1B\sum_{i=1}^{B}\left[D\Big(z_{i},\Theta\Big)-D\Big(y_{i},\Theta\Big)\right]}}\\ {{+\lambda\!\left(\left\|\frac{\partial D(y,\Theta)}{\partial y}\right\|-1\right)^{2}}}\end{array}$$
+Detailed Explanation:\\
+
+\textbf{1. L2 Norm (Euclidean Norm)}: \\
+\begin{itemize}
+  \item    - The L2 norm of a vector is a measure of its magnitude and is calculated as the square root of the sum of the squares of its components. Mathematically, for a vector \( v \), the L2 norm is given by \( \|v\|_2 = \sqrt{\sum v_i^2} \).\\
+  \item    - In PyTorch, the $norm$ function can compute various types of norms, with the L2 norm being specified by the argument $2$. \\
+\end{itemize} \\
+\textbf{2. Dimension Specification ($dim=1$):} \\
+   \begin{itemize}
+     \item    - The $dim$ argument specifies the dimension along which the norm is computed. In a multi-dimensional tensor, this allows you to compute norms along specific axes. \\
+     \item    - For example, if $gradient$ is a 2D tensor (matrix) with shape $[batch size, num features]$, setting $dim=1$ means that the norm is computed for each row independently.
+   This results in a tensor of shape $[batch size]$, where each element is the L2 norm of the corresponding row in the original tensor. \\
+
+   \end{itemize}
+
+\begin{lstlisting}[language=Python, caption=PyTorch gradient sampling example]
+# Define the sampling function
+def sample_function(x):
+    return torch.sin(x)
+
+
+# NOTE: Generate sample points with requires_grad=True, and need requires_grad=True
+# Generate sample points with requires_grad=True
+x = torch.tensor(
+    np.linspace(0, 2 * np.pi, 100), dtype=torch.float32, requires_grad=True
+)
+
+# Define f by sampling from the sample_function
+f = sample_function(x)
+
+# Compute the gradient of f with respect to x
+grad = torch.autograd.grad(outputs=f, inputs=x, grad_outputs=torch.ones_like(f))
+
+print(f"The gradient of f(x) = sin(x) at x = {x} is {grad[0]}")
+
+\end{lstlisting}
+
+\subsection{Building Neural Networks}
+\begin{itemize}
+    \item Layers, activation functions, loss functions, etc.
+\end{itemize}
+
+\section{GANs Models}
+\label{sec:gans-models}
+\subsection{Basic GAN}
+\begin{itemize}
+    \item Architecture: Generator and Discriminator.
+    \item Loss functions: Minimax game.
+    \item Training process.
+\end{itemize}
+
+\subsection{DCGAN}
+\begin{itemize}
+    \item Architecture: Convolutional layers.
+    \item Improvements over basic GAN.
+    \item Training tips.
+\end{itemize}
+
+\subsection{WGAN}
+\begin{itemize}
+    \item Wasserstein distance.
+    \item Critic network.
+    \item Gradient penalty.
+\end{itemize}
+
+\subsection{CycleGAN}
+\begin{itemize}
+    \item Architecture: Cycle consistency loss.
+    \item Applications: Image-to-image translation.
+\end{itemize}
+
+% Add more GANs models sections as needed
+
+\section{Conclusion}
+\label{sec:conclusion}
+Summarize the key points and discuss future directions.
+
+\end{document}
