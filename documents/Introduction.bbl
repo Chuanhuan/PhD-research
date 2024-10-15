@@ -1,0 +1,24 @@
+\begin{thebibliography}{1}
+
+\bibitem{Goodfellow2015}
+Ian~J. Goodfellow, Jonathon Shlens, and Christian Szegedy.
+\newblock Explaining and {{Harnessing Adversarial Examples}}, March 2015.
+
+\bibitem{Kurakin2017}
+Alexey Kurakin, Ian Goodfellow, and Samy Bengio.
+\newblock Adversarial examples in the physical world, February 2017.
+
+\bibitem{Ross2017}
+Andrew~Slavin Ross and Finale {Doshi-Velez}.
+\newblock Improving the {{Adversarial Robustness}} and {{Interpretability}} of {{Deep Neural Networks}} by {{Regularizing}} their {{Input Gradients}}, November 2017.
+
+\bibitem{Carlini2017}
+Nicholas Carlini and David Wagner.
+\newblock Towards {{Evaluating}} the {{Robustness}} of {{Neural Networks}}, March 2017.
+
+\bibitem{Comaniciu2002}
+D.~Comaniciu and P.~Meer.
+\newblock Mean shift: A robust approach toward feature space analysis.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence}, 24(5):603--619, May 2002.
+
+\end{thebibliography}

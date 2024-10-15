@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2024/Arch Linux)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Introduction.aux
+The style file: unsrt.bst
+Database file #1: Zotero.bib
+You've used 5 entries,
+            1791 wiz_defined-function locations,
+            477 strings with 4369 characters,
+and the built_in function-call counts, 840 in all, are:
+= -- 60
+> -- 46
+< -- 0
++ -- 17
+- -- 12
+* -- 49
+:= -- 132
+add.period$ -- 11
+call.type$ -- 5
+change.case$ -- 5
+chr.to.int$ -- 0
+cite$ -- 5
+duplicate$ -- 29
+empty$ -- 97
+format.name$ -- 12
+if$ -- 185
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 1
+newline$ -- 24
+num.names$ -- 5
+pop$ -- 29
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 22
+stack$ -- 0
+substring$ -- 25
+swap$ -- 5
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 7
+width$ -- 6
+write$ -- 45

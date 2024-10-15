@@ -1,13 +1,5 @@
 \begin{thebibliography}{1}
 
-\bibitem{athalyeSynthesizingRobustAdversarial2018}
-Anish Athalye, Logan Engstrom, Andrew Ilyas, and Kevin Kwok.
-\newblock Synthesizing {{Robust Adversarial Examples}}, June 2018.
-
-\bibitem{moosavi-dezfooliUniversalAdversarialPerturbations2017}
-Seyed-Mohsen {Moosavi-Dezfooli}, Alhussein Fawzi, Omar Fawzi, and Pascal Frossard.
-\newblock Universal adversarial perturbations, March 2017.
-
 \bibitem{Shalev-Shwartz2014}
 Shai {Shalev-Shwartz} and Shai {Ben-David}.
 \newblock {\em Understanding Machine Learning: From Theory to Algorithms}.
@@ -23,12 +15,12 @@ Trevor Hastie, Robert Tibshirani, and Jerome~H. Friedman.
 \newblock {\em The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
 \newblock Springer Series in Statistics. Springer, New York, NY, second edition, corrected at 12th printing 2017 edition, 2017.
 
-\bibitem{selvarajuGradCAMVisualExplanations2020}
+\bibitem{Selvaraju2020}
 Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, and Dhruv Batra.
 \newblock Grad-{{CAM}}: {{Visual Explanations}} from {{Deep Networks}} via {{Gradient-based Localization}}.
 \newblock {\em International Journal of Computer Vision}, 128(2):336--359, February 2020.
 
-\bibitem{bleiVariationalInferenceReview2017}
+\bibitem{Blei2017}
 David~M. Blei, Alp Kucukelbir, and Jon~D. McAuliffe.
 \newblock Variational {{Inference}}: {{A Review}} for {{Statisticians}}.
 \newblock {\em Journal of the American Statistical Association}, 112(518):859--877, April 2017.

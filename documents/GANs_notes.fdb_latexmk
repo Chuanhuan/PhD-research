@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1728550583.69529 "GANs_notes.tex" "GANs_notes.pdf" "GANs_notes" 1728550584.31292 2
+["pdflatex"] 1728697576.75866 "GANs_notes.tex" "GANs_notes.pdf" "GANs_notes" 1728697577.61442 2
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1727349926 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm" 1727349926 1536 e07581a4bb3136ece9eeb4c3ffab8233 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1727349926 1004 54797486969f23fa377b128694d548df ""
@@ -101,10 +101,10 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1727349926 41588 b43d3e860a4f94167ee1e725ff526a72 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1728109793.12534 5307094 23ab9ec1744c7f71ddb2bf5953112922 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1728109779 7112988 bcf00dc0350debf1ad1c9180910cddee ""
-  "GANs_notes.aux" 1728550584.2375 2580 addf5a6e2b14b8d66210f210e7002ce8 "pdflatex"
-  "GANs_notes.out" 1728550584.2375 1825 35563eeee8be8999c213a66ec36e2f5c "pdflatex"
-  "GANs_notes.tex" 1728550583.1475 7019 0bd134b9b293ea40f65758d20ca78209 ""
-  "GANs_notes.toc" 1728550584.2375 1188 c68d5f614ffd419d84b9ee6f4aede813 "pdflatex"
+  "GANs_notes.aux" 1728697577.51974 2701 2296dd2ef4abbadf453a73e6206fa177 "pdflatex"
+  "GANs_notes.out" 1728697577.51974 1956 753a6f159294011baf5bd1b0d5fc8fbe "pdflatex"
+  "GANs_notes.tex" 1728697575.58974 8363 18a502247bdf2454ba97a081dbeb0842 ""
+  "GANs_notes.toc" 1728697577.51974 1268 2eb480843e942346215a4101b5b98f71 "pdflatex"
   (generated)
   "GANs_notes.aux"
   "GANs_notes.log"

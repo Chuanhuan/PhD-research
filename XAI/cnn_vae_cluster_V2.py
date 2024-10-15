@@ -123,7 +123,7 @@ class VI(nn.Module):
         self.c = 14
         self.dim = self.c**2
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 1, 2, stride=2),
+            nn.Conv2d(1, 1, 2, stride=2),  # image 14x14
             nn.Dropout(0.25),
             nn.Flatten(),
             nn.Linear(self.dim, self.dim),  # Adjusted to match flattened size

@@ -93,7 +93,7 @@ testloader_8 = DataLoader(testset_8, batch_size=32, shuffle=True)
 
 # NOTE: load the model weights
 
-model.load_state_dict(torch.load("./CNN_MNSIT.pth", weights_only=True))
+model.load_state_dict(torch.load("./XAI/CNN_MNSIT.pth", weights_only=True))
 
 """## Inital image setup"""
 
@@ -140,24 +140,24 @@ class VI(nn.Module):
             nn.ReLU(),
             nn.Linear(h1_dim, h2_dim),
             nn.ReLU(),
-            nn.Linear(h2_dim, self.K),
-            # nn.Linear(h2_dim, self.q_dim),
+            # nn.Linear(h2_dim, self.K),
+            nn.Linear(h2_dim, self.q_dim),
         )
         self.q_log_var = nn.Sequential(
             nn.Linear(self.q_dim, h1_dim),
             nn.ReLU(),
             nn.Linear(h1_dim, h2_dim),
             nn.ReLU(),
-            nn.Linear(h2_dim, self.K),
-            # nn.Linear(h2_dim, self.q_dim),
+            # nn.Linear(h2_dim, self.K),
+            nn.Linear(h2_dim, self.q_dim),
         )
         self.mu_y = nn.Sequential(
             nn.Linear(self.q_dim, h1_dim),
             nn.ReLU(),
             nn.Linear(h1_dim, h2_dim),
             nn.ReLU(),
-            nn.Linear(h2_dim, self.q_dim),
-            # nn.Linear(h2_dim, 1),
+            # nn.Linear(h2_dim, self.q_dim),
+            nn.Linear(h2_dim, 1),
         )
 
     def reparameterize(self, mu, log_var, phi):
@@ -166,17 +166,18 @@ class VI(nn.Module):
         sigma = sigma.unsqueeze(0)
         mu = mu.unsqueeze(0)
         eps = torch.randn_like(phi)
+        # print(f"mu: {mu.shape}, sigma: {sigma.shape}, eps: {eps.shape}")
         z = mu + sigma * eps
         z = z * phi
         # return z.sum(dim=1) + 10
-        return z.sum(dim=1)
+        return z.sum(dim=0)
 
     def forward(self, x):
         phi = self.q_c(x) ** 2
-        phi = phi.view(self.q_dim, self.K)
+        phi = phi.view(self.K, self.q_dim)
 
         # NOTE: method1: softmax winner takes all
-        phi = F.softmax(phi, dim=1)
+        phi = F.softmax(phi, dim=0)
 
         # NOTE: method2: softmax winner takes all
         # phi = phi / phi.sum(dim=1).view(-1, 1)
@@ -196,12 +197,12 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
     # log_var = log_var + 1e-5
     phi = phi + 1e-10
     high_mu_index = mu.argmax()
-    high_phi_index = phi[:, high_mu_index] > 0.5
+    high_phi_index = phi[0, :] > 0.5
     lamb = (high_phi_index > 0.5).sum()
 
-    t1 = -0.5 * (mu.view(1, -1) - mu_y.view(-1, 1)) ** 2
+    t1 = 0.5 * (mu.view(1, -1) - mu_y.view(-1, 1)) ** 2
     t1 = phi * t1
-    t1 = t1.mean()
+    t1 = -t1.mean()
     # t1 = t1.sum()
 
     # t1 = torch.outer(mu_y, mu) - 0.5 * mu.view(1, -1) **2
@@ -210,24 +211,23 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
     # t1 = t1.sum()
 
     # NOTE: Alternative implementation
-    t2 = 0.5 * (x * high_mu_index - x_recon) ** 2
-    t2 = -torch.sum(t2)
+    t2 = 0.5 * (x - x_recon) ** 2
+    t2 = phi * t2
+    t2 = torch.mean(t2)
+
     # t2_1 = 0.5 * (x - x_recon) ** 2
     # t2_1 = -torch.mean(t2_1[high_mu_index])
 
     # NOTE: this is correct
     # t2 = torch.outer(x, mu) - 0.5 * x.view(-1, 1) ** 2
     # t2 = -0.5 * (log_var.exp() + mu**2).view(1, -1) + t2
+    # print(f't2: {t2.shape}, phi: {phi.shape}')
     # t2 = phi * t2
-    # # t2 = torch.mean(t2)
-    # t2 = torch.sum(t2)
+    # t2 = torch.mean(t2)
 
-    t3 = -torch.log(phi).mean()
-    # t3 = phi * torch.log(phi)
-    # t3 = -torch.sum(t3)
+    t3 = 0.5 * log_var.exp().mean()
 
-    t4 = 0.5 * log_var.mean()
-    # t4 = torch.pi * log_var.sum()
+    t4 = -torch.log(phi + 1e-10).mean()
 
     # HACK: use the CNN model predition as the input
     # x_recon = x_recon - 10
@@ -236,10 +236,10 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
     # Forward pass
     outputs = model(input)
     outputs = F.softmax(outputs, dim=1)
-    outputs = torch.clamp(outputs, 1e-5, 1 - 1e-5)
-    t5 = torch.log(outputs[:, predicted])
+    outputs = torch.clamp(outputs, 1e-10, 1 - 1e-10)
+    t5 = -torch.log(outputs[:, predicted])
     # print(f't1: {t1}, t2: {t2}, t3: {t3}, t4: {t4}, t5: {t5}, lamb: {lamb}')
-    return -(t1 + t2 + t3 + t4 - t5) + lamb
+    return -(t1 + t2 + t3 + t4 + t5) + lamb
     # return (t1 + t2  + t3 + t4) * (t5)
 
 
@@ -344,6 +344,7 @@ for epoch in range(epochs + 1):
     optim.step()
 
 print(f"x.max(): {x.max()}, x.min(): {x.min()}")
+print(f"recon.max(): {x_recon.max()}, recon.min(): {x_recon.min()}")
 print(f"mu.max(): {mu.max()}, mu.min(): {mu.min()}")
 print(f"mu_y.max(): {mu_y.max()}, mu_y.min(): {mu_y.min()}")
 print(f"var.max(): {log_var.exp().max()}, var.min(): {log_var.exp().min()}")

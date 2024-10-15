@@ -104,6 +104,34 @@ INPUT /usr/share/texmf-dist/tex/latex/setspace/setspace.sty
 INPUT /usr/share/texmf-dist/tex/latex/setspace/setspace.sty
 INPUT /usr/share/texmf-dist/tex/latex/natbib/natbib.sty
 INPUT /usr/share/texmf-dist/tex/latex/natbib/natbib.sty
+INPUT /usr/share/texmf-dist/tex/latex/float/float.sty
+INPUT /usr/share/texmf-dist/tex/latex/float/float.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/listings.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/listings.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstpatch.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstpatch.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstpatch.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstmisc.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstmisc.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstmisc.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/listings.cfg
+INPUT /usr/share/texmf-dist/tex/latex/listings/listings.cfg
+INPUT /usr/share/texmf-dist/tex/latex/listings/listings.cfg
+INPUT /usr/share/texmf-dist/tex/latex/xcolor/xcolor.sty
+INPUT /usr/share/texmf-dist/tex/latex/xcolor/xcolor.sty
+INPUT /usr/share/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT /usr/share/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT /usr/share/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT /usr/share/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT /usr/share/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT /usr/share/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT /usr/share/texmf-dist/tex/latex/caption/caption.sty
+INPUT /usr/share/texmf-dist/tex/latex/caption/caption.sty
+INPUT /usr/share/texmf-dist/tex/latex/caption/caption3.sty
+INPUT /usr/share/texmf-dist/tex/latex/caption/caption3.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
+INPUT /usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 INPUT /usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 INPUT ./Cluster.aux
@@ -115,8 +143,6 @@ INPUT /usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT /usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT /usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 INPUT /usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
-INPUT /usr/share/texmf-dist/tex/latex/grfext/grfext.sty
-INPUT /usr/share/texmf-dist/tex/latex/grfext/grfext.sty
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
@@ -151,6 +177,7 @@ INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
@@ -168,6 +195,114 @@ INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT ../fig/Full connected Variational Inference.png
+INPUT ../fig/Full connected Variational Inference.png
+INPUT ../fig/Full connected Variational Inference.png
+INPUT ../fig/Full connected Variational Inference.png
+INPUT ../fig/Full connected Variational Inference.png
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmtt12.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
+INPUT ../fig/ID 3-Digit 8 pred 3 new_image.png
+INPUT ../fig/ID 3-Digit 8 pred 3 new_image.png
+INPUT ../fig/ID 3-Digit 8 pred 3 new_image.png
+INPUT ../fig/ID 3-Digit 8 pred 3 new_image.png
+INPUT ../fig/ID 3-Digit 8 pred 3 new_image.png
+INPUT ../fig/GANandVAE.png
+INPUT ../fig/GANandVAE.png
+INPUT ../fig/GANandVAE.png
+INPUT ../fig/GANandVAE.png
+INPUT ../fig/GANandVAE.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png
+INPUT ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/ID 3-Digit 8 pred 5.png
+INPUT ../fig/ID 3-Digit 8 pred 5.png
+INPUT ../fig/ID 3-Digit 8 pred 5.png
+INPUT ../fig/ID 3-Digit 8 pred 5.png
+INPUT ../fig/ID 3-Digit 8 pred 5.png
 INPUT ./Cluster.bbl
 INPUT ./Cluster.bbl
 INPUT Cluster.bbl
@@ -191,3 +326,4 @@ INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb
+INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb

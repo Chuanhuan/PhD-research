@@ -8,9 +8,10 @@
 \contentsline {section}{\numberline {4}PyTorch training gradients}{2}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Autograd}{3}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Building Neural Networks}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Loss Functions}{4}{subsection.4.3}%
 \contentsline {section}{\numberline {5}GANs Models}{4}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Basic GAN}{4}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}DCGAN}{4}{subsection.5.2}%
 \contentsline {subsection}{\numberline {5.3}WGAN}{4}{subsection.5.3}%
 \contentsline {subsection}{\numberline {5.4}CycleGAN}{4}{subsection.5.4}%
-\contentsline {section}{\numberline {6}Conclusion}{4}{section.6}%
+\contentsline {section}{\numberline {6}Conclusion}{5}{section.6}%
