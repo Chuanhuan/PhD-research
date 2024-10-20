@@ -1,5 +1,13 @@
 \begin{thebibliography}{1}
 
+\bibitem{Athalye2018}
+Anish Athalye, Logan Engstrom, Andrew Ilyas, and Kevin Kwok.
+\newblock Synthesizing {{Robust Adversarial Examples}}, June 2018.
+
+\bibitem{Moosavi-Dezfooli2017}
+Seyed-Mohsen {Moosavi-Dezfooli}, Alhussein Fawzi, Omar Fawzi, and Pascal Frossard.
+\newblock Universal adversarial perturbations, March 2017.
+
 \bibitem{Shalev-Shwartz2014}
 Shai {Shalev-Shwartz} and Shai {Ben-David}.
 \newblock {\em Understanding Machine Learning: From Theory to Algorithms}.

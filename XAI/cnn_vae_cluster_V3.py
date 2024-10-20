@@ -87,6 +87,23 @@ testset_8 = MNIST_8(testset)
 testloader_8 = DataLoader(testset_8, batch_size=32, shuffle=True)
 
 
+class MNIST_9(Dataset):
+    def __init__(self, mnist_dataset):
+        self.mnist_dataset = mnist_dataset
+        self.eight_indices = [
+            i for i, (img, label) in enumerate(self.mnist_dataset) if label == 9
+        ]
+
+    def __getitem__(self, index):
+        return self.mnist_dataset[self.eight_indices[index]]
+
+    def __len__(self):
+        return len(self.eight_indices)
+
+
+# Create the dataset for digit 9
+testset_9 = MNIST_9(testset)
+testloader_9 = DataLoader(testset_9, batch_size=32, shuffle=True)
 """## Load CNN Weights"""
 
 # save the mode weights in .pth format (99.25% accuracy
@@ -117,6 +134,22 @@ plt.clf()
 
 
 # %%
+# SECTION: Model definition
+
+min_val = img.min()
+max_val = img.max()
+
+
+class CustomTanh(nn.Module):
+    def __init__(self, min_val, max_val):
+        super(CustomTanh, self).__init__()
+        self.min_val = min_val
+        self.max_val = max_val
+
+    def forward(self, x):
+        return (torch.tanh(x) + 1) * (self.max_val - self.min_val) / 2 + self.min_val
+
+
 class generator(nn.Module):
     def __init__(self, channels_img):
         super().__init__()
@@ -130,7 +163,8 @@ class generator(nn.Module):
             nn.ConvTranspose2d(
                 channels_img, channels_img, kernel_size=2, stride=2, padding=0
             ),
-            nn.Tanh(),
+            # nn.Tanh(),
+            CustomTanh(min_val, max_val),
         )
 
         self.p_layer = nn.Sequential(
@@ -139,14 +173,22 @@ class generator(nn.Module):
             nn.ConvTranspose2d(
                 channels_img, channels_img * self.k, kernel_size=2, stride=2, padding=0
             ),
-            nn.Tanh(),
+            nn.Sigmoid(),
         )
 
     def forward(self, x, z):
-        p = self.p_layer(z)
-        p = F.softmax(p, dim=0)
-        # x_recon = self.decoder(z) * p[:, 0, :, :] + x * (p[:, 1, :, :])
-        x_recon = self.decoder(z)
+        # p = self.p_layer(z)
+        # p = F.softmax(p, dim=1)
+        # NOTE: original
+        # x_recon = self.decoder(z)
+
+        # HACK: alternative 1
+        # noise = torch.randn_like(x).to(device)
+        # x_recon = self.decoder(z) * p[:, 0, :, :] + noise * (p[:, 1, :, :])
+
+        # HACK: alternative 2
+        x_recon = self.decoder(z) * (p[:, 0, :, :] > 0.5)
+
         return x_recon, p
 
 
@@ -201,6 +243,23 @@ print(f"mean:{mean.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
 # %%
 
 
+def loss_function(x, x_recon, mean, log_var, p):
+    # NOTE: original loss
+    reproduction_loss = F.mse_loss(x_recon, x)
+
+    # HACK: alternative loss function, only use the pixels that have high variance
+    # reproduction_loss = (x_recon - x) ** 2
+    # reproduction_loss = reproduction_loss * (p[:, 0, :, :] > 0.5)
+    # reproduction_loss = reproduction_loss.mean()
+
+    KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
+
+    return reproduction_loss + KLD
+
+
+# %%
+# SECTION: Training
+
 epochs = 1000
 leaner_epochs = 10
 predicted = true_y
@@ -210,18 +269,6 @@ L = learner(1).to(device)
 
 opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
 opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
-
-
-def loss_function(x, x_recon, mean, log_var, p):
-    alpha = torch.sum(p[:, 0, :, :])
-    # reproduction_loss = F.mse_loss(x_recon * p[:, 0, :, :], x * p[:, 0, :, :])
-    reproduction_loss = F.mse_loss(x_recon, x)
-    KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
-
-    return reproduction_loss + KLD
-
-
-# %%
 
 for epoch in range(epochs + 1):
     for leaner_epoch in range(leaner_epochs + 1):
@@ -239,7 +286,7 @@ for epoch in range(epochs + 1):
         #     -torch.log(critic_fake + 1e-5)
         # )
 
-        loss_L.backward(retain_graph=True)
+        loss_L.backward()
         opt_L.step()
 
     opt_G.zero_grad()
@@ -252,13 +299,22 @@ for epoch in range(epochs + 1):
     critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
     t1 = -torch.sum(torch.log(critic_fake + 1e-5))
     t2 = loss_function(x, x_recon, mean, log_var, p)
+    t3 = -torch.sum(p * torch.log(p + 1e-5))
+
+    alpha = torch.sum(p[:, 0, :, :])
 
     # NOTE: original loss function
     loss_G = t1 + t2
-    # NOTE: alternative loss function, from GAN
     # loss_G = torch.mean(critic_fake)
 
-    loss_G.backward()
+    # Perform backward pass for t1 and t2
+    loss_G = t1 + t2
+    loss_G.backward()  # Retain graph for t3
+    opt_G.step()
+
+    # Perform backward pass for t3 separately
+    opt_G.zero_grad()
+    t3.backward()
     opt_G.step()
     if epoch % 500 == 0:
         print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
@@ -279,7 +335,8 @@ torch.sum(high_var_index)
 # %%
 
 
-new_image = x_recon.view(1, 1, 28, 28)
+new_image = x_recon.view(1, 1, 28, 28) * (p[:, 0, :, :] > 0.5)
+# new_image = x_recon.view(1, 1, 28, 28)
 # new_image = F.interpolate(mean, size=(28, 28), mode="nearest")
 x_recon_pred = torch.argmax(F.softmax(model(new_image), dim=1))
 print(
@@ -329,3 +386,12 @@ for n in range(5, 31, 5):
     plt.clf()
 
 # %%
+
+new_image = x_recon.view(1, 1, 28, 28)
+
+# %%
+for batch_idx, (data, target) in enumerate(testloader):
+    print(f"batch_idx: {batch_idx}, data.shape: {data.shape}")
+    data = data.to(device)
+    target = target.to(device)
+    data = data.view(data.size(0), -1)

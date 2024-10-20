@@ -13,6 +13,7 @@
 \usepackage{xcolor}
 \usepackage{caption} % Required for using \captionof
 
+\renewcommand{\lstlistingname}{Code}
 \lstset{ 
     language=Python, 
     basicstyle=\ttfamily\small, 
@@ -78,7 +79,7 @@ Therefore, understanding model interpretability for key features is crucial. Thi
 XAI is a subfield of artificial intelligence focused on making AI models more transparent and understandable to humans. \\
 
 Another important area of research is adversarial attacks, which further underscores the importance of XAI and the need to comprehend model behavior. 
-While XAI aims to elucidate the model's decision-making process, adversarial attacks seek to exploit the model's vulnerabilities.\cite{athalyeSynthesizingRobustAdversarial2018} \cite{moosavi-dezfooliUniversalAdversarialPerturbations2017}
+While XAI aims to elucidate the model's decision-making process, adversarial attacks seek to exploit the model's vulnerabilities.\cite{Athalye2018} \cite{Moosavi-Dezfooli2017}
 The robustness of models is crucial for their real-world applications, and understanding the dynamics between XAI and adversarial attacks is essential for improving model interpretability and reliability. 
 Despite their differences, both fields highlight the necessity of understanding AI models.\\
 
@@ -154,14 +155,13 @@ ELBO  &= E_q[log~p(x,z,c,y) - log~q(z,c,y)] \\ \\
 \end{align*}
 
 
-\section{Experiments}
 
 \subsection{Full Connected Variational Inference}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\linewidth]{../fig/Full connected Variational Inference.png} % Replace with the path to your image
-    \caption{Using 784 $z={\mu,s}$ }
+    \caption{Using 784 $z=\{ \mu,s \}$ }
     \label{fig:full_connected}
 \end{figure}
 
@@ -196,7 +196,7 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\linewidth]{../fig/ID 3-Digit 8 pred 3 new_image.png} % Replace with the path to your image
-    \caption{Using 784 $z={\mu,s}$ }
+    \caption{MNIST Prediction with 784 $z=\{\mu,s \}$ }
     \label{fig:naive_bayes}
 \end{figure}
 
@@ -208,6 +208,13 @@ def loss_elbo(x, mu, log_var, phi, x_recon, model, predicted):
     \label{fig:GANandVAE}
 \end{figure}
 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{../fig/2x2kernelstrike2.png} % Replace with the path to your image
+    \caption{use conv2d kernel size 2x2 and stride 2}
+    \label{fig:conv2d}
+\end{figure}
 
 \begin{lstlisting}[language=Python, caption= GAN and VAE model]
   class generator(nn.Module):

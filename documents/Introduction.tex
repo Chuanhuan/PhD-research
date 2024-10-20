@@ -9,17 +9,30 @@
 \usepackage{hyperref}
 \usepackage{setspace} % Add this package for spacing commands
 \usepackage[numbers]{natbib} % Add this package for bibliography management
+\usepackage{titlesec} % Required for customizing section titles
+\usepackage{parskip} % Required for adding space between paragraphs
 
-\setlength{\parindent}{0pt}
-
-\title{XAI: Cluster Variational Inference - draft}
-\author{Jack Li}
-\date{October 2023}
+% Customize section title alignment
+\titleformat{\section}
+  {\raggedright\Large\bfseries} % Left-align, large font, bold
+  {\thesection}{1em}{} % Section number, spacing
 
 \begin{document}
 
-\maketitle
+% Manually format the title page content
+\raggedright
+\textbf{Student Name: Li, Chuan-Huan(Jack)} \\
+\textbf{Student ID: D10546004} \\
+\textbf{Assignment: Essay 1 First Draft} \\
+\textbf{Course: English Writing for Academic Purposes} \\
+\textbf{Instructor: Dr. Fang Pin (Amanda) Yeh} \\
+\textbf{Date: October 2024} \\
+\vspace{2cm} % Add some vertical space
+\centering
+{\LARGE \textbf{XAI: Cluster Variational Inference - draft}} \\
+\vspace{2cm} % Add some vertical space
 
+\raggedright
 \section{Introduction}
 
 In the realm of machine learning and artificial intelligence, two critical areas of research have emerged: adversarial attacks and Explainable Artificial Intelligence (XAI). 
@@ -27,13 +40,16 @@ Adversarial attacks involve the deliberate manipulation of input data to deceive
 These attacks can significantly undermine the reliability and robustness of AI systems, particularly in high-stakes applications such as autonomous driving and healthcare. 
 It is noteworthy more than any other defense technique, as it is an essential component of AI systems\cite{Ross2017}\cite{Carlini2017}.\\
 
+
 Conversely, Explainable Artificial Intelligence (XAI) aims to enhance the transparency and interpretability of AI models\cite{Comaniciu2002}. 
 XAI techniques provide insights into the decision-making processes of complex models, enabling users to understand, trust, and effectively manage AI systems.
 While adversarial attacks exploit the opacity of AI models to generate misleading outputs, XAI seeks to demystify these models, offering explanations that can be scrutinized and validated by human experts. \\
 
+
 The interplay between adversarial attacks and XAI is multifaceted. On one hand, XAI can be leveraged to develop more robust models that are resistant to adversarial perturbations. 
 On the other hand, adversarial examples can serve as tools for generating local explanations, thereby contributing to the broader objectives of XAI.
 Understanding the distinctions and interactions between these two domains is crucial for advancing the field of AI and ensuring the development of secure, transparent, and trustworthy AI systems. \\
+
 
 However, the adversarial attacks method is aimed to deceive the model, meaning it still have different perspectives from XAI method. In this paper, we will provide variational inference to measure the critical features in computer vision models. 
 Meanwhile, it will also be more meaningful to evaluate models in terms of the robustness and sensitivityness. \\

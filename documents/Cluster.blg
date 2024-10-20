@@ -3,47 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: Cluster.aux
 The style file: unsrt.bst
 Database file #1: Zotero.bib
-Warning--I didn't find a database entry for "athalyeSynthesizingRobustAdversarial2018"
-Warning--I didn't find a database entry for "moosavi-dezfooliUniversalAdversarialPerturbations2017"
-You've used 5 entries,
+You've used 7 entries,
             1791 wiz_defined-function locations,
-            487 strings with 4785 characters,
-and the built_in function-call counts, 1119 in all, are:
-= -- 96
-> -- 61
+            495 strings with 4939 characters,
+and the built_in function-call counts, 1447 in all, are:
+= -- 114
+> -- 89
 < -- 0
-+ -- 22
-- -- 17
-* -- 83
-:= -- 189
-add.period$ -- 16
-call.type$ -- 5
-change.case$ -- 3
++ -- 32
+- -- 25
+* -- 103
+:= -- 241
+add.period$ -- 20
+call.type$ -- 7
+change.case$ -- 5
 chr.to.int$ -- 0
-cite$ -- 5
-duplicate$ -- 48
-empty$ -- 106
-format.name$ -- 17
-if$ -- 245
+cite$ -- 7
+duplicate$ -- 58
+empty$ -- 142
+format.name$ -- 25
+if$ -- 317
 int.to.chr$ -- 0
-int.to.str$ -- 5
+int.to.str$ -- 7
 missing$ -- 8
-newline$ -- 28
-num.names$ -- 5
-pop$ -- 17
+newline$ -- 36
+num.names$ -- 7
+pop$ -- 31
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 13
+skip$ -- 21
 stack$ -- 0
 substring$ -- 50
-swap$ -- 5
+swap$ -- 7
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 9
-width$ -- 6
-write$ -- 59
-(There were 2 warnings)
+while$ -- 11
+width$ -- 8
+write$ -- 75

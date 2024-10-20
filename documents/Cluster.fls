@@ -177,7 +177,6 @@ INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
-INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
@@ -213,6 +212,11 @@ INPUT ../fig/GANandVAE.png
 INPUT ../fig/GANandVAE.png
 INPUT ../fig/GANandVAE.png
 INPUT ../fig/GANandVAE.png
+INPUT ../fig/2x2kernelstrike2.png
+INPUT ../fig/2x2kernelstrike2.png
+INPUT ../fig/2x2kernelstrike2.png
+INPUT ../fig/2x2kernelstrike2.png
+INPUT ../fig/2x2kernelstrike2.png
 INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png
 INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png
 INPUT ../fig/ID 3-Digit 8 pred 3 with n=5.png

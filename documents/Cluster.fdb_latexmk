@@ -1,13 +1,14 @@
 # Fdb version 4
-["bibtex Cluster"] 1729007323.75378 "Cluster.aux" "Cluster.bbl" "Cluster" 1729009366.35887 0
+["bibtex Cluster"] 1729042539.94474 "Cluster.aux" "Cluster.bbl" "Cluster" 1729076638.46895 0
   "/home/jack/texmf/bibtex/bib/Zotero.bib" 1728836718.2159 149758 b0c3e98a9bf1c00316cd5523e8349029 ""
   "/usr/share/texmf-dist/bibtex/bst/base/unsrt.bst" 1727349926 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "Cluster.aux" 1729009365.99535 3735 0ca5f8dddb0b69b4c4320bddff3e360a "pdflatex"
+  "Cluster.aux" 1729076638.19598 3945 aed828cbacd2bb8ab722952300b11db9 "pdflatex"
   (generated)
   "Cluster.bbl"
   "Cluster.blg"
   (rewritten before read)
-["pdflatex"] 1729009363.60449 "Cluster.tex" "Cluster.pdf" "Cluster" 1729009366.36226 0
+["pdflatex"] 1729076636.11766 "Cluster.tex" "Cluster.pdf" "Cluster" 1729076638.47084 0
+  "../fig/2x2kernelstrike2.png" 1729036317.12789 24025 987407b214ad309005483ea164dfa392 ""
   "../fig/Full connected Variational Inference.png" 1728841431.62329 53808 ee14932e46c1de9af0009a0ed3cdad24 ""
   "../fig/GANandVAE.png" 1728841408.74138 27155 7ef478698326df6e871b6c4694bd9f3d ""
   "../fig/ID 3-Digit 8 pred 3 new_image.png" 1728790853.36378 21185 15f11d6d6108f277e6d7c5b97d55b10e ""
@@ -137,10 +138,10 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1727349926 41588 b43d3e860a4f94167ee1e725ff526a72 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1728109793.12534 5307094 23ab9ec1744c7f71ddb2bf5953112922 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1728109779 7112988 bcf00dc0350debf1ad1c9180910cddee ""
-  "Cluster.aux" 1729009365.99535 3735 0ca5f8dddb0b69b4c4320bddff3e360a "pdflatex"
-  "Cluster.bbl" 1729007324.25568 1323 fb5732ab493be6d589da864fe6eb0dea "bibtex Cluster"
-  "Cluster.out" 1729009365.99535 1131 260709ecbddd2b2cc23e70d924b3523d "pdflatex"
-  "Cluster.tex" 1729009362.40535 18199 768a2817113259d04270df763fed7796 ""
+  "Cluster.aux" 1729076638.19598 3945 aed828cbacd2bb8ab722952300b11db9 "pdflatex"
+  "Cluster.bbl" 1729042540.09613 1648 2a948ec0b49a3375431793693861ca8b "bibtex Cluster"
+  "Cluster.out" 1729076638.19598 1033 860e16c2f19dfcd1bd1066fb6dff8493 "pdflatex"
+  "Cluster.tex" 1729076634.51597 18408 4e86437d58bf1a6c3f217aecd4d504e3 ""
   (generated)
   "Cluster.aux"
   "Cluster.log"
