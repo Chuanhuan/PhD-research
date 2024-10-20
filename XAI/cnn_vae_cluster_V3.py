@@ -245,12 +245,12 @@ print(f"mean:{mean.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
 
 def loss_function(x, x_recon, mean, log_var, p):
     # NOTE: original loss
-    reproduction_loss = F.mse_loss(x_recon, x)
+    # reproduction_loss = F.mse_loss(x_recon, x)
 
     # HACK: alternative loss function, only use the pixels that have high variance
-    # reproduction_loss = (x_recon - x) ** 2
-    # reproduction_loss = reproduction_loss * (p[:, 0, :, :] > 0.5)
-    # reproduction_loss = reproduction_loss.mean()
+    reproduction_loss = (x_recon - x) ** 2
+    reproduction_loss = reproduction_loss * (p[:, 0, :, :] > 0.5)
+    reproduction_loss = reproduction_loss.mean()
 
     KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
 
@@ -309,13 +309,13 @@ for epoch in range(epochs + 1):
 
     # Perform backward pass for t1 and t2
     loss_G = t1 + t2
-    loss_G.backward()  # Retain graph for t3
+    loss_G.backward(retain_graph=True)  # Retain graph for t3
     opt_G.step()
 
     # Perform backward pass for t3 separately
-    opt_G.zero_grad()
-    t3.backward()
-    opt_G.step()
+    # opt_G.zero_grad()
+    # t3.backward()
+    # opt_G.step()
     if epoch % 500 == 0:
         print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
 
@@ -335,7 +335,7 @@ torch.sum(high_var_index)
 # %%
 
 
-new_image = x_recon.view(1, 1, 28, 28) * (p[:, 0, :, :] > 0.5)
+new_image = x_recon.view(1, 1, 28, 28) * (p[:, 0, :, :] > 0.5) + min_val
 # new_image = x_recon.view(1, 1, 28, 28)
 # new_image = F.interpolate(mean, size=(28, 28), mode="nearest")
 x_recon_pred = torch.argmax(F.softmax(model(new_image), dim=1))
