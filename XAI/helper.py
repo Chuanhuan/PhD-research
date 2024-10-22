@@ -1,6 +1,89 @@
-#%%
+# %%
 import numpy as np
 import matplotlib.pyplot as plt
+import torch
+import torch.nn as nn
+import numpy as np
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader, Dataset
+from torchvision.datasets import MNIST
+import torch.distributions as dist
+import matplotlib.pyplot as plt
+import torch.nn.functional as F
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def plot_recon_img(x_recon, model, true_y, img_id):
+    new_image = x_recon.view(1, 1, 28, 28)
+    x_recon_pred = torch.argmax(F.softmax(model(new_image), dim=1))
+    print(
+        f"True y = {true_y}. New image full model prediction: {F.softmax(model(new_image))}"
+    )
+    plt.imshow(new_image.squeeze(0).squeeze(0).detach().numpy(), cmap="gray")
+    plt.title(
+        f"Digit {x_recon_pred} Surrogate model with prediction: {F.softmax(model(new_image), dim=1).max():.3f}"
+    )
+    plt.colorbar()
+    plt.savefig(f"ID {img_id}-Digit {true_y} pred {x_recon_pred} new_image.png")
+    plt.show()
+    plt.clf()
+
+
+def plot_patch_image(img, model, true_y, img_id, p, p_interpolate, device):
+    num_patches = (p[:, 0, :, :] > 0.5).sum()
+    print(f"num_patches: {num_patches}")
+    x = img.clone().to(device)
+    x = x.view(1, 1, 28, 28)
+
+    # Convert tensors to numpy arrays
+    x_np = x.squeeze(0).squeeze(0).detach().numpy()
+    p_interpolate_np = p_interpolate.squeeze(0).squeeze(0).detach().numpy()
+
+    # Plot the background image (x)
+    plt.imshow(x_np, cmap="gray")
+
+    # Overlay p_interpolate on top of x
+    plt.imshow(
+        p_interpolate_np, cmap="jet", alpha=0.5
+    )  # Use alpha to control transparency
+
+    plt.colorbar()  # Optional: add a colorbar to show the scale of p_interpolate
+    plt.title(f"Digit {true_y} classification with {num_patches} patches")
+    plt.savefig(
+        f"ID {img_id}-Digit {true_y} classification n patches = {num_patches}.png"
+    )
+    plt.show()
+    plt.clf()
+
+
+class MNIST_8(Dataset):
+    def __init__(self, mnist_dataset):
+        self.mnist_dataset = mnist_dataset
+        self.eight_indices = [
+            i for i, (img, label) in enumerate(self.mnist_dataset) if label == 8
+        ]
+
+    def __getitem__(self, index):
+        return self.mnist_dataset[self.eight_indices[index]]
+
+    def __len__(self):
+        return len(self.eight_indices)
+
+
+class MNIST_9(Dataset):
+    def __init__(self, mnist_dataset):
+        self.mnist_dataset = mnist_dataset
+        self.eight_indices = [
+            i for i, (img, label) in enumerate(self.mnist_dataset) if label == 9
+        ]
+
+    def __getitem__(self, index):
+        return self.mnist_dataset[self.eight_indices[index]]
+
+    def __len__(self):
+        return len(self.eight_indices)
+
 
 def cluster_mask(img, means, covs, threshold=0.1):
     # Generate a grid of points for the canvas
@@ -12,7 +95,9 @@ def cluster_mask(img, means, covs, threshold=0.1):
     # Calculate the probability density at each point on the grid for each component
     densities = []
     for mean, cov in zip(means, covs):
-        z = np.exp(-0.5 * np.sum((pos - mean) @ np.linalg.inv(cov) * (pos - mean), axis=2))
+        z = np.exp(
+            -0.5 * np.sum((pos - mean) @ np.linalg.inv(cov) * (pos - mean), axis=2)
+        )
         densities.append(z)
 
     # Normalize the densities for each component using softmax
@@ -40,7 +125,8 @@ def cluster_mask(img, means, covs, threshold=0.1):
     plt.show()
     return img
 
-#%%
+
+# %%
 # def plot_cluster_region(m, s2):
 #     """
 #     Plot the cluster region for each Gaussian component on a 28x28 canvas.
@@ -89,7 +175,7 @@ def cluster_mask(img, means, covs, threshold=0.1):
 # plot_cluster_region(m_test, s2_test)
 
 
-#%%
+# %%
 # def cluster_mask(img, mean, cov, threshold=0.1):
 #     # Generate a grid of points for the canvas
 #     x, y = np.mgrid[0:28, 0:28]
@@ -134,7 +220,11 @@ def cluster_mask(img, means, covs, threshold=0.1):
 if __name__ == "__main__":
     # Define the mean and covariance matrix for the multivariate normal distribution
     mean = [[14, 14], [8, 8], [22, 15]]  # Center of the oval
-    cov = [[[10, 3], [3, 20]], [[10, 3], [3, 20]], [[10, 3], [3, 20]]]  # Covariance matrix (adjust for elliptical shape)
+    cov = [
+        [[10, 3], [3, 20]],
+        [[10, 3], [3, 20]],
+        [[10, 3], [3, 20]],
+    ]  # Covariance matrix (adjust for elliptical shape)
     img = np.zeros((28, 28))
     cluster_mask(img, mean, cov)
 

@@ -1,7 +1,15 @@
-# %%
-
 # SECTION: Define a CNN model for MNIST dataset and load the model weights
 
+import os
+import sys
+
+# Add the directory containing helper.py to the Python path
+sys.path.append(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
+
+# Explicitly import the required functions from helper
+from helper import plot_recon_img, plot_patch_image
+
+# Other imports
 import torch
 import torch.nn as nn
 import numpy as np
@@ -12,35 +20,14 @@ import torch.distributions as dist
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
-# Define the device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Get the directory of the current file
+# current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
+# Change the current working directory to the file's directory
+# os.chdir(current_file_directory)
 
-# Define the CNN model
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
-        self.dropout1 = nn.Dropout(0.25)
-        self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, 10)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = torch.relu(x)
-        x = self.conv2(x)
-        x = torch.relu(x)
-        x = torch.max_pool2d(x, 2)
-        x = self.dropout1(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = torch.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        output = torch.log_softmax(x, dim=1)
-        return output
+# Import other necessary modules
+from vae_model import *
 
 
 model = Net().to(device)
@@ -68,37 +55,11 @@ testloader = DataLoader(testset, batch_size=1000, shuffle=True)
 
 
 # SECTION: load MNIST dataa only 8
-class MNIST_8(Dataset):
-    def __init__(self, mnist_dataset):
-        self.mnist_dataset = mnist_dataset
-        self.eight_indices = [
-            i for i, (img, label) in enumerate(self.mnist_dataset) if label == 8
-        ]
-
-    def __getitem__(self, index):
-        return self.mnist_dataset[self.eight_indices[index]]
-
-    def __len__(self):
-        return len(self.eight_indices)
 
 
 # Create the dataset for digit 8
 testset_8 = MNIST_8(testset)
 testloader_8 = DataLoader(testset_8, batch_size=32, shuffle=True)
-
-
-class MNIST_9(Dataset):
-    def __init__(self, mnist_dataset):
-        self.mnist_dataset = mnist_dataset
-        self.eight_indices = [
-            i for i, (img, label) in enumerate(self.mnist_dataset) if label == 9
-        ]
-
-    def __getitem__(self, index):
-        return self.mnist_dataset[self.eight_indices[index]]
-
-    def __len__(self):
-        return len(self.eight_indices)
 
 
 # Create the dataset for digit 9
@@ -111,7 +72,8 @@ testloader_9 = DataLoader(testset_9, batch_size=32, shuffle=True)
 
 # NOTE: load the model weights
 
-model.load_state_dict(torch.load("./XAI/CNN_MNSIT.pth", weights_only=True))
+
+model.load_state_dict(torch.load("./CNN_MNSIT.pth", weights_only=True))
 
 """## Inital image setup"""
 
@@ -195,18 +157,19 @@ class learner(nn.Module):
             # (28-2)/2 +1 = img 14x14
             nn.Conv2d(channels_img, channels_img, kernel_size=2, stride=2),
             nn.InstanceNorm2d(channels_img, affine=True),
-            CustomTanh(min_val, max_val),
+            # CustomTanh(min_val, max_val),
             # nn.Tanh(),
             # NOTE: eror will increase then drop
-            # nn.LeakyReLU(0.2),
+            nn.LeakyReLU(0.2),
         )  # latent mean and variance
+
         self.logvar_layer = nn.Sequential(
             # NOTE: conv2d output = (input + 2p -k)/s +1
             # (28-2)/2 +1 = img 14x14
             nn.Conv2d(channels_img, channels_img, kernel_size=2, stride=2),
             nn.InstanceNorm2d(channels_img, affine=True),
-            nn.Tanh(),
-            # nn.LeakyReLU(0.2),
+            # nn.Tanh(),
+            nn.LeakyReLU(0.2),
         )
 
         self.p_layer = nn.Sequential(
@@ -247,7 +210,11 @@ print(f"mean:{mean.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
 # %%
 
 
-def loss_function(x, x_recon, mean, log_var, p_interpolate):
+def loss_function(x, x_recon, mean, log_var, p):
+    p = p.float()
+    p_interpolate = F.interpolate(
+        p, size=(x_recon.shape[2], x_recon.shape[3]), mode="nearest"
+    )
     # NOTE: original loss
     # reproduction_loss = F.mse_loss(x_recon, x)
 
@@ -256,7 +223,11 @@ def loss_function(x, x_recon, mean, log_var, p_interpolate):
     reproduction_loss = reproduction_loss * p_interpolate
     reproduction_loss = reproduction_loss.mean()
 
-    KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
+    # NOTE: original KLD
+    # KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
+
+    # NOTE: alternative KLD
+    KLD = -0.5 * torch.sum((1 + log_var - mean.pow(2) - log_var.exp()) * p)
 
     return reproduction_loss + KLD
 
@@ -306,7 +277,7 @@ for epoch in range(epochs + 1):
     model.eval()
     critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
     t1 = -torch.sum(torch.log(critic_fake + 1e-5))
-    t2 = loss_function(x, x_recon, mean, log_var, p_interpolate)
+    t2 = loss_function(x, x_recon, mean, log_var, p)
     t3 = -torch.sum(p * torch.log(p + 1e-5))
 
     # FIXME: will black out the digit
@@ -338,45 +309,17 @@ print(f"num_patches: {num_patches}")
 # %%
 # SECTION: plot the reconstructed image
 
-new_image = x_recon.view(1, 1, 28, 28)
-x_recon_pred = torch.argmax(F.softmax(model(new_image), dim=1))
-print(
-    f"True y = {true_y}. New image full model prediction: {F.softmax(model(new_image))}"
-)
-plt.imshow(new_image.squeeze(0).squeeze(0).detach().numpy(), cmap="gray")
-plt.title(
-    f"Digit {x_recon_pred} Surrogate model with prediction: {F.softmax(model(new_image), dim=1).max():.3f}"
-)
-plt.colorbar()
-plt.savefig(f"ID {img_id}-Digit {true_y} pred {x_recon_pred} new_image.png")
-plt.show()
-plt.clf()
+# Add the directory containing helper.py to the Python path
+sys.path.append(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
+
+# Import necessary functions from helper
+from helper import plot_recon_img, plot_patch_image
+
+plot_recon_img(x_recon, model, true_y, img_id)
 
 # %%
 # SECTION: find the n_th patch of image
-
-num_patches = (p[:, 0, :, :] > 0.5).sum()
-print(f"num_patches: {num_patches}")
-x = img.clone().to(device)
-x = x.view(1, 1, 28, 28)
-# Convert tensors to numpy arrays
-x_np = x.squeeze(0).squeeze(0).detach().numpy()
-p_interpolate_np = p_interpolate.squeeze(0).squeeze(0).detach().numpy()
-
-# # Plot the background image (x)
-plt.imshow(x_np, cmap="gray")
-
-# Overlay p_interpolate on top of x
-plt.imshow(p_interpolate_np, cmap="jet", alpha=0.5)  # Use alpha to control transparency
-
-plt.colorbar()  # Optional: add a colorbar to show the scale of p_interpolate
-# Add a colorbar to show the mapping from colors to values
-plt.title(
-    f"Digit {x_recon_pred} Surrogate model with prediction: {F.softmax(model(new_image), dim=1).max():.3f}"
-)
-plt.savefig(f"ID {img_id}-Digit {true_y} classification n patches = {num_patches}.png")
-plt.show()
-plt.clf()
+plot_patch_image(img, model, true_y, img_id, p, p_interpolate, device)
 
 # %%
 # SECTION: find the top n_th high variance pixels
@@ -449,15 +392,72 @@ for batch_idx, (data, target) in enumerate(testloader_8):
             opt_L.step()
 
         opt_G.zero_grad()
-        x = img.clone().to(device)
-        x = x.view(1, 1, 28, 28)
         z, mean, log_var, p = L(x)
         x_recon, p_interpolate = G(z, p)
 
         model.eval()
         critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
         t1 = -torch.sum(torch.log(critic_fake + 1e-5))
-        t2 = loss_function(x, x_recon, mean, log_var, p_interpolate)
+        t2 = loss_function(x, x_recon, mean, log_var, p)
+        t3 = -torch.sum(p * torch.log(p + 1e-5))
+
+        # FIXME: will black out the digit
+        # alpha = torch.sum(p)
+
+        # NOTE: original loss function
+        loss_G = t1 + t2 + t3
+
+        # NOTE: alternative loss function
+        # loss_G = torch.mean(critic_fake)
+
+        loss_G.backward(retain_graph=True)  # Retain graph for t3
+        opt_G.step()
+
+        if epoch % 500 == 0:
+            print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
+
+# %%
+# SECTION: train testloader
+
+
+epochs = 500
+leaner_epochs = 10
+predicted = true_y
+# predicted = 9
+G = generator(1).to(device)
+L = learner(1).to(device)
+
+opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
+opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
+
+for batch_idx, (data, target) in enumerate(testloader):
+    data = data.to(device)
+    target = target.to(device)
+    for epoch in range(epochs + 1):
+        for leaner_epoch in range(leaner_epochs + 1):
+            opt_L.zero_grad()
+            x = data.clone().to(device)
+            z, mean, log_var, p = L(x)
+            x_recon, p_interpolate = G(z, p)
+
+            # Get the index of the max log-probability
+            predicted = target
+            model.eval()
+            critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+
+            loss_L = -(critic_fake.mean())
+
+            loss_L.backward()
+            opt_L.step()
+
+        opt_G.zero_grad()
+        z, mean, log_var, p = L(x)
+        x_recon, p_interpolate = G(z, p)
+
+        model.eval()
+        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+        t1 = -torch.sum(torch.log(critic_fake + 1e-5))
+        t2 = loss_function(x, x_recon, mean, log_var, p)
         t3 = -torch.sum(p * torch.log(p + 1e-5))
 
         # FIXME: will black out the digit
