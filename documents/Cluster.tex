@@ -355,7 +355,7 @@ for epoch in range(epochs + 1):
 
 \begin{table}[H]
     \centering
-    \caption{Experiments Comparison table}
+    \caption{Experiments Comparison table with top n-th variance(v3)}
     \begin{tabular}{|c|c|}
         \hline
         
@@ -423,7 +423,7 @@ for epoch in range(epochs + 1):
 \newpage
 \begin{table}[H]
     \centering
-    \caption{Experiments Comparison table}
+    \caption{Experiments Comparison table with top n-th variance(v3)}
     \begin{tabular}{|c|c|}
         \hline
         \begin{minipage}{0.45\linewidth}
@@ -485,6 +485,65 @@ for epoch in range(epochs + 1):
     \end{tabular}
     \label{tab:example}
 \end{table}
+
+\newpage
+\begin{table}[H]
+    \centering
+    \caption{Train one class Experiments Comparison table with mask $C < 0.1$ (v4)}
+    \begin{tabular}{|c|c|}
+        \hline
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 1-Digit 8 pred 8 new_image.png}
+        \end{minipage} &
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 1-Digit 8 classification n patches = 188.png}
+        \end{minipage} \\
+        \\
+        \hline
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 2-Digit 8 pred 8 new_image.png}
+        \end{minipage} &
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 2-Digit 8 classification n patches = 189.png}
+        \end{minipage} \\
+        \\
+        \hline
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 4-Digit 8 pred 8 new_image.png}
+        \end{minipage} &
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 4-Digit 8 classification n patches = 187.png}
+        \end{minipage} \\
+        \\
+        \hline
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 5-Digit 8 pred 8 new_image.png}
+        \end{minipage} &
+        \begin{minipage}{0.45\linewidth}
+            \centering
+
+            \includegraphics[width=\linewidth]{../fig/ID 5-Digit 8 classification n patches = 190.png}
+        \end{minipage} \\
+        \\
+        \hline
+    \end{tabular}
+    \label{tab:example}
+\end{table}
+
 
 \section{Future Work}
 

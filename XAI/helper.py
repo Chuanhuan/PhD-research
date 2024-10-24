@@ -43,13 +43,19 @@ def plot_patch_image(img, model, true_y, img_id, p, p_interpolate, device):
     # Plot the background image (x)
     plt.imshow(x_np, cmap="gray")
 
+    # mask data prediction
+    mask_data = x * (p_interpolate < 0.1)
+    mask_prediction = F.softmax(model(mask_data), dim=1)[0][true_y]
+
     # Overlay p_interpolate on top of x
     plt.imshow(
         p_interpolate_np, cmap="jet", alpha=0.5
     )  # Use alpha to control transparency
 
     plt.colorbar()  # Optional: add a colorbar to show the scale of p_interpolate
-    plt.title(f"Digit {true_y} classification with {num_patches} patches")
+    plt.title(
+        f"Digit {true_y} classification {num_patches} patches with mask prediction: {mask_prediction:.3f}"
+    )
     plt.savefig(
         f"ID {img_id}-Digit {true_y} classification n patches = {num_patches}.png"
     )

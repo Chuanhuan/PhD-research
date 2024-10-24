@@ -1,16 +1,20 @@
 # Fdb version 4
-["bibtex Cluster"] 1729042539.94474 "Cluster.aux" "Cluster.bbl" "Cluster" 1729076638.46895 0
-  "/home/jack/texmf/bibtex/bib/Zotero.bib" 1728836718.2159 149758 b0c3e98a9bf1c00316cd5523e8349029 ""
+["bibtex Cluster"] 1729654031.7267 "Cluster.aux" "Cluster.bbl" "Cluster" 1729654034.1362 0
+  "/home/jack/texmf/bibtex/bib/Zotero.bib" 1729615930.8436 159673 1e100c910d19522556230d2e3e47e18b ""
   "/usr/share/texmf-dist/bibtex/bst/base/unsrt.bst" 1727349926 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "Cluster.aux" 1729076638.19598 3945 aed828cbacd2bb8ab722952300b11db9 "pdflatex"
+  "Cluster.aux" 1729654033.92005 4362 3d1f570b026933c4c74cdd578755be46 "pdflatex"
   (generated)
   "Cluster.bbl"
   "Cluster.blg"
   (rewritten before read)
-["pdflatex"] 1729076636.11766 "Cluster.tex" "Cluster.pdf" "Cluster" 1729076638.47084 0
+["pdflatex"] 1729654031.93271 "Cluster.tex" "Cluster.pdf" "Cluster" 1729654034.13972 0
   "../fig/2x2kernelstrike2.png" 1729036317.12789 24025 987407b214ad309005483ea164dfa392 ""
   "../fig/Full connected Variational Inference.png" 1728841431.62329 53808 ee14932e46c1de9af0009a0ed3cdad24 ""
   "../fig/GANandVAE.png" 1728841408.74138 27155 7ef478698326df6e871b6c4694bd9f3d ""
+  "../fig/ID 1-Digit 8 classification n patches = 188.png" 1729643893.26312 20603 a1dc2533be00a7ab575f84becb5141d1 ""
+  "../fig/ID 1-Digit 8 pred 8 new_image.png" 1729642013.5455 19456 55cbfc095dd9ea17611f7988bb2260e8 ""
+  "../fig/ID 2-Digit 8 classification n patches = 189.png" 1729643919.00524 20076 6ed26c1407ebb2c92947d0bd54b8f5e2 ""
+  "../fig/ID 2-Digit 8 pred 8 new_image.png" 1729642044.77051 19617 746d168765ded59999074802f4443c4d ""
   "../fig/ID 3-Digit 8 pred 3 new_image.png" 1728790853.36378 21185 15f11d6d6108f277e6d7c5b97d55b10e ""
   "../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png" 1729004435.91613 13634 40461111dc72dc469495ecf33a9a79b0 ""
   "../fig/ID 3-Digit 8 pred 3 with n=10.png" 1729002823.28638 13848 3bde64aa69f5a81ab9f6623cdb3f3c8e ""
@@ -29,6 +33,10 @@
   "../fig/ID 3-Digit 8 pred 8 with n=25.png" 1729002823.59638 14064 3358fe33bf4a1cb978b0f97b93c962e7 ""
   "../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png" 1729004436.55613 14114 d66ac9b70fff18ca2720014eb3d97613 ""
   "../fig/ID 3-Digit 8 pred 8 with n=30.png" 1729002823.70638 13978 c19c5a1c7b2ee47b2fa75647c0b445c1 ""
+  "../fig/ID 4-Digit 8 classification n patches = 187.png" 1729643936.02664 20061 e289474fc2289ad45804d34c66a8ce08 ""
+  "../fig/ID 4-Digit 8 pred 8 new_image.png" 1729642104.06004 19442 221d9b641198ebd1ccc2f5fd0288beb1 ""
+  "../fig/ID 5-Digit 8 classification n patches = 190.png" 1729643858.42026 20130 7ffbb2a921aa616869b9ff0ab256fdeb ""
+  "../fig/ID 5-Digit 8 pred 8 new_image.png" 1729642111.54124 19300 c58697a80528a115e6d554e68f044a08 ""
   "../fig/Sharingan-evo.png" 1729007587.2632 219260 58eea12571382eb905ff4b3d958fb6c3 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1727349926 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1727349926 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -138,10 +146,10 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1727349926 41588 b43d3e860a4f94167ee1e725ff526a72 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1728109793.12534 5307094 23ab9ec1744c7f71ddb2bf5953112922 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1728109779 7112988 bcf00dc0350debf1ad1c9180910cddee ""
-  "Cluster.aux" 1729076638.19598 3945 aed828cbacd2bb8ab722952300b11db9 "pdflatex"
-  "Cluster.bbl" 1729042540.09613 1648 2a948ec0b49a3375431793693861ca8b "bibtex Cluster"
-  "Cluster.out" 1729076638.19598 1033 860e16c2f19dfcd1bd1066fb6dff8493 "pdflatex"
-  "Cluster.tex" 1729076634.51597 18408 4e86437d58bf1a6c3f217aecd4d504e3 ""
+  "Cluster.aux" 1729654033.92005 4362 3d1f570b026933c4c74cdd578755be46 "pdflatex"
+  "Cluster.bbl" 1729654031.92005 1648 2a948ec0b49a3375431793693861ca8b "bibtex Cluster"
+  "Cluster.out" 1729654033.92005 1033 860e16c2f19dfcd1bd1066fb6dff8493 "pdflatex"
+  "Cluster.tex" 1729654028.40005 20281 8a062edac7a980f6f9d1cbff663d4fa8 ""
   (generated)
   "Cluster.aux"
   "Cluster.log"

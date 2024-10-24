@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
 
 # Explicitly import the required functions from helper
-from helper import plot_recon_img, plot_patch_image
+from helper import *
 
 # Other imports
 import torch
@@ -73,7 +73,7 @@ testloader_9 = DataLoader(testset_9, batch_size=32, shuffle=True)
 # NOTE: load the model weights
 
 
-model.load_state_dict(torch.load("./CNN_MNSIT.pth", weights_only=True))
+model.load_state_dict(torch.load("./XAI/CNN_MNSIT.pth", weights_only=True))
 
 """## Inital image setup"""
 
@@ -157,10 +157,10 @@ class learner(nn.Module):
             # (28-2)/2 +1 = img 14x14
             nn.Conv2d(channels_img, channels_img, kernel_size=2, stride=2),
             nn.InstanceNorm2d(channels_img, affine=True),
-            # CustomTanh(min_val, max_val),
+            CustomTanh(min_val, max_val),
             # nn.Tanh(),
             # NOTE: eror will increase then drop
-            nn.LeakyReLU(0.2),
+            # nn.LeakyReLU(0.2),
         )  # latent mean and variance
 
         self.logvar_layer = nn.Sequential(
@@ -168,8 +168,8 @@ class learner(nn.Module):
             # (28-2)/2 +1 = img 14x14
             nn.Conv2d(channels_img, channels_img, kernel_size=2, stride=2),
             nn.InstanceNorm2d(channels_img, affine=True),
-            # nn.Tanh(),
-            nn.LeakyReLU(0.2),
+            nn.Tanh(),
+            # nn.LeakyReLU(0.2),
         )
 
         self.p_layer = nn.Sequential(
@@ -194,7 +194,7 @@ class learner(nn.Module):
 
     def forward(self, x):
         mean, log_var, p = self.encode(x)
-        p = p > 0.5
+        # p = p > 0.5
         z = self.reparameterization(mean, log_var, p)
         return z, mean, log_var, p
 
@@ -281,10 +281,10 @@ for epoch in range(epochs + 1):
     t3 = -torch.sum(p * torch.log(p + 1e-5))
 
     # FIXME: will black out the digit
-    # alpha = torch.sum(p)
+    alpha = torch.sum(p)
 
     # NOTE: original loss function
-    loss_G = t1 + t2 + t3
+    loss_G = t1 + t2 + t3 + alpha
 
     # NOTE: alternative loss function
     # loss_G = torch.mean(critic_fake)
@@ -309,17 +309,36 @@ print(f"num_patches: {num_patches}")
 # %%
 # SECTION: plot the reconstructed image
 
-# Add the directory containing helper.py to the Python path
-sys.path.append(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
-
-# Import necessary functions from helper
-from helper import plot_recon_img, plot_patch_image
-
 plot_recon_img(x_recon, model, true_y, img_id)
 
 # %%
 # SECTION: find the n_th patch of image
 plot_patch_image(img, model, true_y, img_id, p, p_interpolate, device)
+
+# %%
+
+
+# SECTION: randomly pick data from testloader_8 and plot_recon_img and plot_patch_image
+
+for i in range(5):
+    img_id = i
+    input = testset_8[img_id]
+    true_y = input[1]
+    data = input[0].clone().view(1, 1, 28, 28).to(device)
+    # Generate the reconstructed image and patch image
+    z, mean, log_var, p = L(data)
+    x_recon, p_interpolate = G(z, p)
+    model.eval()
+    plot_recon_img(x_recon, model, true_y, img_id)
+    plot_patch_image(data.squeeze(0), model, true_y, img_id, p, p_interpolate, device)
+
+    mask_data = data * (p_interpolate < 0.1)
+    num_mask_patches = (p < 0.1).sum()
+    mask_prediction = F.softmax(model(mask_data), dim=1)
+    # print(f"prediction: {mask_prediction[0][true_y]}, num_patches = {num_patches}")
+    print(
+        f"prediction: {mask_prediction[0][true_y]}, num_mask_patches = {num_mask_patches}"
+    )
 
 # %%
 # SECTION: find the top n_th high variance pixels
