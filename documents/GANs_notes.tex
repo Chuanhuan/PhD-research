@@ -10,7 +10,12 @@
 \usepackage{tabularx}
 \usepackage{array} % for 'm' column type
 \usepackage{float} % Include the float package for the H option
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption} % Required for using \captionof
 
+
+\renewcommand{\lstlistingname}{Code}
 \lstset{ 
     language=Python, 
     basicstyle=\ttfamily\small, 
@@ -392,7 +397,7 @@ print(f"The gradient of f(x) = sin(x) at x = {x} is {grad[0]}")
     \label{fig:example}
 \end{figure}
 
-\subsection{Loss Functions}
+\subsection{Convolutional Neural Networks (CNNs) basics}
 
 --- PyTorch Conv2d Equation \\
 
@@ -451,8 +456,226 @@ Where:
 
 % Add more GANs models sections as needed
 
-\section{Conclusion}
-\label{sec:conclusion}
-Summarize the key points and discuss future directions.
+
+\section{Loss Functions}
+\label{sec:loss-functions}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{| m{3cm} | X |}
+\hline
+\textbf{Model} & \textbf{Loss Function} \\
+\hline
+Basic GAN (2014) & 
+\[
+\begin{aligned}
+\min_G \max_D V(D, G) &= \mathbb{E}_{x \sim p_{\text{data}}(x)} [\log D(x)] \\
+&+ \mathbb{E}_{z \sim p_z(z)} [\log (1 - D(G(z)))]
+\end{aligned}
+\] \\
+\hline
+CGAN(2014) & 
+\[
+\begin{aligned}
+\min_G \max_D V(D, G) &= \mathbb{E}_{x \sim p_{\text{data}}(x)} [\log D(x|y)] \\
+&+ \mathbb{E}_{z \sim p_z(z)} [\log (1 - D(G(z|y)))]
+\end{aligned}
+\] \\
+\hline
+DCGAN (2015) & 
+\[
+\begin{aligned}
+\mathcal{L}_D &= -\mathbb{E}_{x \sim p_{\text{data}}(x)} [\log D(x)] \\
+&- \mathbb{E}_{z \sim p_z(z)} [\log (1 - D(G(z)))] \\
+\mathcal{L}_G &= -\mathbb{E}_{z \sim p_z(z)} [\log D(G(z))]
+\end{aligned}
+\] \\
+\hline
+WGAN (2017) & 
+\[
+\begin{aligned}
+\min_G \max_D V(D, G) &= \mathbb{E}_{x \sim p_{\text{data}}(x)} [D(x)] \\
+&- \mathbb{E}_{z \sim p_z(z)} [D(G(z))]
+\end{aligned}
+\] \\
+\hline
+LSGAN (2017) & 
+\[
+\begin{aligned}
+\mathcal{L}_D &= \frac{1}{2} \mathbb{E}_{x \sim p_{\text{data}}(x)} [(D(x) - 1)^2] \\
+&+ \frac{1}{2} \mathbb{E}_{z \sim p_z(z)} [D(G(z))^2] \\
+\mathcal{L}_G &= \frac{1}{2} \mathbb{E}_{z \sim p_z(z)} [(D(G(z)) - 1)^2]
+\end{aligned}
+\] \\
+\hline
+WGAN-GP (2017) & 
+\[
+\begin{aligned}
+\min_G \max_D V(D, G) &= \mathbb{E}_{x \sim p_{\text{data}}(x)} [D(x)] \\
+&- \mathbb{E}_{z \sim p_z(z)} [D(G(z))] \\
+&+ \lambda \mathbb{E}_{\hat{x} \sim p_{\hat{x}}(\hat{x})} \left[ (\|\nabla_{\hat{x}} D(\hat{x})\|_2 - 1)^2 \right]
+\end{aligned}
+\] \\
+\hline
+CycleGAN (2017) & 
+\[
+\begin{aligned}
+\mathcal{L}_{\text{cyc}}(G, F) &= \mathbb{E}_{x \sim p_{\text{data}}(x)} [\|F(G(x)) - x\|_1] \\
+&+ \mathbb{E}_{y \sim p_{\text{data}}(y)} [\|G(F(y)) - y\|_1]
+\end{aligned}
+\] \\
+\hline
+F-GAN (2018) & 
+\[
+\begin{aligned}
+\mathcal{L}_D &= \mathbb{E}_{x \sim p_{\text{data}}(x)} [f'(D(x))] \\
+&- \mathbb{E}_{z \sim p_z(z)} [f'(D(G(z)))] \\
+\mathcal{L}_G &= -\mathbb{E}_{z \sim p_z(z)} [f(D(G(z)))]
+\end{aligned}
+\] \\
+\hline
+\end{tabularx}
+\caption{Loss functions for various generative models}
+\label{tab:loss-functions}
+\end{table}
+
+
+\section{Evaluation Metrics}
+\label{sec:evaluation-metrics}
+
+\subsection{Frechet Inception Distance (FID)}
+\textbf{Description:} FID measures the distance between the feature vectors of real and generated images, capturing both the mean and covariance differences.
+
+\textbf{Equation:}
+\[
+\text{FID} = \|\mu_r - \mu_g\|^2 + \text{Tr}(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2})
+\]
+where:
+\begin{itemize}
+    \item \(\mu_r, \Sigma_r\) are the mean and covariance of the real images' feature vectors.
+    \item \(\mu_g, \Sigma_g\) are the mean and covariance of the generated images' feature vectors.
+\end{itemize}
+
+\subsection{Inception Score (IS)}
+\textbf{Description:} IS evaluates the quality and diversity of generated images by using the Inception v3 network to classify them. High-quality images should have a high confidence score for a single class, and diverse images should be spread across many classes.
+
+\textbf{Equation:}
+\[
+\text{IS} = \exp \left( \mathbb{E}_{x \sim p_g} \left[ D_{\text{KL}}(p(y|x) \| p(y)) \right] \right)
+\]
+where:
+\begin{itemize}
+    \item \(p(y|x)\) is the conditional label distribution given an image \(x\).
+    \item \(p(y)\) is the marginal label distribution.
+    \item \(D_{\text{KL}}\) is the Kullback-Leibler divergence.
+  \end{itemize}
+
+\section{Fourier Series and Fast Fourier Transform (FFT): Mathematical Explanation and Comparison}
+
+Fourier Series and the Fast Fourier Transform (FFT) are tools for representing signals in the frequency domain.
+
+\subsection{1. Fourier Series}
+
+The \textbf{Fourier Series} decomposes a \textit{periodic continuous function} \( f(t) \) with period \( T \) into a sum of sine and cosine functions with different frequencies:
+\[
+f(t) = a_0 + \sum_{n=1}^{\infty} \left( a_n \cos\left(\frac{2 \pi n t}{T}\right) + b_n \sin\left(\frac{2 \pi n t}{T}\right) \right)
+\]
+where \( a_0 \) is the mean (DC) component, and \( a_n \) and \( b_n \) represent the amplitude of each frequency component.
+
+\subsection{2. Fast Fourier Transform (FFT)}
+
+The \textbf{Fast Fourier Transform (FFT)} is an algorithm for computing the \textit{Discrete Fourier Transform (DFT)} of a discrete, finite-length signal. The DFT is given by:
+\[
+X[k] = \sum_{n=0}^{N-1} x[n] \cdot e^{-i 2 \pi k n / N}
+\]
+where \( x[n] \) is the input signal (with \( N \) samples) and \( X[k] \) is the DFT output for each frequency \( k \). The FFT reduces the complexity to \( O(N \log N) \).
+
+\subsection{Comparison}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Feature & Fourier Series & FFT \\
+\hline
+Input Type & Continuous, periodic functions & Discrete, finite-length signals \\
+\hline
+Output Type & Sine and cosine terms for harmonics & Complex frequency components \\
+\hline
+Computational Complexity & Integral calculations & \( O(N \log N) \) algorithm \\
+\hline
+Applications & Continuous signals & Discrete signals \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Python Code for FFT and Inverse FFT}
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+
+def fft(x):
+    N = len(x)
+    if N <= 1:
+        return x
+    even = fft(x[0::2])
+    odd = fft(x[1::2])
+    T = np.exp(-2j * np.pi * np.arange(N) / N)[:N // 2] * odd
+    return np.concatenate([even + T, even - T])
+
+def ifft(X):
+    N = len(X)
+    if N <= 1:
+        return X
+    X_conj = np.conjugate(X)
+    X_fft = fft(X_conj)
+    return np.conjugate(X_fft) / N
+\end{lstlisting}
+
+
+\subsection{Example: FFT and Inverse FFT Calculation}
+
+\subsubsection{Given Signal}
+Consider a simple 4-point signal \( x = [1, 2, 3, 4] \). We will compute the FFT to transform this signal into the frequency domain and then apply the inverse FFT to retrieve the original signal.
+
+\subsubsection{FFT Computation (Step-by-Step)}
+
+For an \( N = 4 \)-point signal, the DFT formula is:
+\[
+X[k] = \sum_{n=0}^{N-1} x[n] \cdot e^{-i 2 \pi k n / N}
+\]
+
+1. Compute \( X[0] \):
+\[
+X[0] = x[0] \cdot e^{-i 2 \pi \cdot 0 \cdot 0 / 4} + x[1] \cdot e^{-i 2 \pi \cdot 0 \cdot 1 / 4} + x[2] \cdot e^{-i 2 \pi \cdot 0 \cdot 2 / 4} + x[3] \cdot e^{-i 2 \pi \cdot 0 \cdot 3 / 4}
+\]
+\[
+= 1 + 2 + 3 + 4 = 10
+\]
+
+2. Compute \( X[1] \):
+\[
+X[1] = x[0] \cdot e^{-i 2 \pi \cdot 1 \cdot 0 / 4} + x[1] \cdot e^{-i 2 \pi \cdot 1 \cdot 1 / 4} + x[2] \cdot e^{-i 2 \pi \cdot 1 \cdot 2 / 4} + x[3] \cdot e^{-i 2 \pi \cdot 1 \cdot 3 / 4}
+\]
+\[
+= -2 + 2i
+\]
+
+And so on. The FFT of \( x = [1, 2, 3, 4] \) is \( X = [10, -2 + 2i, -2, -2 - 2i] \).
+
+\subsubsection{Inverse FFT Computation}
+To verify the result, compute the inverse FFT:
+
+\[
+x[n] = \frac{1}{N} \sum_{k=0}^{N-1} X[k] \cdot e^{i 2 \pi k n / N}
+\]
+
+1. Compute \( x[0] \):
+\[
+x[0] = \frac{1}{4} (10 + (-2 + 2i) + (-2) + (-2 - 2i)) = 1
+\]
+
+Similarly, \( x[1] = 2 \), \( x[2] = 3 \), and \( x[3] = 4 \).
+
+Thus, we reconstruct \( x = [1, 2, 3, 4] \).
 
 \end{document}
