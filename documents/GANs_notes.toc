@@ -1,17 +1,36 @@
 \contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
-\contentsline {section}{\numberline {2}Basic Math}{1}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Probability Theory}{1}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Linear Algebra}{1}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Optimization}{1}{subsection.2.3}%
-\contentsline {section}{\numberline {3}PyTorch Basics}{1}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Tensors}{1}{subsection.3.1}%
-\contentsline {section}{\numberline {4}PyTorch training gradients}{2}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Autograd}{3}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Building Neural Networks}{4}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Loss Functions}{4}{subsection.4.3}%
-\contentsline {section}{\numberline {5}GANs Models}{4}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Basic GAN}{4}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}DCGAN}{4}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}WGAN}{4}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}CycleGAN}{4}{subsection.5.4}%
-\contentsline {section}{\numberline {6}Conclusion}{5}{section.6}%
+\contentsline {section}{\numberline {2}Basic Math}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Probability Theory}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Sampling from a Probability Distribution: Why \( P(x) \, dx \)?}{2}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Mathematical Expression}{2}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Why \( P(x) \, dx \)?}{2}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Example of Sampling}{2}{subsubsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.3}Standard Sampling (Non-Differentiable)}{2}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Reparameterization Trick (Differentiable)}{3}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Gumbel-Softmax}{3}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Definition}{3}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Proof of Differentiability}{3}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}Concrete Distribution}{4}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}Definition}{4}{subsubsection.2.6.1}%
+\contentsline {subsubsection}{\numberline {2.6.2}Differentiability}{4}{subsubsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.7}Pros and Cons}{4}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.8}Use Cases}{4}{subsection.2.8}%
+\contentsline {subsubsection}{\numberline {2.8.1}Gumbel-Softmax}{4}{subsubsection.2.8.1}%
+\contentsline {subsubsection}{\numberline {2.8.2}Concrete Distribution}{4}{subsubsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.9}Equations Summary}{4}{subsection.2.9}%
+\contentsline {subsubsection}{\numberline {2.9.1}Gumbel-Softmax Equation}{4}{subsubsection.2.9.1}%
+\contentsline {subsubsection}{\numberline {2.9.2}Concrete Distribution Equation}{5}{subsubsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.10}Linear Algebra}{5}{subsection.2.10}%
+\contentsline {subsection}{\numberline {2.11}Optimization}{5}{subsection.2.11}%
+\contentsline {section}{\numberline {3}PyTorch Basics}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Tensors}{5}{subsection.3.1}%
+\contentsline {section}{\numberline {4}PyTorch training gradients}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Autograd}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Building Neural Networks}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Loss Functions}{8}{subsection.4.3}%
+\contentsline {section}{\numberline {5}GANs Models}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Basic GAN}{9}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}DCGAN}{9}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}WGAN}{9}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}CycleGAN}{9}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Conclusion}{9}{section.6}%
