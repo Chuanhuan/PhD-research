@@ -51,6 +51,7 @@ testset = MNIST(
 )
 testloader = DataLoader(testset, batch_size=1000, shuffle=True)
 
+
 # %%
 
 
@@ -74,10 +75,30 @@ testloader_9 = DataLoader(testset_9, batch_size=32, shuffle=True)
 
 
 model.load_state_dict(torch.load("./XAI/CNN_MNSIT.pth", weights_only=True))
+# Set the model to evaluation mode
+model.eval()
 
+# Initialize variables to track the number of correct predictions and the total number of samples
+correct = 0
+total = 0
+
+# Disable gradient calculation for evaluation
+with torch.no_grad():
+    for data, target in testloader:
+        data, target = data.to(device), target.to(device)
+        outputs = model(data)
+        _, predicted = torch.max(outputs, 1)
+        total += target.size(0)
+        correct += (predicted == target).sum().item()
+
+# Calculate and print the accuracy
+accuracy = 100 * correct / total
+print(f"Accuracy of the model on the test images: {accuracy:.2f}%")
+
+# %%
 """## Inital image setup"""
 
-img_id = 3
+img_id = 1
 input = testset_8[img_id]
 img = input[0].squeeze(0).clone()
 true_y = input[1]
@@ -212,7 +233,7 @@ def loss_function(x, mu, log_var, phi, x_recon):
 # SECTION: Training
 
 torch.autograd.set_detect_anomaly(True)
-epochs = 5000
+epochs = 500
 leaner_epochs = 10
 predicted = true_y
 channels_img = 1
@@ -234,7 +255,8 @@ for epoch in range(epochs + 1):
         # train generator
         model.eval()
         opt_G.zero_grad()
-        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+        with torch.no_grad():
+            critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
         t1 = -torch.sum(torch.log(critic_fake + 1e-5))
         t2 = loss_function(x, mu, log_var, phi, x_recon)
         loss_G = t1 + t2
@@ -246,7 +268,8 @@ for epoch in range(epochs + 1):
     # train learner Get the index of the max log-probability
     model.eval()
     opt_L.zero_grad()
-    critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+    with torch.no_grad():
+        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
     loss_L = -(torch.mean(critic_fake))
     loss_L.backward()
     opt_L.step()
@@ -283,142 +306,25 @@ plot_recon_img(x_recon, model, true_y, img_id)
 
 # %%
 # SECTION: find the n_th patch of image
-p_interpolate = phi[:, argmax_i, :, :].unsqueeze(0)  # Add batch dimension
+# p_interpolate = phi[:, argmax_i, :, :].unsqueeze(0)  # Add batch dimension
+p_interpolate = phi[:, 7, :, :].unsqueeze(0)  # Add batch dimension
 p_interpolate = nn.Upsample(size=(28, 28), mode="nearest")(
     p_interpolate
 )  # Apply upsampling
 plot_patch_image(img, model, true_y, img_id, p_interpolate, device)
 
 # %%
-
-
-# SECTION: randomly pick data from testloader_8 and plot_recon_img and plot_patch_image
-
-for i in range(5):
-    img_id = i
-    input = testset_8[img_id]
-    true_y = input[1]
-    data = input[0].clone().view(1, 1, 28, 28).to(device)
-    # Generate the reconstructed image and patch image
-    z, mean, log_var, p = L(data)
-    x_recon, p_interpolate = G(z, p)
-    model.eval()
-    plot_recon_img(x_recon, model, true_y, img_id)
-    plot_patch_image(data.squeeze(0), model, true_y, img_id, p, p_interpolate, device)
-
-    mask_data = data * (p_interpolate < 0.1)
-    num_mask_patches = (p < 0.1).sum()
-    mask_prediction = F.softmax(model(mask_data), dim=1)
-    # print(f"prediction: {mask_prediction[0][true_y]}, num_patches = {num_patches}")
-    print(
-        f"prediction: {mask_prediction[0][true_y]}, num_mask_patches = {num_mask_patches}"
-    )
-
-# %%
-# SECTION: find the top n_th high variance pixels
-# maybe not important
-
-for n in range(5, 31, 5):
-    flat_tensor = log_var.exp().flatten()
-    top_10_indices = torch.topk(flat_tensor, n).indices
-    high_var_index = torch.zeros_like(flat_tensor, dtype=torch.bool)
-    high_var_index[top_10_indices] = True
-    high_var_index = high_var_index.view(log_var.shape[2], log_var.shape[3])
-
-    # Convert boolean tensor to float tensor
-    high_var_index = high_var_index.float()
-    high_var_index = high_var_index.unsqueeze(0).unsqueeze(
-        0
-    )  # Add batch and channel dimensions
-    # interpolation to 28x28
-    c = F.interpolate(high_var_index, size=(28, 28), mode="nearest")
-    c = c.squeeze(0).view(1, 1, 28, 28)
-    new_image = x * c.view(1, 1, 28, 28)
-    x_recon_pred = torch.argmax(F.softmax(model(new_image), dim=1))
-    print(f"When n={n}, x_recon_pred: {x_recon_pred}")
-    plt.imshow(new_image.squeeze(0).squeeze(0).detach().numpy(), cmap="gray")
-    # Add a colorbar to show the mapping from colors to values
-    plt.title(
-        f"Digit {x_recon_pred} Surrogate model with prediction: {F.softmax(model(new_image), dim=1).max():.3f}"
-    )
-    plt.savefig(f"ID {img_id}-Digit {true_y} pred {x_recon_pred} with n={n}.png")
-    plt.show()
-    plt.clf()
-
-
-# %%
-
+# SECTION: train testloader
 
 torch.autograd.set_detect_anomaly(True)
 epochs = 500
-leaner_epochs = 5
-predicted = true_y
-# predicted = 9
-G = generator(1).to(device)
-L = learner(1).to(device)
-
-opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
-opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
-
-for batch_idx, (data, target) in enumerate(testloader_8):
-    data = data.to(device)
-    target = target.to(device)
-    for epoch in range(epochs + 1):
-        for leaner_epoch in range(leaner_epochs + 1):
-            opt_L.zero_grad()
-            x = data.clone().to(device)
-            z, mean, log_var, p = L(x)
-            x_recon, p_interpolate = G(z, p)
-            # z, mean, log_var = L(x)
-            # x_recon, p = G(x, z)
-
-            # Get the index of the max log-probability
-            model.eval()
-            critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
-
-            loss_L = -(torch.mean(critic_fake))
-            # loss = loss_function(x, x_recon, mean, log_var) - torch.log(critic_real + 1e-5) * (
-            #     -torch.log(critic_fake + 1e-5)
-            # )
-
-            loss_L.backward()
-            opt_L.step()
-
-        opt_G.zero_grad()
-        z, mean, log_var, p = L(x)
-        x_recon, p_interpolate = G(z, p)
-
-        model.eval()
-        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
-        t1 = -torch.sum(torch.log(critic_fake + 1e-5))
-        t2 = loss_function(x, x_recon, mean, log_var, p)
-        t3 = -torch.sum(p * torch.log(p + 1e-5))
-
-        # FIXME: will black out the digit
-        # alpha = torch.sum(p)
-
-        # NOTE: original loss function
-        loss_G = t1 + t2 + t3
-
-        # NOTE: alternative loss function
-        # loss_G = torch.mean(critic_fake)
-
-        loss_G.backward(retain_graph=True)  # Retain graph for t3
-        opt_G.step()
-
-        if epoch % 500 == 0:
-            print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
-
-# %%
-# SECTION: train testloader
-
-
-epochs = 500
 leaner_epochs = 10
 predicted = true_y
-# predicted = 9
-G = generator(1).to(device)
-L = learner(1).to(device)
+channels_img = 1
+latent_dim = 10
+
+G = Generator(latent_dim, channels_img).to(device)
+L = Learner(channels_img, latent_dim).to(device)
 
 opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
 opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
@@ -430,40 +336,34 @@ for batch_idx, (data, target) in enumerate(testloader):
         for leaner_epoch in range(leaner_epochs + 1):
             opt_L.zero_grad()
             x = data.clone().to(device)
-            z, mean, log_var, p = L(x)
-            x_recon, p_interpolate = G(z, p)
-
-            # Get the index of the max log-probability
             predicted = target
+
+            z, mu, log_var, phi = L(x)
+            x_recon = G(z)
+
+            # train generator
             model.eval()
-            critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+            opt_G.zero_grad()
+            # critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+            outputs = F.softmax(model(x), dim=1)
+            predicted = torch.argmax(outputs, dim=1)
+            critic_fake = outputs[torch.arange(len(predicted)), predicted]
 
-            loss_L = -(critic_fake.mean())
+            t1 = -torch.sum(torch.log(critic_fake + 1e-5))
+            t2 = loss_function(x, mu, log_var, phi, x_recon)
+            loss_G = t1 + t2
+            loss_G.backward(retain_graph=True)  # Retain graph for t3
+            opt_G.step()
 
-            loss_L.backward()
-            opt_L.step()
-
-        opt_G.zero_grad()
-        z, mean, log_var, p = L(x)
-        x_recon, p_interpolate = G(z, p)
-
+        z, mu, log_var, phi = L(x)
+        x_recon = G(z)
+        # train learner Get the index of the max log-probability
         model.eval()
+        opt_L.zero_grad()
         critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
-        t1 = -torch.sum(torch.log(critic_fake + 1e-5))
-        t2 = loss_function(x, x_recon, mean, log_var, p)
-        t3 = -torch.sum(p * torch.log(p + 1e-5))
-
-        # FIXME: will black out the digit
-        # alpha = torch.sum(p)
-
-        # NOTE: original loss function
-        loss_G = t1 + t2 + t3
-
-        # NOTE: alternative loss function
-        # loss_G = torch.mean(critic_fake)
-
-        loss_G.backward(retain_graph=True)  # Retain graph for t3
-        opt_G.step()
+        loss_L = -(torch.mean(critic_fake))
+        loss_L.backward()
+        opt_L.step()
 
         if epoch % 500 == 0:
             print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")

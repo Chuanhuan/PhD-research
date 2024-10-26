@@ -30,8 +30,8 @@ def plot_recon_img(x_recon, model, true_y, img_id):
     plt.clf()
 
 
-def plot_patch_image(img, model, true_y, img_id, p_interpolate, device):
-    num_patches = torch.sum(p_interpolate > 0.5)
+def plot_patch_image(img, model, true_y, img_id, p_interpolate, device, p=0.5):
+    num_patches = torch.sum(p_interpolate > p)
     x = img.clone().to(device)
     x = x.view(1, 1, 28, 28)
     # Convert tensors to numpy arrays
@@ -42,7 +42,7 @@ def plot_patch_image(img, model, true_y, img_id, p_interpolate, device):
     plt.imshow(x_np, cmap="gray")
 
     # mask data prediction
-    mask_data = x * (p_interpolate < 0.1)
+    mask_data = x * (p_interpolate > p)
     mask_prediction = F.softmax(model(mask_data), dim=1)[0][true_y]
 
     # Overlay p_interpolate on top of x
