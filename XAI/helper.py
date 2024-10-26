@@ -30,12 +30,10 @@ def plot_recon_img(x_recon, model, true_y, img_id):
     plt.clf()
 
 
-def plot_patch_image(img, model, true_y, img_id, p, p_interpolate, device):
-    num_patches = (p[:, 0, :, :] > 0.5).sum()
-    print(f"num_patches: {num_patches}")
+def plot_patch_image(img, model, true_y, img_id, p_interpolate, device):
+    num_patches = torch.sum(p_interpolate > 0.5)
     x = img.clone().to(device)
     x = x.view(1, 1, 28, 28)
-
     # Convert tensors to numpy arrays
     x_np = x.squeeze(0).squeeze(0).detach().numpy()
     p_interpolate_np = p_interpolate.squeeze(0).squeeze(0).detach().numpy()

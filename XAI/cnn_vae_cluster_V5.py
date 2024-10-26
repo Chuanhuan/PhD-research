@@ -112,169 +112,199 @@ class CustomTanh(nn.Module):
         return (torch.tanh(x) + 1) * (self.max_val - self.min_val) / 2 + self.min_val
 
 
-class Generator(nn.Module):
-    def __init__(self, channels_z, channels_img):
+class generator(nn.Module):
+    def __init__(self, channels_img):
         super().__init__()
-        self.channels_z = channels_z
         self.channels_img = channels_img
+        # self.features_d = features_d
+        self.k = 2
         # decoder
         self.decoder = nn.Sequential(
+            # NOTE: convTranspose2d output = (input -1)*s -2p + k + op
+            # (14-1)*2 + 2 = img 28x28
             nn.ConvTranspose2d(
-                self.channels_z, self.channels_img, kernel_size=2, stride=2, padding=0
+                channels_img, channels_img, kernel_size=2, stride=2, padding=0
             ),
+            # nn.Tanh(),
             CustomTanh(min_val, max_val),
         )
 
-    def forward(self, z):
+    def forward(self, z, p):
+        # p = self.p_layer(z)
+        # p = F.softmax(p, dim=1)
+        # NOTE: original
         x_recon = self.decoder(z)
-        return x_recon
+        p = p.float()
+        p_interpolate = F.interpolate(
+            p, size=(x_recon.shape[2], x_recon.shape[3]), mode="nearest"
+        )
+
+        x_recon = x_recon * p_interpolate
+
+        return x_recon, p_interpolate
 
 
-class Learner(nn.Module):
-    def __init__(self, channels_img, k=10):
+class learner(nn.Module):
+    def __init__(self, channels_img):
         super().__init__()
         self.channels_img = channels_img
-        self.k = k
+        # self.features_d = features_d
+        self.k = 2
         # encoder
+        # latent mean and variance
         self.mean_layer = nn.Sequential(
-            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
-            nn.InstanceNorm2d(self.k, affine=True),
+            # NOTE: conv2d output = (input + 2p -k)/s +1
+            # (28-2)/2 +1 = img 14x14
+            nn.Conv2d(channels_img, channels_img, kernel_size=2, stride=2),
+            nn.InstanceNorm2d(channels_img, affine=True),
             CustomTanh(min_val, max_val),
-        )
+            # nn.Tanh(),
+            # NOTE: eror will increase then drop
+            # nn.LeakyReLU(0.2),
+        )  # latent mean and variance
+
         self.logvar_layer = nn.Sequential(
-            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
-            nn.InstanceNorm2d(self.k, affine=True),
+            # NOTE: conv2d output = (input + 2p -k)/s +1
+            # (28-2)/2 +1 = img 14x14
+            nn.Conv2d(channels_img, channels_img, kernel_size=2, stride=2),
+            nn.InstanceNorm2d(channels_img, affine=True),
             nn.Tanh(),
-        )
-        self.c_layer = nn.Sequential(
-            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
-            nn.InstanceNorm2d(self.k, affine=True),
-            nn.Softmax(dim=1),
+            # nn.LeakyReLU(0.2),
         )
 
-    def reparameterization(self, mu, log_var, phi):
-        epsilon = torch.randn_like(phi)
-        sigma = torch.exp(0.5 * log_var) + 1e-5
-        z = mu + sigma * epsilon
-        z = z * phi
+        self.p_layer = nn.Sequential(
+            # NOTE: conv2d output = (input + 2p -k)/s +1
+            # (28-2)/2 +1 = img 14x14
+            nn.Conv2d(channels_img, channels_img, kernel_size=2, stride=2),
+            nn.InstanceNorm2d(channels_img, affine=True),
+            nn.Sigmoid(),
+        )
+
+    def reparameterization(self, mean, var, p):
+        # mean = mean.view(mean.size[0], -1)
+        # var = var.view(var.size[0], -1)
+        epsilon = torch.randn_like(var).to(device)
+        z = mean + var * epsilon
+        z = z * p
         return z
 
+    def encode(self, x):
+        mean, log_var, p = self.mean_layer(x), self.logvar_layer(x), self.p_layer(x)
+        return mean, log_var, p
+
     def forward(self, x):
-        mu = self.mean_layer(x)
-        log_var = self.logvar_layer(x)
-        phi = self.c_layer(x)
-        z = self.reparameterization(mu, log_var, phi)
-        return z, mu, log_var, phi
+        mean, log_var, p = self.encode(x)
+        # p = p > 0.5
+        z = self.reparameterization(mean, log_var, p)
+        return z, mean, log_var, p
 
 
-# Adjust the number of channels to match between encoder and decoder
-channels_img = 1
-latent_dim = 10
-
-G = Generator(latent_dim, channels_img).to(device)
-L = Learner(channels_img, latent_dim).to(device)
+G = generator(1).to(device)
+L = learner(1).to(device)
 
 x = torch.randn(1, 1, 28, 28).to(device)
-z, mu, log_var, phi = L(x)
-x_recon = G(z)
-print(f"mu:{mu.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
+z, mean, log_var, p = L(x)
+x_recon, p_interpolate = G(z, p)
+print(f"mean:{mean.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
 
 # %%
 
 
-def loss_function(x, mu, log_var, phi, x_recon):
-    phi = phi + 1e-10
-    t1 = -0.5 * (log_var.exp() + mu**2)
-    t1 = t1.sum()
+def loss_function(x, x_recon, mean, log_var, p):
+    p = p.float()
+    p_interpolate = F.interpolate(
+        p, size=(x_recon.shape[2], x_recon.shape[3]), mode="nearest"
+    )
+    # NOTE: original loss
+    # reproduction_loss = F.mse_loss(x_recon, x)
 
-    # NOTE: origine
-    x_flat = x.view(-1)
-    mu_flat = mu.view(-1)
-    t2 = torch.outer(x_flat, mu_flat) - 0.5 * x_flat.view(-1, 1) ** 2
-    t2 = -0.5 * (log_var.exp() + mu**2).view(1, -1) + t2
-    t2 = phi.view(1, -1) * t2
-    t2 = torch.sum(t2)
+    # HACK: alternative loss function, only use the pixels that have high variance
+    reproduction_loss = (x_recon - x) ** 2
+    reproduction_loss = reproduction_loss * p_interpolate
+    reproduction_loss = reproduction_loss.mean()
 
-    # FIXME: this is not correct, but why?
-    # t2 = (x - x_recon) ** 2
-    # t2 = -torch.sum(t2)
+    # NOTE: original KLD
+    # KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
 
-    # NOTE:Basics
-    t3 = phi * torch.log(phi)
-    t3 = -torch.sum(t3)
+    # NOTE: alternative KLD
+    KLD = -0.5 * torch.sum((1 + log_var - mean.pow(2) - log_var.exp()) * p)
 
-    t4 = 0.5 * log_var.sum()
-    # print(f't1: {t1}, t2: {t2}, t3: {t3}, t4: {t4}')
-    return -(t1 + t2 + t3 + t4)
+    return reproduction_loss + KLD
 
 
 # %%
 # SECTION: Training
 
 torch.autograd.set_detect_anomaly(True)
-epochs = 5000
+epochs = 1000
 leaner_epochs = 10
 predicted = true_y
-channels_img = 1
-latent_dim = 10
-
-G = Generator(latent_dim, channels_img).to(device)
-L = Learner(channels_img, latent_dim).to(device)
+# predicted = 9
+G = generator(1).to(device)
+L = learner(1).to(device)
 
 opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
 opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
 
 for epoch in range(epochs + 1):
     for leaner_epoch in range(leaner_epochs + 1):
+        opt_L.zero_grad()
         x = img.clone().to(device)
         x = x.view(1, 1, 28, 28)
-        z, mu, log_var, phi = L(x)
-        x_recon = G(z)
+        z, mean, log_var, p = L(x)
+        x_recon, p_interpolate = G(z, p)
+        # z, mean, log_var = L(x)
+        # x_recon, p = G(x, z)
 
-        # train generator
+        # Get the index of the max log-probability
         model.eval()
-        opt_G.zero_grad()
         critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
-        t1 = -torch.sum(torch.log(critic_fake + 1e-5))
-        t2 = loss_function(x, mu, log_var, phi, x_recon)
-        loss_G = t1 + t2
-        loss_G.backward(retain_graph=True)  # Retain graph for t3
-        opt_G.step()
 
-    z, mu, log_var, phi = L(x)
-    x_recon = G(z)
-    # train learner Get the index of the max log-probability
+        loss_L = -(torch.mean(critic_fake))
+        # loss = loss_function(x, x_recon, mean, log_var) - torch.log(critic_real + 1e-5) * (
+        #     -torch.log(critic_fake + 1e-5)
+        # )
+
+        loss_L.backward()
+        opt_L.step()
+
+    opt_G.zero_grad()
+    x = img.clone().to(device)
+    x = x.view(1, 1, 28, 28)
+    z, mean, log_var, p = L(x)
+    x_recon, p_interpolate = G(z, p)
+
     model.eval()
-    opt_L.zero_grad()
     critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
-    loss_L = -(torch.mean(critic_fake))
-    loss_L.backward()
-    opt_L.step()
+    t1 = -torch.sum(torch.log(critic_fake + 1e-5))
+    t2 = loss_function(x, x_recon, mean, log_var, p)
+    t3 = -torch.sum(p * torch.log(p + 1e-5))
 
-    if epoch % 100 == 0:
+    # FIXME: will black out the digit
+    alpha = torch.sum(p)
+
+    # NOTE: original loss function
+    loss_G = t1 + t2 + t3 + alpha
+
+    # NOTE: alternative loss function
+    # loss_G = torch.mean(critic_fake)
+
+    loss_G.backward(retain_graph=True)  # Retain graph for t3
+    opt_G.step()
+
+    if epoch % 500 == 0:
         print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
 
 
 # %%
 print(f"x.max(): {x.max()}, x.min(): {x.min()}")
 print(f"x_recon.max(): {x_recon.max()}, x_recon.min(): {x_recon.min()}")
-print(f"mu.max(): {mu.max()}, mu.min(): {mu.min()}")
+print(f"mu.max(): {mean.max()}, mu.min(): {mean.min()}")
 print(f"log_var.max(): {log_var.max()}, log_var.min(): {log_var.min()}")
 print(f"prob: {F.softmax(model(x_recon.view(1, 1, 28, 28)), dim=1)}")
+num_patches = (p[:, 0, :, :] > 0.5).sum()
+print(f"num_patches: {num_patches}")
 
-sums = []
-
-# Iterate over the channels
-for i in range(phi.shape[1]):
-    # Compute the sum of elements greater than 0.5
-    sum_greater_than_0_5 = torch.sum(phi[0, i, :, :] > 0.5).item()
-    print(f"i:{i}, {sum_greater_than_0_5}")
-    sums.append(sum_greater_than_0_5)
-
-# Find the index of the maximum sum
-argmax_i = torch.argmax(torch.tensor(sums)).item()
-
-print(f"The index i with the maximum sum of elements > 0.5 is: {argmax_i}")
 
 # %%
 # SECTION: plot the reconstructed image
@@ -283,11 +313,7 @@ plot_recon_img(x_recon, model, true_y, img_id)
 
 # %%
 # SECTION: find the n_th patch of image
-p_interpolate = phi[:, argmax_i, :, :].unsqueeze(0)  # Add batch dimension
-p_interpolate = nn.Upsample(size=(28, 28), mode="nearest")(
-    p_interpolate
-)  # Apply upsampling
-plot_patch_image(img, model, true_y, img_id, p_interpolate, device)
+plot_patch_image(img, model, true_y, img_id, p, p_interpolate, device)
 
 # %%
 
