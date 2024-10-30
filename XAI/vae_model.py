@@ -39,3 +39,87 @@ class Net(nn.Module):
         x = self.fc2(x)
         output = torch.log_softmax(x, dim=1)
         return output
+
+
+# SECTION: Model definition
+
+min_val = img.min()
+max_val = img.max()
+
+
+class CustomTanh(nn.Module):
+    def __init__(self, min_val, max_val):
+        super(CustomTanh, self).__init__()
+        self.min_val = min_val
+        self.max_val = max_val
+
+    def forward(self, x):
+        return (torch.tanh(x) + 1) * (self.max_val - self.min_val) / 2 + self.min_val
+
+
+class Generator(nn.Module):
+    def __init__(self, channels_z, channels_img):
+        super().__init__()
+        self.channels_z = channels_z
+        self.channels_img = channels_img
+        # decoder
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(
+                self.channels_z, self.channels_img, kernel_size=2, stride=2, padding=0
+            ),
+            CustomTanh(min_val, max_val),
+        )
+
+    def forward(self, z):
+        x_recon = self.decoder(z)
+        return x_recon
+
+
+class Learner(nn.Module):
+    def __init__(self, channels_img, k=10):
+        super().__init__()
+        self.channels_img = channels_img
+        self.k = k
+        # encoder
+        self.mean_layer = nn.Sequential(
+            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
+            nn.InstanceNorm2d(self.k, affine=True),
+            CustomTanh(min_val, max_val),
+        )
+        self.logvar_layer = nn.Sequential(
+            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
+            nn.InstanceNorm2d(self.k, affine=True),
+            nn.Tanh(),
+        )
+        self.c_layer = nn.Sequential(
+            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
+            nn.InstanceNorm2d(self.k, affine=True),
+            nn.Softmax(dim=1),
+        )
+
+    def reparameterization(self, mu, log_var, phi):
+        epsilon = torch.randn_like(phi)
+        sigma = torch.exp(0.5 * log_var) + 1e-5
+        z = mu + sigma * epsilon
+        z = z * phi
+        return z
+
+    def forward(self, x):
+        mu = self.mean_layer(x)
+        log_var = self.logvar_layer(x)
+        phi = self.c_layer(x)
+        z = self.reparameterization(mu, log_var, phi)
+        return z, mu, log_var, phi
+
+
+# Adjust the number of channels to match between encoder and decoder
+channels_img = 1
+latent_dim = 10
+
+G = Generator(latent_dim, channels_img).to(device)
+L = Learner(channels_img, latent_dim).to(device)
+
+x = torch.randn(1, 1, 28, 28).to(device)
+z, mu, log_var, phi = L(x)
+x_recon = G(z)
+print(f"mu:{mu.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")

@@ -14,18 +14,94 @@ import torch.nn.functional as F
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+def plot_and_save_random_reconstructions_and_patches(dataset, G, L, n, device, p=0.5):
+    G.to(device)
+    L.to(device)
+    G.eval()
+    L.eval()
+    indices = random.sample(range(len(dataset)), n)
+    fig, axes = plt.subplots(n, 3, figsize=(15, 5 * n))
+
+    for i, idx in enumerate(indices):
+        img, true_y = dataset[idx]
+        img = img.to(device).unsqueeze(0)  # Add batch dimension
+
+        # Forward pass without torch.no_grad()
+        z, mu, log_var, phi = L(img)
+        x_recon = G(z)
+
+        # Compute p_interpolate
+
+        for batch_idx in range(phi.shape[0]):
+            sums = []
+
+            # Iterate over the channels
+            for k in range(phi.shape[1]):
+                # Compute the sum of elements greater than 0.5 for the current sample and channel
+                sum_greater_than_0_5 = torch.sum(phi[batch_idx, k, :, :] > 0.5).item()
+                sums.append(sum_greater_than_0_5)
+
+            # Find the index of the channel with the maximum sum for the current sample
+            argmax_i = torch.argmax(torch.tensor(sums)).item()
+
+        p_interpolate = phi[:, argmax_i, :, :].unsqueeze(0)  # Add batch dimension
+        p_interpolate = nn.Upsample(size=(28, 28), mode="nearest")(
+            p_interpolate
+        )  # Apply upsampling
+
+        num_patches = torch.sum(p_interpolate > p)
+        # Move tensors to CPU and convert to numpy arrays
+        img_np = img.squeeze(0).squeeze(0).cpu().detach().numpy()
+        x_recon_np = x_recon.squeeze(0).squeeze(0).cpu().detach().numpy()
+        p_interpolate_np = p_interpolate.squeeze(0).squeeze(0).cpu().detach().numpy()
+
+        # mask data prediction
+        x_recon_pred = F.softmax(model(x_recon), dim=1)[0]
+        mask_data = x * (p_interpolate < p)
+        mask_prediction = F.softmax(model(mask_data), dim=1)[0]
+        mask_prd_idx = torch.argmax(mask_prediction)
+        print(f"x_recon_pred: {x_recon_pred}")
+        print(f"mask_prediction: {mask_prediction}")
+
+        # Plot original image
+        axes[i, 0].imshow(img_np, cmap="gray")
+        axes[i, 0].set_title(f"Original Image {idx}")
+
+        # Plot reconstructed image
+        axes[i, 1].imshow(x_recon_np, cmap="gray")
+        axes[i, 1].set_title(
+            f"Reconstructed Image {idx} \n prediction: {x_recon_pred[true_y]:.3f}"
+        )
+
+        # Plot patch image with color bar
+        im = axes[i, 2].imshow(img_np, cmap="gray")
+        im = axes[i, 2].imshow(p_interpolate_np, cmap="jet", alpha=0.5)
+        axes[i, 2].set_title(
+            f"Patch Image {idx} with {num_patches} patches \n mask prediction: digit {mask_prd_idx} {mask_prediction[mask_prd_idx]:.3f}"
+        )
+        fig.colorbar(im, ax=axes[i, 2])
+
+    plt.tight_layout()
+    plt.show()
+    # Save each image
+    plt.savefig(f"ID_{idx}_Original_Reconstructed_Patch.png")
+    plt.clf()
+    plt.close(fig)
+
+
 def plot_recon_img(x_recon, model, true_y, img_id):
     new_image = x_recon.view(1, 1, 28, 28)
-    x_recon_pred = torch.argmax(F.softmax(model(new_image), dim=1))
+    x_recon_pred = F.softmax(model(new_image), dim=1).max(1)[0].item()
+
     print(
         f"True y = {true_y}. New image full model prediction: {F.softmax(model(new_image))}"
     )
-    plt.imshow(new_image.squeeze(0).squeeze(0).detach().numpy(), cmap="gray")
+    plt.imshow(new_image.squeeze(0).squeeze(0).to("cpu").detach().numpy(), cmap="gray")
     plt.title(
-        f"Digit {x_recon_pred} Surrogate model with prediction: {F.softmax(model(new_image), dim=1).max():.3f}"
+        f"Digit {x_recon_pred} Surrogate model with prediction: {x_recon_pred:.3f}"
     )
-    plt.colorbar()
-    plt.savefig(f"ID {img_id}-Digit {true_y} pred {x_recon_pred} new_image.png")
+    # plt.colorbar()
+    plt.savefig(f"ID {img_id}-Digit {true_y} pred {x_recon_pred:.3f} new_image.png")
     plt.show()
     plt.clf()
 
@@ -34,15 +110,16 @@ def plot_patch_image(img, model, true_y, img_id, p_interpolate, device, p=0.5):
     num_patches = torch.sum(p_interpolate > p)
     x = img.clone().to(device)
     x = x.view(1, 1, 28, 28)
-    # Convert tensors to numpy arrays
-    x_np = x.squeeze(0).squeeze(0).detach().numpy()
-    p_interpolate_np = p_interpolate.squeeze(0).squeeze(0).detach().numpy()
+
+    # Move tensors to CPU before converting to NumPy arrays
+    x_np = x.squeeze(0).squeeze(0).cpu().detach().numpy()
+    p_interpolate_np = p_interpolate.squeeze(0).squeeze(0).cpu().detach().numpy()
 
     # Plot the background image (x)
     plt.imshow(x_np, cmap="gray")
 
     # mask data prediction
-    mask_data = x * (p_interpolate > p)
+    mask_data = x * (p_interpolate < p)
     mask_prediction = F.softmax(model(mask_data), dim=1)[0][true_y]
 
     # Overlay p_interpolate on top of x

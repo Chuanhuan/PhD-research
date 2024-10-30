@@ -18,6 +18,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision.datasets import MNIST
 import torch.distributions as dist
 import matplotlib.pyplot as plt
+import random
 import torch.nn.functional as F
 
 # Get the directory of the current file
@@ -29,7 +30,7 @@ import torch.nn.functional as F
 # Import other necessary modules
 from vae_model import *
 
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Net().to(device)
 
 # Define the loss function and optimizer
@@ -100,105 +101,18 @@ print(f"Accuracy of the model on the test images: {accuracy:.2f}%")
 
 img_id = 1
 input = testset_8[img_id]
-img = input[0].squeeze(0).clone()
 true_y = input[1]
-# img = transform(img)
-plt.imshow(img, cmap="gray")
+
+img = input[0].squeeze(0).clone().to(device)
+predicted = model(img.unsqueeze(0).unsqueeze(0)).argmax().item()
+
+img_cpu = img.cpu().numpy()
+plt.imshow(img_cpu, cmap="gray")
 plt.savefig(f"ID {img_id}-Digit {input[1]} original_image.png")
-print(
-    f"ID: {img_id}, True y = {input[1]}, probability: {F.softmax(model(input[0].unsqueeze(0)), dim=1).max():.5f}"
-)
-print(
-    f"predicted probability:{F.softmax(model(input[0].unsqueeze(0)), dim=1).max():.5f}"
-)
-print(f"pixel from {img.max()} to {img.min()}")
+print(f"ID: {img_id}, True y = {input[1]}, probability: {predicted:.5f}")
 # plt.show()
 plt.clf()
 
-
-# %%
-# SECTION: Model definition
-
-min_val = img.min()
-max_val = img.max()
-
-
-class CustomTanh(nn.Module):
-    def __init__(self, min_val, max_val):
-        super(CustomTanh, self).__init__()
-        self.min_val = min_val
-        self.max_val = max_val
-
-    def forward(self, x):
-        return (torch.tanh(x) + 1) * (self.max_val - self.min_val) / 2 + self.min_val
-
-
-class Generator(nn.Module):
-    def __init__(self, channels_z, channels_img):
-        super().__init__()
-        self.channels_z = channels_z
-        self.channels_img = channels_img
-        # decoder
-        self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(
-                self.channels_z, self.channels_img, kernel_size=2, stride=2, padding=0
-            ),
-            CustomTanh(min_val, max_val),
-        )
-
-    def forward(self, z):
-        x_recon = self.decoder(z)
-        return x_recon
-
-
-class Learner(nn.Module):
-    def __init__(self, channels_img, k=10):
-        super().__init__()
-        self.channels_img = channels_img
-        self.k = k
-        # encoder
-        self.mean_layer = nn.Sequential(
-            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
-            nn.InstanceNorm2d(self.k, affine=True),
-            CustomTanh(min_val, max_val),
-        )
-        self.logvar_layer = nn.Sequential(
-            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
-            nn.InstanceNorm2d(self.k, affine=True),
-            nn.Tanh(),
-        )
-        self.c_layer = nn.Sequential(
-            nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
-            nn.InstanceNorm2d(self.k, affine=True),
-            nn.Softmax(dim=1),
-        )
-
-    def reparameterization(self, mu, log_var, phi):
-        epsilon = torch.randn_like(phi)
-        sigma = torch.exp(0.5 * log_var) + 1e-5
-        z = mu + sigma * epsilon
-        z = z * phi
-        return z
-
-    def forward(self, x):
-        mu = self.mean_layer(x)
-        log_var = self.logvar_layer(x)
-        phi = self.c_layer(x)
-        z = self.reparameterization(mu, log_var, phi)
-        return z, mu, log_var, phi
-
-
-# Adjust the number of channels to match between encoder and decoder
-channels_img = 1
-latent_dim = 10
-
-G = Generator(latent_dim, channels_img).to(device)
-L = Learner(channels_img, latent_dim).to(device)
-
-x = torch.randn(1, 1, 28, 28).to(device)
-z, mu, log_var, phi = L(x)
-x_recon = G(z)
-print(f"mu:{mu.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
 
 # %%
 
@@ -209,16 +123,16 @@ def loss_function(x, mu, log_var, phi, x_recon):
     t1 = t1.sum()
 
     # NOTE: origine
-    x_flat = x.view(-1)
-    mu_flat = mu.view(-1)
-    t2 = torch.outer(x_flat, mu_flat) - 0.5 * x_flat.view(-1, 1) ** 2
-    t2 = -0.5 * (log_var.exp() + mu**2).view(1, -1) + t2
-    t2 = phi.view(1, -1) * t2
-    t2 = torch.sum(t2)
+    # x_flat = x.view(-1)
+    # mu_flat = mu.view(-1)
+    # t2 = torch.outer(x_flat, mu_flat) - 0.5 * x_flat.view(-1, 1) ** 2
+    # t2 = -0.5 * (log_var.exp() + mu**2).view(1, -1) + t2
+    # t2 = phi.view(1, -1) * t2
+    # t2 = torch.sum(t2)
 
     # FIXME: this is not correct, but why?
-    # t2 = (x - x_recon) ** 2
-    # t2 = -torch.sum(t2)
+    t2 = (x - x_recon) ** 2
+    t2 = -torch.mean(t2)
 
     # NOTE:Basics
     t3 = phi * torch.log(phi)
@@ -233,7 +147,7 @@ def loss_function(x, mu, log_var, phi, x_recon):
 # SECTION: Training
 
 torch.autograd.set_detect_anomaly(True)
-epochs = 500
+epochs = 1000
 leaner_epochs = 10
 predicted = true_y
 channels_img = 1
@@ -268,8 +182,7 @@ for epoch in range(epochs + 1):
     # train learner Get the index of the max log-probability
     model.eval()
     opt_L.zero_grad()
-    with torch.no_grad():
-        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+    critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
     loss_L = -(torch.mean(critic_fake))
     loss_L.backward()
     opt_L.step()
@@ -306,8 +219,7 @@ plot_recon_img(x_recon, model, true_y, img_id)
 
 # %%
 # SECTION: find the n_th patch of image
-# p_interpolate = phi[:, argmax_i, :, :].unsqueeze(0)  # Add batch dimension
-p_interpolate = phi[:, 7, :, :].unsqueeze(0)  # Add batch dimension
+p_interpolate = phi[:, argmax_i, :, :].unsqueeze(0)  # Add batch dimension
 p_interpolate = nn.Upsample(size=(28, 28), mode="nearest")(
     p_interpolate
 )  # Apply upsampling
@@ -316,8 +228,8 @@ plot_patch_image(img, model, true_y, img_id, p_interpolate, device)
 # %%
 # SECTION: train testloader
 
-torch.autograd.set_detect_anomaly(True)
-epochs = 500
+# torch.autograd.set_detect_anomaly(True)
+epochs = 1000
 leaner_epochs = 10
 predicted = true_y
 channels_img = 1
@@ -360,10 +272,22 @@ for batch_idx, (data, target) in enumerate(testloader):
         # train learner Get the index of the max log-probability
         model.eval()
         opt_L.zero_grad()
-        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+        outputs = F.softmax(model(x), dim=1)
+        critic_fake = outputs[torch.arange(len(predicted)), predicted]
         loss_L = -(torch.mean(critic_fake))
         loss_L.backward()
         opt_L.step()
-
+        # print(f'mu.shape: {mu.shape}, log_var.shape: {log_var.shape}, phi.shape: {phi.shape}')
         if epoch % 500 == 0:
             print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
+
+
+# %%
+# SECTION: choice n random phto and plot the reconstructed image
+
+
+plot_and_save_random_reconstructions_and_patches(
+    testloader.dataset, G, L, n=5, device=device
+)
+
+# %%
