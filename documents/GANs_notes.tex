@@ -8,6 +8,7 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{tabularx}
+\usepackage{tikz}
 \usepackage{array} % for 'm' column type
 \usepackage{float} % Include the float package for the H option
 \usepackage{listings}
@@ -570,13 +571,87 @@ where:
     \item \(D_{\text{KL}}\) is the Kullback-Leibler divergence.
   \end{itemize}
 
+\newpage
+\section{Boltzmann Machines: Intuition}
+A Boltzmann Machine is a network of symmetrically connected nodes, where each node represents a binary variable that is either in an active state (1) or inactive state (0). The key idea is to train the network so that the probability distribution over the visible nodes aligns with the data distribution.
+
+The goal of a Boltzmann Machine is to minimize the energy of the network to obtain a configuration that represents the training data accurately. Nodes in a Boltzmann Machine are connected with undirected weights and can be thought of as simulating a "thermodynamic system" that reaches an equilibrium over time.
+
+\subsection{Restricted Boltzmann Machines (RBMs)}
+Restricted Boltzmann Machines (RBMs) are a simplified version of BMs where the network is divided into two layers: a visible layer representing the observed data and a hidden layer capturing dependencies. There are no connections between units in the same layer, making it "restricted."
+
+\section{Mathematical Formulation}
+Consider a binary RBM with:
+\begin{itemize}
+    \item \( \mathbf{v} \): The visible layer (input data).
+    \item \( \mathbf{h} \): The hidden layer (features).
+    \item \( W_{ij} \): The weight between visible node \( v_i \) and hidden node \( h_j \).
+\end{itemize}
+
+The energy function \( E(\mathbf{v}, \mathbf{h}) \) for an RBM configuration is defined as:
+\[
+E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j} v_i h_j W_{ij} - \sum_i v_i a_i - \sum_j h_j b_j
+\]
+where:
+\begin{itemize}
+    \item \( a_i \) and \( b_j \) are biases for the visible and hidden units, respectively.
+    \item \( W_{ij} \) represents the weight matrix between visible and hidden layers.
+\end{itemize}
+
+The probability distribution over the visible and hidden states is given by:
+\[
+P(\mathbf{v}, \mathbf{h}) = \frac{1}{Z} e^{-E(\mathbf{v}, \mathbf{h})}
+\]
+where \( Z \) is the partition function: \\
+\[
+Z = \sum_{\mathbf{v}, \mathbf{h}} e^{-E(\mathbf{v}, \mathbf{h})}
+\]
+\subsection{Training via Contrastive Divergence}
+Training an RBM involves finding weights and biases that maximize the likelihood of the observed data. Contrastive Divergence (CD) is a popular algorithm to approximate this.\\
+
+The weight update rule for CD is:\\
+\[
+\Delta W_{ij} = \epsilon (\langle v_i h_j \rangle_{\text{data}} - \langle v_i h_j \rangle_{\text{recon}})
+\]
+where:\\
+\begin{itemize}
+    \item \( \epsilon \) is the learning rate.
+    \item \( \langle \cdot \rangle_{\text{data}} \) denotes the expectation with respect to the data distribution.
+    \item \( \langle \cdot \rangle_{\text{recon}} \) denotes the expectation with respect to the reconstructed distribution.
+\end{itemize}
+
+\section{Illustration of RBM Structure}
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        % Define visible layer nodes
+        \foreach \i in {1,2,3} {
+            \node[draw, circle] (v\i) at (\i,0) {$v_\i$};
+        }
+        % Define hidden layer nodes
+        \foreach \j in {1,2} {
+            \node[draw, circle] (h\j) at (\j+0.5,2) {$h_\j$};
+        }
+        % Connect visible to hidden nodes
+        \foreach \i in {1,2,3} {
+            \foreach \j in {1,2} {
+                \draw (v\i) -- (h\j);
+            }
+        }
+    \end{tikzpicture}
+    \caption{Structure of a Restricted Boltzmann Machine (RBM) with three visible nodes and two hidden nodes.}
+    \label{fig:rbm_structure}
+\end{figure}
+
+
+\newpage
 \section{Fourier Series and Fast Fourier Transform (FFT): Mathematical Explanation and Comparison}
 
-Fourier Series and the Fast Fourier Transform (FFT) are tools for representing signals in the frequency domain.
+Fourier Series and the Fast Fourier Transform (FFT) are tools for representing signals in the frequency domain.\\
 
 \subsection{1. Fourier Series}
 
-The \textbf{Fourier Series} decomposes a \textit{periodic continuous function} \( f(t) \) with period \( T \) into a sum of sine and cosine functions with different frequencies:
+The \textbf{Fourier Series} decomposes a \textit{periodic continuous function} \( f(t) \) with period \( T \) into a sum of sine and cosine functions with different frequencies:\\
 \[
 f(t) = a_0 + \sum_{n=1}^{\infty} \left( a_n \cos\left(\frac{2 \pi n t}{T}\right) + b_n \sin\left(\frac{2 \pi n t}{T}\right) \right)
 \]
@@ -584,7 +659,7 @@ where \( a_0 \) is the mean (DC) component, and \( a_n \) and \( b_n \) represen
 
 \subsection{2. Fast Fourier Transform (FFT)}
 
-The \textbf{Fast Fourier Transform (FFT)} is an algorithm for computing the \textit{Discrete Fourier Transform (DFT)} of a discrete, finite-length signal. The DFT is given by:
+The \textbf{Fast Fourier Transform (FFT)} is an algorithm for computing the \textit{Discrete Fourier Transform (DFT)} of a discrete, finite-length signal. The DFT is given by:\\
 \[
 X[k] = \sum_{n=0}^{N-1} x[n] \cdot e^{-i 2 \pi k n / N}
 \]
