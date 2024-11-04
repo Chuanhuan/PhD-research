@@ -1,3 +1,4 @@
+# %%
 # SECTION: Define a CNN model for MNIST dataset and load the model weights
 
 import os
@@ -27,7 +28,8 @@ import torch.nn.functional as F
 # Change the current working directory to the file's directory
 # os.chdir(current_file_directory)
 
-# Import other necessary modules
+# %%
+# SECTION: Import other necessary modules
 from vae_model import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -54,8 +56,6 @@ testloader = DataLoader(testset, batch_size=1000, shuffle=True)
 
 
 # %%
-
-
 # SECTION: load MNIST dataa only 8
 
 
@@ -105,11 +105,12 @@ true_y = input[1]
 
 img = input[0].squeeze(0).clone().to(device)
 predicted = model(img.unsqueeze(0).unsqueeze(0)).argmax().item()
+prob = F.softmax(model(img.unsqueeze(0).unsqueeze(0)), dim=1)[0][predicted].item()
 
 img_cpu = img.cpu().numpy()
 plt.imshow(img_cpu, cmap="gray")
 plt.savefig(f"ID {img_id}-Digit {input[1]} original_image.png")
-print(f"ID: {img_id}, True y = {input[1]}, probability: {predicted:.5f}")
+print(f"ID: {img_id}, True y = {input[1]}, probability: {prob:.5f}")
 # plt.show()
 plt.clf()
 
@@ -145,6 +146,9 @@ def loss_function(x, mu, log_var, phi, x_recon):
 
 # %%
 # SECTION: Training
+
+min_val = img.min()
+max_val = img.max()
 
 torch.autograd.set_detect_anomaly(True)
 epochs = 1000

@@ -43,9 +43,6 @@ class Net(nn.Module):
 
 # SECTION: Model definition
 
-min_val = img.min()
-max_val = img.max()
-
 
 class CustomTanh(nn.Module):
     def __init__(self, min_val, max_val):
@@ -58,7 +55,7 @@ class CustomTanh(nn.Module):
 
 
 class Generator(nn.Module):
-    def __init__(self, channels_z, channels_img):
+    def __init__(self, channels_z, channels_img, min_val=-1, max_val=1):
         super().__init__()
         self.channels_z = channels_z
         self.channels_img = channels_img
@@ -76,7 +73,7 @@ class Generator(nn.Module):
 
 
 class Learner(nn.Module):
-    def __init__(self, channels_img, k=10):
+    def __init__(self, channels_img, k=10, min_val=-1, max_val=1):
         super().__init__()
         self.channels_img = channels_img
         self.k = k
@@ -85,6 +82,7 @@ class Learner(nn.Module):
             nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
             nn.InstanceNorm2d(self.k, affine=True),
             CustomTanh(min_val, max_val),
+            # nn.LeakyReLU(0.2),
         )
         self.logvar_layer = nn.Sequential(
             nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
@@ -101,7 +99,11 @@ class Learner(nn.Module):
         epsilon = torch.randn_like(phi)
         sigma = torch.exp(0.5 * log_var) + 1e-5
         z = mu + sigma * epsilon
-        z = z * phi
+
+        # HACK: log z phi
+        log_z_phi = torch.log(z + 1e-10) * phi
+        z = log_z_phi.exp()
+
         return z
 
     def forward(self, x):
@@ -112,14 +114,18 @@ class Learner(nn.Module):
         return z, mu, log_var, phi
 
 
-# Adjust the number of channels to match between encoder and decoder
-channels_img = 1
-latent_dim = 10
+if __name__ == "__main__":
+    # Load the MNIST dataset
+    min_val = img.min()
+    max_val = img.max()
+    # Adjust the number of channels to match between encoder and decoder
+    channels_img = 1
+    latent_dim = 10
 
-G = Generator(latent_dim, channels_img).to(device)
-L = Learner(channels_img, latent_dim).to(device)
+    G = Generator(latent_dim, channels_img).to(device)
+    L = Learner(channels_img, latent_dim).to(device)
 
-x = torch.randn(1, 1, 28, 28).to(device)
-z, mu, log_var, phi = L(x)
-x_recon = G(z)
-print(f"mu:{mu.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
+    x = torch.randn(1, 1, 28, 28).to(device)
+    z, mu, log_var, phi = L(x)
+    x_recon = G(z)
+    print(f"mu:{mu.shape}, log_var:{log_var.shape}, x_recon:{x_recon.shape}")
