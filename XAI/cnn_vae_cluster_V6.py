@@ -183,6 +183,7 @@ for epoch in range(epochs + 1):
 
     z, mu, log_var, phi = L(x)
     x_recon = G(z)
+
     # train learner Get the index of the max log-probability
     model.eval()
     opt_L.zero_grad()
@@ -295,3 +296,130 @@ plot_and_save_random_reconstructions_and_patches(
 )
 
 # %%
+# SECTION: train testloader2
+
+
+def loss_function(x, mu, log_var, phi, x_recon):
+    phi = phi + 1e-10
+    t1 = -0.5 * (log_var.exp() + mu**2)
+    t1 = t1.sum()
+
+    # FIXME: alternative t2: swap leaner and generator
+    t2 = (x - x_recon) ** 2
+    t2 = -torch.mean(t2)
+
+    # NOTE:Basics
+    t3 = phi * torch.log(phi)
+    t3 = -torch.sum(t3)
+
+    t4 = 0.5 * log_var.sum()
+    # print(f't1: {t1}, t2: {t2}, t3: {t3}, t4: {t4}')
+    return -(t1 + t2 + t3 + t4)
+
+
+# torch.autograd.set_detect_anomaly(True)
+epochs = 1000
+leaner_epochs = 10
+predicted = true_y
+channels_img = 1
+latent_dim = 10
+
+G = Generator(latent_dim, channels_img).to(device)
+L = Learner(channels_img, latent_dim).to(device)
+
+opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
+opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
+
+for batch_idx, (data, target) in enumerate(testloader):
+    data = data.to(device)
+    target = target.to(device)
+    for epoch in range(epochs + 1):
+        for leaner_epoch in range(leaner_epochs + 1):
+            opt_L.zero_grad()
+            x = data.clone().to(device)
+            predicted = target
+
+            z, mu, log_var, phi = L(x)
+            x_recon = G(z)
+
+            # train learner Get the index of the max log-probability
+            model.eval()
+            opt_L.zero_grad()
+            outputs = F.softmax(model(x), dim=1)
+            critic_fake = outputs[torch.arange(len(predicted)), predicted]
+            loss_L = -(torch.mean(critic_fake))
+            loss_L.backward()
+            opt_L.step()
+
+        z, mu, log_var, phi = L(x)
+        x_recon = G(z)
+
+        # train generator
+        model.eval()
+        opt_G.zero_grad()
+        # critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+        outputs = F.softmax(model(x), dim=1)
+        predicted = torch.argmax(outputs, dim=1)
+        critic_fake = outputs[torch.arange(len(predicted)), predicted]
+
+        t1 = -torch.sum(torch.log(critic_fake + 1e-5))
+        t2 = loss_function(x, mu, log_var, phi, x_recon)
+        loss_G = t1 + t2
+        loss_G.backward(retain_graph=True)  # Retain graph for t3
+        opt_G.step()
+        # print(f'mu.shape: {mu.shape}, log_var.shape: {log_var.shape}, phi.shape: {phi.shape}')
+        if epoch % 500 == 0:
+            print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
+
+
+# %%
+# SECTION: choice n random phto and plot the reconstructed image
+
+
+plot_and_save_random_reconstructions_and_patches(
+    testloader.dataset, G, L, n=5, device=device
+)
+
+# %%
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
+import umap
+
+# Assuming phi is a tensor of shape (batch_size, channels, height, width)
+phi_np = phi.cpu().detach().numpy()  # Convert to numpy array if it's a tensor
+batch_size, channels, height, width = phi_np.shape
+
+# Reshape phi to (batch_size, channels * height * width)
+phi_flat = phi_np.reshape(batch_size, -1)
+
+# Apply t-SNE
+tsne = TSNE(n_components=2, random_state=42)
+phi_tsne = tsne.fit_transform(phi_flat)
+
+# Apply UMAP
+umap_reducer = umap.UMAP(n_components=2, random_state=42)
+phi_umap = umap_reducer.fit_transform(phi_flat)
+
+# Plot t-SNE results
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.scatter(phi_tsne[:, 0], phi_tsne[:, 1], c="blue", label="t-SNE")
+plt.title("t-SNE of phi")
+plt.xlabel("Component 1")
+plt.ylabel("Component 2")
+plt.legend()
+
+# Plot UMAP results
+plt.subplot(1, 2, 2)
+plt.scatter(phi_umap[:, 0], phi_umap[:, 1], c="red", label="UMAP")
+plt.title("UMAP of phi")
+plt.xlabel("Component 1")
+plt.ylabel("Component 2")
+plt.legend()
+
+plt.tight_layout()
+plt.savefig("t-SNE_vs_UMAP.png")
+plt.show()

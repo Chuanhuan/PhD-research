@@ -101,8 +101,12 @@ class Learner(nn.Module):
         z = mu + sigma * epsilon
 
         # HACK: log z phi
-        log_z_phi = torch.log(z + 1e-10) * phi
+
+        min_z = z.min()
+        z = z - min_z + 1
+        log_z_phi = torch.log(z) * phi
         z = log_z_phi.exp()
+        z = z - z.min()
 
         return z
 

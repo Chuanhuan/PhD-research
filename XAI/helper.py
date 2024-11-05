@@ -10,6 +10,7 @@ from torchvision.datasets import MNIST
 import torch.distributions as dist
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
+import random
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -97,9 +98,7 @@ def plot_recon_img(x_recon, model, true_y, img_id):
         f"True y = {true_y}. New image full model prediction: {F.softmax(model(new_image))}"
     )
     plt.imshow(new_image.squeeze(0).squeeze(0).to("cpu").detach().numpy(), cmap="gray")
-    plt.title(
-        f"Digit {x_recon_pred} Surrogate model with prediction: {x_recon_pred:.3f}"
-    )
+    plt.title(f"Digit {true_y} Surrogate model with prediction: {x_recon_pred:.3f}")
     # plt.colorbar()
     plt.savefig(f"ID {img_id}-Digit {true_y} pred {x_recon_pred:.3f} new_image.png")
     plt.show()
