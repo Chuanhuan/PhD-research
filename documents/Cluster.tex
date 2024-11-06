@@ -12,6 +12,9 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{caption} % Required for using \captionof
+\usepackage{algorithm} 
+\usepackage{algorithmicx} 
+\usepackage{algpseudocode}
 
 \renewcommand{\lstlistingname}{Code}
 \lstset{ 
@@ -545,7 +548,89 @@ for epoch in range(epochs + 1):
 \end{table}
 
 
+\section{Experiment Results 2.0}
+
+
+Formulation (Equation ideal Similar to \cite{Blei2017}) Structure (Concept similar to \cite{Mescheder}):\\ 
+
+\begin{align} 
+  \begin{split}
+z_j & \sim \mathcal{N}(\mu, \sigma^2)~\text{for } j = 1, ..., K \\\\
+c_i & \sim \phi(K)~\text{for } i = 1, ..., N \\\\ 
+x_i & \sim \mathcal{N}(c_i^T z, 1)~\text{for } i = 1, ..., N \\\\
+y  & \sim CNN
+  \end{split}
+\end{align}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../fig/GAN-VI-model-v2.png} % Replace with the path to your image
+    \caption{Using GAN and VAE method with conv2d }
+    \label{fig:GANandVAE_v2}
+\end{figure}
+
+The goal is to minimize the loss function:
+
+$$ \underbrace{arg~max}_{ELBO} \quad \underbrace{arg~max}_{z}\quad \mathbb{E}_{z \sim p_z(z)} [L(z)] + ELBO $$
+
+\begin{align*}
+ELBO  &= E_q[log~p(x,z,c,y) - log~q(z,c,y)] \\ \\
+&= E_{q}[-\frac{1}{2}( \sum_j c_{j}\left( x_{i}-m_{j} \right)^2+~\sum_{j}c_{j}\left( z_{j}-\mu_{y} \right)^2) + \frac{1}{2}\left(\sum_{j} \log~s^2  \right) - \sum_{j} \log~ \phi_{j} - \log~ \text{pred}_{y}] \\ \\
+\end{align*}
+
+In my experiments, $k=10$, Some issues with the model:\\ 
+
+1. Mode collapse: The model is not able to generate diverse samples.\\ 
+  Remedy: add regularization term to the model\cite{Su}.\\ 
+$$\lambda\int q(z)\|G(z)-G^{o}(z)\|^{2}d z$$
+
+Where $G^{o}(z)$ is the previous data distribution.\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../fig/ID_7687_Original_Reconstructed_Patch.png} % Replace with the path to your image
+    \caption{Conv2d output: mode collapse}
+    \label{fig:mode_collapse}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png} % Replace with the path to your image
+    \caption{Conv2d output 1 }
+    \label{fig:exp1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png} % Replace with the path to your image
+    \caption{Conv2d output 2}
+    \label{fig:exp2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png} % Replace with the path to your image
+    \caption{Conv2d output 3}
+    \label{fig:exp3}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{../fig-mask-collection/t-SNE_vs_UMAP.png} % Replace with the path to your image
+    \caption{T-SNE vs UMAP}
+    \label{fig:t-SNE}
+\end{figure}
+
 \section{Future Work}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{../fig/ID 3-Digit 8 pred 5.png} % Replace with the path to your image
+    \caption{Using conv2d and GAN}
+    \label{fig:digit5}
+\end{figure}
 
 
 Sharingan Evolution:\\
@@ -556,13 +641,6 @@ Sharingan Evolution:\\
     \caption{Sharingan}
     \label{fig:sharingan}
 \end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\linewidth]{../fig/ID 3-Digit 8 pred 5.png} % Replace with the path to your image
-    \caption{Using conv2d and GAN}
-    \label{fig:digit5}
-\end{figure}
-
 
 \section{Conclusion}
 \ldots

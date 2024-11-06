@@ -58,7 +58,7 @@ def plot_and_save_random_reconstructions_and_patches(dataset, G, L, n, device, p
 
         # mask data prediction
         x_recon_pred = F.softmax(model(x_recon), dim=1)[0]
-        mask_data = x * (p_interpolate < p)
+        mask_data = x_recon * (p_interpolate < p)
         mask_prediction = F.softmax(model(mask_data), dim=1)[0]
         mask_prd_idx = torch.argmax(mask_prediction)
         print(f"x_recon_pred: {x_recon_pred}")

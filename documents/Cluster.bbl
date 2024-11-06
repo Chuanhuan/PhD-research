@@ -33,4 +33,12 @@ David~M. Blei, Alp Kucukelbir, and Jon~D. McAuliffe.
 \newblock Variational {{Inference}}: {{A Review}} for {{Statisticians}}.
 \newblock {\em Journal of the American Statistical Association}, 112(518):859--877, April 2017.
 
+\bibitem{Mescheder}
+Lars Mescheder, Sebastian Nowozin, and Andreas Geiger.
+\newblock Adversarial {{Variational Bayes}}: {{Unifying Variational Autoencoders}} and {{Generative Adversarial Networks}}.
+
+\bibitem{Su}
+Jianlin Su.
+\newblock Variational {{Inference}}: {{A Unified Framework}} of {{Generative Models}} and {{Some Revelations}}.
+
 \end{thebibliography}

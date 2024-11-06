@@ -129,6 +129,14 @@ INPUT /usr/share/texmf-dist/tex/latex/caption/caption.sty
 INPUT /usr/share/texmf-dist/tex/latex/caption/caption.sty
 INPUT /usr/share/texmf-dist/tex/latex/caption/caption3.sty
 INPUT /usr/share/texmf-dist/tex/latex/caption/caption3.sty
+INPUT /usr/share/texmf-dist/tex/latex/algorithms/algorithm.sty
+INPUT /usr/share/texmf-dist/tex/latex/algorithms/algorithm.sty
+INPUT /usr/share/texmf-dist/tex/latex/base/ifthen.sty
+INPUT /usr/share/texmf-dist/tex/latex/base/ifthen.sty
+INPUT /usr/share/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
+INPUT /usr/share/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
+INPUT /usr/share/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
+INPUT /usr/share/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
 INPUT /usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -337,16 +345,46 @@ INPUT ../fig/ID 5-Digit 8 classification n patches = 190.png
 INPUT ../fig/ID 5-Digit 8 classification n patches = 190.png
 INPUT ../fig/ID 5-Digit 8 classification n patches = 190.png
 INPUT ../fig/ID 5-Digit 8 classification n patches = 190.png
-INPUT ../fig/Sharingan-evo.png
-INPUT ../fig/Sharingan-evo.png
-INPUT ../fig/Sharingan-evo.png
-INPUT ../fig/Sharingan-evo.png
-INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/GAN-VI-model-v2.png
+INPUT ../fig/GAN-VI-model-v2.png
+INPUT ../fig/GAN-VI-model-v2.png
+INPUT ../fig/GAN-VI-model-v2.png
+INPUT ../fig/GAN-VI-model-v2.png
+INPUT ../fig/ID_7687_Original_Reconstructed_Patch.png
+INPUT ../fig/ID_7687_Original_Reconstructed_Patch.png
+INPUT ../fig/ID_7687_Original_Reconstructed_Patch.png
+INPUT ../fig/ID_7687_Original_Reconstructed_Patch.png
+INPUT ../fig/ID_7687_Original_Reconstructed_Patch.png
+INPUT ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png
+INPUT ../fig-mask-collection/t-SNE_vs_UMAP.png
+INPUT ../fig-mask-collection/t-SNE_vs_UMAP.png
+INPUT ../fig-mask-collection/t-SNE_vs_UMAP.png
+INPUT ../fig-mask-collection/t-SNE_vs_UMAP.png
+INPUT ../fig-mask-collection/t-SNE_vs_UMAP.png
 INPUT ../fig/ID 3-Digit 8 pred 5.png
 INPUT ../fig/ID 3-Digit 8 pred 5.png
 INPUT ../fig/ID 3-Digit 8 pred 5.png
 INPUT ../fig/ID 3-Digit 8 pred 5.png
 INPUT ../fig/ID 3-Digit 8 pred 5.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
+INPUT ../fig/Sharingan-evo.png
 INPUT ./Cluster.bbl
 INPUT ./Cluster.bbl
 INPUT Cluster.bbl
@@ -371,3 +409,4 @@ INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb
+INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
