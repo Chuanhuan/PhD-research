@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024/Arch Linux) (preloaded format=pdflatex 2024.11.6)  6 NOV 2024 12:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024/Arch Linux) (preloaded format=pdflatex 2024.11.6)  6 NOV 2024 21:33
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -359,24 +359,24 @@ LaTeX Warning: Label `tab:example' multiply defined.
 )
 \openout1 = `Cluster.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -431,7 +431,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (/usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring OFF on input line 38.
+Package hyperref Info: Link coloring OFF on input line 40.
  (./Cluster.out) (./Cluster.out)
 \@outlinefile=\write3
 \openout3 = `Cluster.out'.
@@ -439,128 +439,128 @@ Package hyperref Info: Link coloring OFF on input line 38.
 \c@lstlisting=\count316
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 41.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 43.
  (/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 41.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 43.
  (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 10000) in paragraph at lines 50--52
+Underfull \hbox (badness 10000) in paragraph at lines 52--54
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 53--58
+Underfull \hbox (badness 10000) in paragraph at lines 55--60
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 59--64
+Underfull \hbox (badness 10000) in paragraph at lines 61--66
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 65--68
+Underfull \hbox (badness 10000) in paragraph at lines 67--70
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 69--71
+Underfull \hbox (badness 10000) in paragraph at lines 71--73
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 75--83
+Underfull \hbox (badness 10000) in paragraph at lines 77--85
 
  []
 
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 84--88
+Underfull \hbox (badness 10000) in paragraph at lines 86--90
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 106--108
+Underfull \hbox (badness 10000) in paragraph at lines 108--110
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 109--111
+Underfull \hbox (badness 10000) in paragraph at lines 111--113
 
  []
 
 [2] [3]
-Overfull \hbox (23.13614pt too wide) detected at line 158
+Overfull \hbox (23.13614pt too wide) detected at line 160
 []
  []
 
 <../fig/Full connected Variational Inference.png, id=81, 963.6pt x 542.025pt>
 File: ../fig/Full connected Variational Inference.png Graphic file (type png)
 <use ../fig/Full connected Variational Inference.png>
-Package pdftex.def Info: ../fig/Full connected Variational Inference.png  used on input line 166.
+Package pdftex.def Info: ../fig/Full connected Variational Inference.png  used on input line 168.
 (pdftex.def)             Requested size: 241.84843pt x 136.03523pt.
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 172.
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 174.
 [4 <../fig/Full connected Variational Inference.png (PNG copy)>]
 <../fig/ID 3-Digit 8 pred 3 new_image.png, id=101, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 new_image.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 new_image.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 new_image.png  used on input line 201.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 new_image.png  used on input line 203.
 (pdftex.def)             Requested size: 338.58632pt x 253.95184pt.
 <../fig/GANandVAE.png, id=103, 963.6pt x 542.025pt>
 File: ../fig/GANandVAE.png Graphic file (type png)
 <use ../fig/GANandVAE.png>
-Package pdftex.def Info: ../fig/GANandVAE.png  used on input line 209.
+Package pdftex.def Info: ../fig/GANandVAE.png  used on input line 211.
 (pdftex.def)             Requested size: 241.84843pt x 136.03523pt.
  [5 <../fig/ID 3-Digit 8 pred 3 new_image.png>]
 <../fig/2x2kernelstrike2.png, id=127, 642.4pt x 256.96pt>
 File: ../fig/2x2kernelstrike2.png Graphic file (type png)
 <use ../fig/2x2kernelstrike2.png>
-Package pdftex.def Info: ../fig/2x2kernelstrike2.png  used on input line 217.
+Package pdftex.def Info: ../fig/2x2kernelstrike2.png  used on input line 219.
 (pdftex.def)             Requested size: 241.84843pt x 96.74008pt.
  [6 <../fig/GANandVAE.png (PNG copy)> <../fig/2x2kernelstrike2.png>] [7] [8]
 <../fig/ID 3-Digit 8 pred 3 with n=5.png, id=269, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=5.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=5.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=5.png  used on input line 370.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=5.png  used on input line 372.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png, id=270, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png  used on input line 376.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=5-1_1.png  used on input line 378.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=10.png, id=271, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=10.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=10.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=10.png  used on input line 384.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=10.png  used on input line 386.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png, id=272, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png  used on input line 390.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=10-1_1.png  used on input line 392.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=12.png, id=273, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=12.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=12.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=12.png  used on input line 398.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=12.png  used on input line 400.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png, id=274, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png  used on input line 404.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=12-1_1.png  used on input line 406.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=13.png, id=275, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=13.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=13.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=13.png  used on input line 412.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=13.png  used on input line 414.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png, id=276, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png  used on input line 418.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=13-1_1.png  used on input line 420.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
  [9]
 Overfull \vbox (41.58763pt too high) has occurred while \output is active []
@@ -569,42 +569,42 @@ Overfull \vbox (41.58763pt too high) has occurred while \output is active []
 <../fig/ID 3-Digit 8 pred 3 with n=15.png, id=302, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=15.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=15.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=15.png  used on input line 436.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=15.png  used on input line 438.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png, id=303, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png  used on input line 442.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 3 with n=15-1_1.png  used on input line 444.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 8 with n=20.png, id=304, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 8 with n=20.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 8 with n=20.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=20.png  used on input line 450.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=20.png  used on input line 452.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png, id=305, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png  used on input line 456.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=20-1_1.png  used on input line 458.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 8 with n=25.png, id=306, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 8 with n=25.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 8 with n=25.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=25.png  used on input line 464.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=25.png  used on input line 466.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png, id=307, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png  used on input line 470.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=25-1_1.png  used on input line 472.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 8 with n=30.png, id=308, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 8 with n=30.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 8 with n=30.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=30.png  used on input line 478.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=30.png  used on input line 480.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png, id=309, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png  used on input line 484.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 8 with n=30-1_1.png  used on input line 486.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 
 Overfull \vbox (41.18764pt too high) has occurred while \output is active []
@@ -613,120 +613,120 @@ Overfull \vbox (41.18764pt too high) has occurred while \output is active []
 <../fig/ID 1-Digit 8 pred 8 new_image.png, id=323, 462.528pt x 346.896pt>
 File: ../fig/ID 1-Digit 8 pred 8 new_image.png Graphic file (type png)
 <use ../fig/ID 1-Digit 8 pred 8 new_image.png>
-Package pdftex.def Info: ../fig/ID 1-Digit 8 pred 8 new_image.png  used on input line 501.
+Package pdftex.def Info: ../fig/ID 1-Digit 8 pred 8 new_image.png  used on input line 503.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 1-Digit 8 classification n patches = 188.png, id=324, 462.528pt x 346.896pt>
 File: ../fig/ID 1-Digit 8 classification n patches = 188.png Graphic file (type png)
 <use ../fig/ID 1-Digit 8 classification n patches = 188.png>
-Package pdftex.def Info: ../fig/ID 1-Digit 8 classification n patches = 188.png  used on input line 506.
+Package pdftex.def Info: ../fig/ID 1-Digit 8 classification n patches = 188.png  used on input line 508.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 2-Digit 8 pred 8 new_image.png, id=325, 462.528pt x 346.896pt>
 File: ../fig/ID 2-Digit 8 pred 8 new_image.png Graphic file (type png)
 <use ../fig/ID 2-Digit 8 pred 8 new_image.png>
-Package pdftex.def Info: ../fig/ID 2-Digit 8 pred 8 new_image.png  used on input line 513.
+Package pdftex.def Info: ../fig/ID 2-Digit 8 pred 8 new_image.png  used on input line 515.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 2-Digit 8 classification n patches = 189.png, id=326, 462.528pt x 346.896pt>
 File: ../fig/ID 2-Digit 8 classification n patches = 189.png Graphic file (type png)
 <use ../fig/ID 2-Digit 8 classification n patches = 189.png>
-Package pdftex.def Info: ../fig/ID 2-Digit 8 classification n patches = 189.png  used on input line 518.
+Package pdftex.def Info: ../fig/ID 2-Digit 8 classification n patches = 189.png  used on input line 520.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 4-Digit 8 pred 8 new_image.png, id=327, 462.528pt x 346.896pt>
 File: ../fig/ID 4-Digit 8 pred 8 new_image.png Graphic file (type png)
 <use ../fig/ID 4-Digit 8 pred 8 new_image.png>
-Package pdftex.def Info: ../fig/ID 4-Digit 8 pred 8 new_image.png  used on input line 525.
+Package pdftex.def Info: ../fig/ID 4-Digit 8 pred 8 new_image.png  used on input line 527.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 4-Digit 8 classification n patches = 187.png, id=328, 462.528pt x 346.896pt>
 File: ../fig/ID 4-Digit 8 classification n patches = 187.png Graphic file (type png)
 <use ../fig/ID 4-Digit 8 classification n patches = 187.png>
-Package pdftex.def Info: ../fig/ID 4-Digit 8 classification n patches = 187.png  used on input line 530.
+Package pdftex.def Info: ../fig/ID 4-Digit 8 classification n patches = 187.png  used on input line 532.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 5-Digit 8 pred 8 new_image.png, id=329, 462.528pt x 346.896pt>
 File: ../fig/ID 5-Digit 8 pred 8 new_image.png Graphic file (type png)
 <use ../fig/ID 5-Digit 8 pred 8 new_image.png>
-Package pdftex.def Info: ../fig/ID 5-Digit 8 pred 8 new_image.png  used on input line 537.
+Package pdftex.def Info: ../fig/ID 5-Digit 8 pred 8 new_image.png  used on input line 539.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 <../fig/ID 5-Digit 8 classification n patches = 190.png, id=330, 462.528pt x 346.896pt>
 File: ../fig/ID 5-Digit 8 classification n patches = 190.png Graphic file (type png)
 <use ../fig/ID 5-Digit 8 classification n patches = 190.png>
-Package pdftex.def Info: ../fig/ID 5-Digit 8 classification n patches = 190.png  used on input line 542.
+Package pdftex.def Info: ../fig/ID 5-Digit 8 classification n patches = 190.png  used on input line 544.
 (pdftex.def)             Requested size: 217.66211pt x 163.24757pt.
 
 Overfull \vbox (6.25435pt too high) has occurred while \output is active []
 
  [12 <../fig/ID 1-Digit 8 pred 8 new_image.png> <../fig/ID 1-Digit 8 classification n patches = 188.png> <../fig/ID 2-Digit 8 pred 8 new_image.png> <../fig/ID 2-Digit 8 classification n patches = 189.png> <../fig/ID 4-Digit 8 pred 8 new_image.png> <../fig/ID 4-Digit 8 classification n patches = 187.png> <../fig/ID 5-Digit 8 pred 8 new_image.png> <../fig/ID 5-Digit 8 classification n patches = 190.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 554--555
+Underfull \hbox (badness 10000) in paragraph at lines 556--557
 
  []
 
 <../fig/GAN-VI-model-v2.png, id=346, 1278.57675pt x 711.25725pt>
 File: ../fig/GAN-VI-model-v2.png Graphic file (type png)
 <use ../fig/GAN-VI-model-v2.png>
-Package pdftex.def Info: ../fig/GAN-VI-model-v2.png  used on input line 567.
+Package pdftex.def Info: ../fig/GAN-VI-model-v2.png  used on input line 569.
 (pdftex.def)             Requested size: 386.95897pt x 215.25636pt.
 
-Overfull \hbox (23.13614pt too wide) detected at line 579
+Overfull \hbox (23.13614pt too wide) detected at line 581
 []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 581--582
+Underfull \hbox (badness 10000) in paragraph at lines 583--584
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 583--585
+Underfull \hbox (badness 10000) in paragraph at lines 585--587
 
  []
 
 [13 <../fig/GAN-VI-model-v2.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 587--588
+Underfull \hbox (badness 10000) in paragraph at lines 589--590
 
  []
 
 <../fig/ID_7687_Original_Reconstructed_Patch.png, id=358, 1084.05pt x 1806.75pt>
 File: ../fig/ID_7687_Original_Reconstructed_Patch.png Graphic file (type png)
 <use ../fig/ID_7687_Original_Reconstructed_Patch.png>
-Package pdftex.def Info: ../fig/ID_7687_Original_Reconstructed_Patch.png  used on input line 591.
+Package pdftex.def Info: ../fig/ID_7687_Original_Reconstructed_Patch.png  used on input line 593.
 (pdftex.def)             Requested size: 386.95897pt x 644.91576pt.
 [14]
 <../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png, id=364, 1084.05pt x 1806.75pt>
 File: ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png Graphic file (type png)
 <use ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png>
-Package pdftex.def Info: ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png  used on input line 598.
+Package pdftex.def Info: ../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png  used on input line 600.
 (pdftex.def)             Requested size: 386.95897pt x 644.91576pt.
  [15 <../fig/ID_7687_Original_Reconstructed_Patch.png>]
 <../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png, id=371, 1084.05pt x 1806.75pt>
 File: ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png Graphic file (type png)
 <use ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png>
-Package pdftex.def Info: ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png  used on input line 605.
+Package pdftex.def Info: ../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png  used on input line 607.
 (pdftex.def)             Requested size: 386.95897pt x 644.91576pt.
  [16 <../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png>]
 <../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png, id=378, 1084.05pt x 1806.75pt>
 File: ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png Graphic file (type png)
 <use ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png>
-Package pdftex.def Info: ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png  used on input line 612.
+Package pdftex.def Info: ../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png  used on input line 614.
 (pdftex.def)             Requested size: 386.95897pt x 644.91576pt.
  [17 <../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png>]
 <../fig-mask-collection/t-SNE_vs_UMAP.png, id=385, 867.24pt x 433.62pt>
 File: ../fig-mask-collection/t-SNE_vs_UMAP.png Graphic file (type png)
 <use ../fig-mask-collection/t-SNE_vs_UMAP.png>
-Package pdftex.def Info: ../fig-mask-collection/t-SNE_vs_UMAP.png  used on input line 620.
+Package pdftex.def Info: ../fig-mask-collection/t-SNE_vs_UMAP.png  used on input line 622.
 (pdftex.def)             Requested size: 483.69687pt x 241.85292pt.
  [18 <../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png>]
 <../fig/ID 3-Digit 8 pred 5.png, id=392, 462.528pt x 346.896pt>
 File: ../fig/ID 3-Digit 8 pred 5.png Graphic file (type png)
 <use ../fig/ID 3-Digit 8 pred 5.png>
-Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 5.png  used on input line 630.
+Package pdftex.def Info: ../fig/ID 3-Digit 8 pred 5.png  used on input line 632.
 (pdftex.def)             Requested size: 338.58632pt x 253.95184pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 636--637
+Underfull \hbox (badness 10000) in paragraph at lines 638--639
 
  []
 
 <../fig/Sharingan-evo.png, id=393, 1284.8pt x 2055.68pt>
 File: ../fig/Sharingan-evo.png Graphic file (type png)
 <use ../fig/Sharingan-evo.png>
-Package pdftex.def Info: ../fig/Sharingan-evo.png  used on input line 640.
+Package pdftex.def Info: ../fig/Sharingan-evo.png  used on input line 642.
 (pdftex.def)             Requested size: 338.58632pt x 541.74136pt.
 [19 <../fig-mask-collection/t-SNE_vs_UMAP.png> <../fig/ID 3-Digit 8 pred 5.png>] [20 <../fig/Sharingan-evo.png>] (./Cluster.bbl) [21] (./Cluster.aux)
  ***********
@@ -741,15 +741,15 @@ Package rerunfilecheck Info: File `Cluster.out' has not changed.
 (rerunfilecheck)             Checksum: 20C372B032409423086BAC4C1EC13101;1192.
  ) 
 Here is how much of TeX's memory you used:
- 15283 strings out of 476076
- 239439 string characters out of 5793775
+ 15281 strings out of 476076
+ 239423 string characters out of 5793775
  2295187 words of memory out of 5000000
- 36999 multiletter control sequences out of 15000+600000
+ 36997 multiletter control sequences out of 15000+600000
  567816 words of font info for 74 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,16n,79p,500b,2169s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Cluster.pdf (21 pages, 1937507 bytes).
+Output written on Cluster.pdf (21 pages, 1937284 bytes).
 PDF statistics:
  541 PDF objects out of 1000 (max. 8388607)
  408 compressed objects within 5 object streams

@@ -1,51 +1,51 @@
 This is BibTeX, Version 0.99d (TeX Live 2024/Arch Linux)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: Cluster.aux
-The style file: unsrt.bst
+The style file: ieeetr.bst
 Database file #1: Zotero.bib
 Warning--empty journal in Mescheder
 Warning--empty year in Mescheder
 Warning--empty journal in Su
 Warning--empty year in Su
 You've used 9 entries,
-            1791 wiz_defined-function locations,
-            503 strings with 5242 characters,
-and the built_in function-call counts, 1726 in all, are:
-= -- 131
+            1876 wiz_defined-function locations,
+            535 strings with 5194 characters,
+and the built_in function-call counts, 1887 in all, are:
+= -- 160
 > -- 104
 < -- 0
 + -- 38
 - -- 29
-* -- 120
-:= -- 289
-add.period$ -- 24
+* -- 142
+:= -- 286
+add.period$ -- 10
 call.type$ -- 9
 change.case$ -- 7
 chr.to.int$ -- 0
 cite$ -- 13
-duplicate$ -- 74
-empty$ -- 170
+duplicate$ -- 85
+empty$ -- 187
 format.name$ -- 29
-if$ -- 373
+if$ -- 443
 int.to.chr$ -- 0
 int.to.str$ -- 9
 missing$ -- 10
-newline$ -- 44
+newline$ -- 33
 num.names$ -- 9
-pop$ -- 43
+pop$ -- 45
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 27
+skip$ -- 47
 stack$ -- 0
-substring$ -- 50
-swap$ -- 7
+substring$ -- 64
+swap$ -- 21
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 4
-while$ -- 13
+while$ -- 15
 width$ -- 10
-write$ -- 89
+write$ -- 77
 (There were 4 warnings)

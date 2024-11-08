@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex Cluster"] 1730859748.82184 "Cluster.aux" "Cluster.bbl" "Cluster" 1730867554.38713 0
+["bibtex Cluster"] 1730899980.58271 "Cluster.aux" "Cluster.bbl" "Cluster" 1730899984.95747 0
   "/home/jack/texmf/bibtex/bib/Zotero.bib" 1730647569.46767 166548 4f8d99759cc19edf7572a461760da70e ""
-  "/usr/share/texmf-dist/bibtex/bst/base/unsrt.bst" 1727349926 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "Cluster.aux" 1730867553.90059 5908 e97c507cb8b92f885d0d79c1c9ceb394 "pdflatex"
+  "/usr/share/texmf-dist/bibtex/bst/base/ieeetr.bst" 1727349926 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
+  "Cluster.aux" 1730899984.73204 5909 0600d0dccd7590d7677fd252143cfdd0 "pdflatex"
   (generated)
   "Cluster.bbl"
   "Cluster.blg"
   (rewritten before read)
-["pdflatex"] 1730867546.5522 "Cluster.tex" "Cluster.pdf" "Cluster" 1730867554.39108 0
+["pdflatex"] 1730899980.71762 "Cluster.tex" "Cluster.pdf" "Cluster" 1730899984.96127 0
   "../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png" 1730823158.00674 225003 5d759405fc8a50bccc03e1f07f1025dc ""
   "../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png" 1730823158.00674 218297 e3e512e159c0f8604cb7705f38444a21 ""
   "../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png" 1730823158.01674 221713 54706507484e82e9a6bed6bd05ce1b27 ""
@@ -157,10 +157,10 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1727349926 41588 b43d3e860a4f94167ee1e725ff526a72 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1730851111.75145 5307976 288e05e411c5c3a13bfa041a92d5acc8 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1730851098 7112992 47ef968c70beaff320933c213f892e75 ""
-  "Cluster.aux" 1730867553.90059 5908 e97c507cb8b92f885d0d79c1c9ceb394 "pdflatex"
-  "Cluster.bbl" 1730859749.0309 1986 a744933a935766cc7e4599fe9cbe0bfb "bibtex Cluster"
-  "Cluster.out" 1730867553.90059 1192 20c372b032409423086bac4c1ec13101 "pdflatex"
-  "Cluster.tex" 1730867545.24059 22941 b3265189a2aa19159edcb3a6a4757289 ""
+  "Cluster.aux" 1730899984.73204 5909 0600d0dccd7590d7677fd252143cfdd0 "pdflatex"
+  "Cluster.bbl" 1730899980.70204 1775 174db781caff20dc5dac952bc8de5f29 "bibtex Cluster"
+  "Cluster.out" 1730899984.73204 1192 20c372b032409423086bac4c1ec13101 "pdflatex"
+  "Cluster.tex" 1730899974.46204 23028 4b4779b66c45c63f07f824152d65bb6f ""
   (generated)
   "Cluster.aux"
   "Cluster.log"

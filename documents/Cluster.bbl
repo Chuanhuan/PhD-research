@@ -1,44 +1,33 @@
 \begin{thebibliography}{1}
 
 \bibitem{Athalye2018}
-Anish Athalye, Logan Engstrom, Andrew Ilyas, and Kevin Kwok.
-\newblock Synthesizing {{Robust Adversarial Examples}}, June 2018.
+A.~Athalye, L.~Engstrom, A.~Ilyas, and K.~Kwok, ``Synthesizing {{Robust Adversarial Examples}},'' June 2018.
 
 \bibitem{Moosavi-Dezfooli2017}
-Seyed-Mohsen {Moosavi-Dezfooli}, Alhussein Fawzi, Omar Fawzi, and Pascal Frossard.
-\newblock Universal adversarial perturbations, March 2017.
+S.-M. {Moosavi-Dezfooli}, A.~Fawzi, O.~Fawzi, and P.~Frossard, ``Universal adversarial perturbations,'' Mar. 2017.
 
 \bibitem{Shalev-Shwartz2014}
-Shai {Shalev-Shwartz} and Shai {Ben-David}.
-\newblock {\em Understanding Machine Learning: From Theory to Algorithms}.
-\newblock Cambridge University Press, New York, NY, USA, 2014.
+S.~{Shalev-Shwartz} and S.~{Ben-David}, {\em Understanding Machine Learning: From Theory to Algorithms}.
+\newblock New York, NY, USA: Cambridge University Press, 2014.
 
 \bibitem{Devroye1996}
-Luc Devroye, L{\'a}szl{\'o} Gy{\"o}rfi, and G{\'a}bor Lugosi.
-\newblock {\em A Probabilistic Theory of Pattern Recognition}.
-\newblock Springer, New York, 1996.
+L.~Devroye, L.~Gy{\"o}rfi, and G.~Lugosi, {\em A Probabilistic Theory of Pattern Recognition}.
+\newblock New York: Springer, 1996.
 
 \bibitem{Hastie2017}
-Trevor Hastie, Robert Tibshirani, and Jerome~H. Friedman.
-\newblock {\em The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
-\newblock Springer Series in Statistics. Springer, New York, NY, second edition, corrected at 12th printing 2017 edition, 2017.
+T.~Hastie, R.~Tibshirani, and J.~H. Friedman, {\em The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
+\newblock Springer Series in Statistics, New York, NY: Springer, second edition, corrected at 12th printing 2017~ed., 2017.
 
 \bibitem{Selvaraju2020}
-Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, and Dhruv Batra.
-\newblock Grad-{{CAM}}: {{Visual Explanations}} from {{Deep Networks}} via {{Gradient-based Localization}}.
-\newblock {\em International Journal of Computer Vision}, 128(2):336--359, February 2020.
+R.~R. Selvaraju, M.~Cogswell, A.~Das, R.~Vedantam, D.~Parikh, and D.~Batra, ``Grad-{{CAM}}: {{Visual Explanations}} from {{Deep Networks}} via {{Gradient-based Localization}},'' {\em International Journal of Computer Vision}, vol.~128, pp.~336--359, Feb. 2020.
 
 \bibitem{Blei2017}
-David~M. Blei, Alp Kucukelbir, and Jon~D. McAuliffe.
-\newblock Variational {{Inference}}: {{A Review}} for {{Statisticians}}.
-\newblock {\em Journal of the American Statistical Association}, 112(518):859--877, April 2017.
+D.~M. Blei, A.~Kucukelbir, and J.~D. McAuliffe, ``Variational {{Inference}}: {{A Review}} for {{Statisticians}},'' {\em Journal of the American Statistical Association}, vol.~112, pp.~859--877, Apr. 2017.
 
 \bibitem{Mescheder}
-Lars Mescheder, Sebastian Nowozin, and Andreas Geiger.
-\newblock Adversarial {{Variational Bayes}}: {{Unifying Variational Autoencoders}} and {{Generative Adversarial Networks}}.
+L.~Mescheder, S.~Nowozin, and A.~Geiger, ``Adversarial {{Variational Bayes}}: {{Unifying Variational Autoencoders}} and {{Generative Adversarial Networks}},''
 
 \bibitem{Su}
-Jianlin Su.
-\newblock Variational {{Inference}}: {{A Unified Framework}} of {{Generative Models}} and {{Some Revelations}}.
+J.~Su, ``Variational {{Inference}}: {{A Unified Framework}} of {{Generative Models}} and {{Some Revelations}},''
 
 \end{thebibliography}
