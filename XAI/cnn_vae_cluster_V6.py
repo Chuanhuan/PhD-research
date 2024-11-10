@@ -144,6 +144,18 @@ def loss_function(x, mu, log_var, phi, x_recon):
     return -(t1 + t2 + t3 + t4)
 
 
+def loss_function_2(x, x_recon, mu, log_var):
+    # NOTE: original loss
+    reproduction_loss = F.mse_loss(x_recon, x)
+
+    # NOTE: original KLD
+    KLD = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp())
+
+    # KLD = -0.5 * torch.sum((1 + log_var - mu.pow(2) - log_var.exp()) * phi)
+
+    return reproduction_loss + KLD
+
+
 # %%
 # SECTION: Training
 
@@ -157,8 +169,8 @@ predicted = true_y
 channels_img = 1
 latent_dim = 10
 
-G = Generator(latent_dim, channels_img).to(device)
-L = Learner(channels_img, latent_dim).to(device)
+G = Generator(latent_dim, channels_img, min_val, max_val).to(device)
+L = Learner(channels_img, latent_dim, min_val, max_val).to(device)
 
 opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
 opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
@@ -170,27 +182,27 @@ for epoch in range(epochs + 1):
         z, mu, log_var, phi = L(x)
         x_recon = G(z)
 
-        # train generator
+        # train learner Get the index of the max log-probability
         model.eval()
-        opt_G.zero_grad()
-        with torch.no_grad():
-            critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
-        t1 = -torch.sum(torch.log(critic_fake + 1e-5))
-        t2 = loss_function(x, mu, log_var, phi, x_recon)
-        loss_G = t1 + t2
-        loss_G.backward(retain_graph=True)  # Retain graph for t3
-        opt_G.step()
-
+        opt_L.zero_grad()
+        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+        loss_L = -(torch.mean(critic_fake))
+        loss_L.backward()
+        opt_L.step()
     z, mu, log_var, phi = L(x)
     x_recon = G(z)
 
-    # train learner Get the index of the max log-probability
+    # train generator
     model.eval()
-    opt_L.zero_grad()
-    critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
-    loss_L = -(torch.mean(critic_fake))
-    loss_L.backward()
-    opt_L.step()
+    opt_G.zero_grad()
+    with torch.no_grad():
+        critic_fake = F.softmax(model(x_recon), dim=1)[0][predicted]
+    t1 = -torch.sum(torch.log(critic_fake + 1e-5))
+    # t2 = loss_function(x, mu, log_var, phi, x_recon)
+    t2 = loss_function_2(x, x_recon, mu * phi, log_var * phi)
+    loss_G = t1 + t2
+    loss_G.backward(retain_graph=True)  # Retain graph for t3
+    opt_G.step()
 
     if epoch % 100 == 0:
         print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
@@ -202,6 +214,7 @@ print(f"x_recon.max(): {x_recon.max()}, x_recon.min(): {x_recon.min()}")
 print(f"mu.max(): {mu.max()}, mu.min(): {mu.min()}")
 print(f"log_var.max(): {log_var.max()}, log_var.min(): {log_var.min()}")
 print(f"prob: {F.softmax(model(x_recon.view(1, 1, 28, 28)), dim=1)}")
+print(f"phi: {phi}")
 
 sums = []
 
@@ -229,6 +242,32 @@ p_interpolate = nn.Upsample(size=(28, 28), mode="nearest")(
     p_interpolate
 )  # Apply upsampling
 plot_patch_image(img, model, true_y, img_id, p_interpolate, device)
+
+
+# %%
+# SECTION: choice variance  and plot the reconstructed image
+
+
+log_var_interpolated = F.interpolate(log_var.exp(), size=(28, 28), mode="nearest")
+
+# Convert tensors to numpy arrays for plotting
+log_var_np = log_var_interpolated.squeeze().detach().cpu().numpy()
+original_image_np = img.squeeze().detach().cpu().numpy()
+
+# Plotting
+fig, axes = plt.subplots(5, 2, figsize=(10, 20))
+
+for i in range(10):
+    ax = axes[i // 2, i % 2]
+    ax.imshow(original_image_np, cmap="gray", alpha=0.5)
+    ax.imshow(log_var_np[i], cmap="hot", alpha=0.5)
+    ax.set_title(f"Channel {i+1}")
+    plt.colorbar(ax.imshow(log_var_np[i], cmap="hot", alpha=0.5), ax=ax)
+    ax.axis("off")
+
+plt.tight_layout()
+plt.savefig("log_var_interpolated.png")
+plt.clf()
 
 # %%
 # SECTION: train testloader
@@ -324,8 +363,8 @@ predicted = true_y
 channels_img = 1
 latent_dim = 10
 
-G = Generator(latent_dim, channels_img).to(device)
-L = Learner(channels_img, latent_dim).to(device)
+G = Generator(latent_dim, channels_img, min_val, max_val).to(device)
+L = Learner(channels_img, latent_dim, min_val, max_val).to(device)
 
 opt_G = torch.optim.Adam(G.parameters(), lr=0.005)
 opt_L = torch.optim.Adam(L.parameters(), lr=0.005)
@@ -351,6 +390,7 @@ for batch_idx, (data, target) in enumerate(testloader):
             loss_L.backward()
             opt_L.step()
 
+        z_0 = z
         z, mu, log_var, phi = L(x)
         x_recon = G(z)
 
@@ -364,7 +404,9 @@ for batch_idx, (data, target) in enumerate(testloader):
 
         t1 = -torch.sum(torch.log(critic_fake + 1e-5))
         t2 = loss_function(x, mu, log_var, phi, x_recon)
-        loss_G = t1 + t2
+        t3 = (z_0 - z) ** 2
+        t3 = torch.mean(t3)
+        loss_G = t1 + t2 + t3
         loss_G.backward(retain_graph=True)  # Retain graph for t3
         opt_G.step()
         # print(f'mu.shape: {mu.shape}, log_var.shape: {log_var.shape}, phi.shape: {phi.shape}')
@@ -388,12 +430,26 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 import umap
 
-# Assuming phi is a tensor of shape (batch_size, channels, height, width)
+
+# x = img.clone().to(device)
+# x = x.view(1, 1, 28, 28)
+z, mu, log_var, phi = L(x)
+# Assuming phi is a tensor of shape (1000, 10, 14, 14)
 phi_np = phi.cpu().detach().numpy()  # Convert to numpy array if it's a tensor
 batch_size, channels, height, width = phi_np.shape
 
 # Reshape phi to (batch_size, channels * height * width)
 phi_flat = phi_np.reshape(batch_size, -1)
+
+# Assuming phi is a tensor of shape (1000, 10, 14, 14)
+phi_np = phi.cpu().detach().numpy()  # Convert to numpy array if it's a tensor
+batch_size, channels, height, width = phi_np.shape
+
+# Repeat the single sample to create a batch of size 1000
+phi_np_repeated = np.repeat(phi_np, 1000, axis=0)
+
+# Reshape phi to (batch_size, channels * height * width)
+phi_flat = phi_np_repeated.reshape(1000, -1)
 
 # Apply t-SNE
 tsne = TSNE(n_components=2, random_state=42)
@@ -403,23 +459,94 @@ phi_tsne = tsne.fit_transform(phi_flat)
 umap_reducer = umap.UMAP(n_components=2, random_state=42)
 phi_umap = umap_reducer.fit_transform(phi_flat)
 
+# Create a figure with subplots for t-SNE and UMAP
+fig, axes = plt.subplots(1, 2, figsize=(15, 7))
+
+# Define a color map
+cmap = plt.get_cmap("tab10")
+
 # Plot t-SNE results
-plt.figure(figsize=(12, 6))
-plt.subplot(1, 2, 1)
-plt.scatter(phi_tsne[:, 0], phi_tsne[:, 1], c="blue", label="t-SNE")
-plt.title("t-SNE of phi")
-plt.xlabel("Component 1")
-plt.ylabel("Component 2")
-plt.legend()
+for i in range(10):
+    labels = phi_np[:, i, :, :].reshape(batch_size, -1).mean(axis=1)
+    mask = phi_np[:, i, :, :].reshape(batch_size, -1).mean(axis=1) > 0.05
+    colors = np.where(mask, "red", "blue")
+    axes[0].scatter(
+        phi_tsne[:, 0], phi_tsne[:, 1], c=colors, label=f"Dimension {i}", alpha=0.6
+    )
+axes[0].set_title("t-SNE of phi")
+axes[0].set_xlabel("Component 1")
+axes[0].set_ylabel("Component 2")
+axes[0].legend()
 
 # Plot UMAP results
-plt.subplot(1, 2, 2)
-plt.scatter(phi_umap[:, 0], phi_umap[:, 1], c="red", label="UMAP")
-plt.title("UMAP of phi")
-plt.xlabel("Component 1")
-plt.ylabel("Component 2")
-plt.legend()
+for i in range(10):
+    labels = phi_np[:, i, :, :].reshape(batch_size, -1).mean(axis=1)
+    mask = phi_np[:, i, :, :].reshape(batch_size, -1).mean(axis=1) > 0.5
+    colors = np.where(mask, "red", "blue")
+    axes[1].scatter(
+        phi_umap[:, 0], phi_umap[:, 1], c=colors, label=f"Dimension {i}", alpha=0.6
+    )
+axes[1].set_title("UMAP of phi")
+axes[1].set_xlabel("Component 1")
+axes[1].set_ylabel("Component 2")
+axes[1].legend()
 
 plt.tight_layout()
-plt.savefig("t-SNE_vs_UMAP.png")
+plt.savefig("t-SNE_vs_UMAP_per_dimension.png")
 plt.show()
+("UMAP of phi")
+axes[1].set_xlabel("Component 1")
+axes[1].set_ylabel("Component 2")
+axes[1].legend()
+
+plt.tight_layout()
+plt.savefig("t-SNE_vs_UMAP_per_dimension.png")
+plt.show()
+
+
+# %%
+
+
+# Create a figure with subplots for t-SNE and UMAP
+fig, axes = plt.subplots(1, 2, figsize=(15, 7))
+
+# Define a color map
+cmap = plt.get_cmap("tab10")
+
+# Plot t-SNE results
+# for i in range(channels):
+for i in range(3):
+    labels = phi_np[0, i, :, :].reshape(-1)
+    num_values_above_threshold = np.sum(labels > 0.5)
+    axes[0].scatter(
+        phi_tsne[:, 0],
+        phi_tsne[:, 1],
+        c=cmap(i),
+        label=f"Dimension {i} (>0.5: {num_values_above_threshold})",
+        alpha=0.6,
+    )
+axes[0].set_title("t-SNE of phi")
+axes[0].set_xlabel("Component 1")
+axes[0].set_ylabel("Component 2")
+axes[0].legend()
+
+# Plot UMAP results
+# for i in range(channels):
+for i in range(5):
+    labels = phi_np[0, i, :, :].reshape(-1)
+    num_values_above_threshold = np.sum(labels > 0.5)
+    axes[1].scatter(
+        phi_umap[:, 0],
+        phi_umap[:, 1],
+        c=cmap(i),
+        label=f"Dimension {i} (>0.5: {num_values_above_threshold})",
+        alpha=0.6,
+    )
+axes[1].set_title("UMAP of phi")
+axes[1].set_xlabel("Component 1")
+axes[1].set_ylabel("Component 2")
+axes[1].legend()
+
+plt.tight_layout()
+plt.savefig("t-SNE_vs_UMAP_per_dimension.png")
+plt.clf()

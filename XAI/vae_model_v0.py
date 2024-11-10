@@ -88,15 +88,11 @@ class Learner(nn.Module):
             nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
             nn.InstanceNorm2d(self.k, affine=True),
             nn.Tanh(),
-            # nn.LeakyReLU(0.2),
         )
         self.c_layer = nn.Sequential(
             nn.Conv2d(channels_img, self.k, kernel_size=2, stride=2),
             nn.InstanceNorm2d(self.k, affine=True),
             nn.Softmax(dim=1),
-            nn.AdaptiveAvgPool2d(
-                (1, 1)
-            ),  # Add this layer to change the output size to [1, 10, 1, 1]
         )
 
     def reparameterization(self, mu, log_var, phi):
