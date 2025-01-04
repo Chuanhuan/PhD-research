@@ -1,12 +1,11 @@
-# %%
 # SECTION: Define a CNN model for MNIST dataset and load the model weights
 
 import os
 import sys
 
 # Add the directory containing helper.py to the Python path
-sys.path.append(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
-
+# sys.path.append(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
+os.chdir(os.path.abspath("./XAI"))
 # Explicitly import the required functions from helper
 from helper import *
 
@@ -22,15 +21,17 @@ import matplotlib.pyplot as plt
 import random
 import torch.nn.functional as F
 
+from vae_model import *
+
 # Get the directory of the current file
 # current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Change the current working directory to the file's directory
 # os.chdir(current_file_directory)
 
-# %%
+# |%%--%%| <A0HJs55ICL|aOudbR11fI>
+
 # SECTION: Import other necessary modules
-from vae_model import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Net().to(device)
@@ -67,6 +68,10 @@ testloader_8 = DataLoader(testset_8, batch_size=32, shuffle=True)
 # Create the dataset for digit 9
 testset_9 = MNIST_9(testset)
 testloader_9 = DataLoader(testset_9, batch_size=32, shuffle=True)
+
+
+# |%%--%%| <aOudbR11fI|AscxxvLuFy>
+
 """## Load CNN Weights"""
 
 # save the mode weights in .pth format (99.25% accuracy
@@ -75,7 +80,7 @@ testloader_9 = DataLoader(testset_9, batch_size=32, shuffle=True)
 # NOTE: load the model weights
 
 
-model.load_state_dict(torch.load("./XAI/CNN_MNSIT.pth", weights_only=True))
+model.load_state_dict(torch.load("./CNN_MNSIT.pth", weights_only=True))
 # Set the model to evaluation mode
 model.eval()
 
@@ -111,11 +116,11 @@ img_cpu = img.cpu().numpy()
 plt.imshow(img_cpu, cmap="gray")
 plt.savefig(f"ID {img_id}-Digit {input[1]} original_image.png")
 print(f"ID: {img_id}, True y = {input[1]}, probability: {prob:.5f}")
-# plt.show()
+plt.show()
 plt.clf()
 
 
-# %%
+# |%%--%%| <AscxxvLuFy|EWF7msubuw>
 
 
 def loss_function(x, mu, log_var, phi, x_recon):
@@ -206,6 +211,16 @@ for epoch in range(epochs + 1):
 
     if epoch % 100 == 0:
         print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
+
+
+# |%%--%%| <EWF7msubuw|fFhjaEm19i>
+# %%
+
+
+# %%
+
+
+# %%
 
 
 # %%
