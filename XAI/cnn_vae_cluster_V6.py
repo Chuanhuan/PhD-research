@@ -120,7 +120,7 @@ plt.show()
 plt.clf()
 
 
-# |%%--%%| <AscxxvLuFy|EWF7msubuw>
+# |%%--%%| <AscxxvLuFy|sxJgHvqiBP>
 
 
 def loss_function(x, mu, log_var, phi, x_recon):
@@ -159,6 +159,9 @@ def loss_function_2(x, x_recon, mu, log_var):
     # KLD = -0.5 * torch.sum((1 + log_var - mu.pow(2) - log_var.exp()) * phi)
 
     return reproduction_loss + KLD
+
+
+# |%%--%%| <sxJgHvqiBP|A9EWgSfwGj>
 
 
 # %%
@@ -211,6 +214,9 @@ for epoch in range(epochs + 1):
 
     if epoch % 100 == 0:
         print(f"epoch: {epoch}, loss_L: {loss_L}, loss_G: {loss_G}")
+
+
+# |%%--%%| <A9EWgSfwGj|EWF7msubuw>
 
 
 # |%%--%%| <EWF7msubuw|fFhjaEm19i>
