@@ -46,8 +46,9 @@ def ifft(X):
 
 # Example usage:
 # Create a sample signal of 8 points
-x = np.random.random(8)  # Input signal (real values)
-x_fft = fft(x)  # 
+# x = np.random.random(8)  # Input signal (real values)
+x = np.array([1, 2, 3, 4, 5, 6, 0, 0])
+x_fft = fft(x)  #
 x_ifft = ifft(x_fft)  # IFFT (reconstructed signal)
 
 print("Input signal:", x)
