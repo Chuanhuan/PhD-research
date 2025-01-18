@@ -292,7 +292,50 @@ for i in range(2000):
         plt.show()
         plt.clf()
 
-# |%%--%%| <SI0zhI7YHo|UojAbttNC4>
+#|%%--%%| <SI0zhI7YHo|sZQNDDuS8n>
+
+input_height = 28
+input_width = 28
+
+patch_model = Patch_Model(1, input_height, input_width).to(device)
+optimizer_patch = torch.optim.Adam(patch_model.parameters(), lr=1e-4)
+
+model.eval()
+for epoch in range(10):  # Number of epochs
+    for batch_idx, (data, target) in enumerate(trainloader):
+        data = data.to(device)
+        batch_size = data.size(0)
+        w = patch_model(data)
+        wx = w * data
+        model.zero_grad()
+        y0 = model(data)
+        y1 = model(wx)
+        loss = F.mse_loss(y0, y1) + w.norm(1) + torch.sum(w)
+        loss.backward()
+        optimizer_patch.step()
+
+        if batch_idx % 100 == 0:  # Show every 100 batches
+            print(f"Epoch: {epoch}, Batch: {batch_idx}, Loss: {loss.item()}")
+
+            # Visualize wx image and w points
+            wx_image = wx[0].reshape(28, 28).cpu().detach().numpy()
+            w_image = w[0].reshape(28, 28).cpu().detach().numpy()
+
+            plt.imshow(wx_image, cmap="gray")
+            plt.title(f"Epoch {epoch}, Batch {batch_idx}")
+
+            # Plot w points with different colors
+            y_coords, x_coords = np.where(w_image > 0)  # Get coordinates of positive weights
+            colors = w_image[y_coords, x_coords]  # Use weights as colors
+
+            plt.scatter(x_coords, y_coords, c=colors, cmap="viridis", edgecolor="red")
+            plt.colorbar()  # Add a color bar to show the weight values
+            plt.savefig(f"w_image_iteration_{batch_idx}.png")
+            plt.show()
+            plt.clf()
+
+
+# |%%--%%| <sZQNDDuS8n|UojAbttNC4>
 
 
 # |%%--%%| <UojAbttNC4|QSLOS9OOub>
@@ -306,7 +349,7 @@ optimizer_patch = torch.optim.Adam(patch_model.parameters(), lr=1e-4)
 
 model.eval()
 # Training loop
-num_epochs = 5
+num_epochs = 50
 for epoch in range(num_epochs):
     VAE_cluster.train()
     train_loss = 0
@@ -335,7 +378,8 @@ for epoch in range(num_epochs):
             model.zero_grad()
             y0 = model(X)
             y1 = model(wx)
-            loss_patch = F.mse_loss(y0, y1) + w.norm(1) + torch.sum(w)
+            # loss_patch = F.mse_loss(y0, y1) + w.norm(1) + torch.sum(w)
+            loss_patch = F.mse_loss(y0, y1) + w.norm(1) 
             loss_patch.backward(retain_graph=True)
             optimizer_patch.step()
 
