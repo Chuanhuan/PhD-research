@@ -1,3 +1,4 @@
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -5,6 +6,9 @@ from torch.utils.data import DataLoader, TensorDataset
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
 import os
+
+
+#|%%--%%| <XkM6XPd3Wp|6pO89jqATn>
 
 # Hyperparameters
 batch_size = 100
@@ -27,6 +31,10 @@ test_dataset = datasets.MNIST(
 
 train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
+
+
+
+#|%%--%%| <6pO89jqATn|nqqFegd7gL>
 
 
 # Encoder
@@ -103,6 +111,7 @@ class Classifier(nn.Module):
 
 
 # Gaussian Layer
+# NOTE:q(z|y) shape batch_size x num_classes x latent_dim
 class GaussianLayer(nn.Module):
     def __init__(self, num_classes, latent_dim):
         super(GaussianLayer, self).__init__()
@@ -110,6 +119,8 @@ class GaussianLayer(nn.Module):
 
     def forward(self, z):
         z = z.unsqueeze(1)
+        # print('GaussianLayer:')
+        # print(z.shape, self.means.shape)
         return z - self.means.unsqueeze(0)
 
 
@@ -133,11 +144,43 @@ class VAE(nn.Module):
 
 # Loss Function
 def vae_loss(x, x_recon, z_mean, z_log_var, z_prior_mean, y):
-    recon_loss = torch.mean((x - x_recon) ** 2)
-    kl_loss = -0.5 * torch.sum(1 + z_log_var - z_mean.pow(2) - z_log_var.exp())
-    cat_loss = torch.mean(y * torch.log(y + 1e-8))
+    # Reconstruction Loss
+    recon_loss = torch.mean((x - x_recon) ** 2, axis=(1,2,3))
+    # print(recon_loss.shape)
+    recon_loss = recon_loss.sum()
+
+    # KL Divergence for the latent space
+    z_mean = z_mean.unsqueeze(1)  # Shape (batch_size, 1, latent_dim)
+    z_log_var = z_log_var.unsqueeze(1)  # Shape (batch_size, 1, latent_dim)
+    # kl_divergence = -0.5 * torch.sum(
+    #     1 + z_log_var_expanded - z_prior_mean.pow(2) - z_log_var_expanded.exp(),
+    #     dim=-1
+    # )
+    # kl_loss = torch.mean(torch.sum(y * kl_divergence, dim=1))
+      # KL Loss
+    # print(z_log_var.shape, z_prior_mean.shape)
+    kl_loss = -0.5 * (z_log_var - z_prior_mean.pow(2))  # Shape: (batch_size, num_classes, latent_dim)
+    # print('kl_loss:')
+    # print(kl_loss.shape, y.shape, kl_loss.sum(dim=-1).unsqueeze(-1).shape,y.unsqueeze(-1).shape)
+    # print(torch.bmm(y.unsqueeze(-1), kl_loss.sum(dim=-1).unsqueeze(1)).shape)
+    # kl_loss = torch.bmm(y.unsqueeze(-1), kl_loss.sum(dim=-1).unsqueeze(1)).mean() # shape batch_size x num_classes
+    
+    kl_loss = torch.mean(y * kl_loss.sum(dim=-1),axis=1)
+    # print(kl_loss.shape)
+    kl_loss = kl_loss.sum()
+
+    # Category Loss (Entropy Regularization)
+    cat_loss = torch.mean(y * torch.log(y + 1e-8), axis=1)
+    # print(cat_loss.shape)
+    cat_loss = cat_loss.sum()
+
+    # Weighted total loss
     total_loss = lamb * recon_loss + kl_loss + cat_loss
     return total_loss
+
+lamb =2.5
+
+#|%%--%%| <nqqFegd7gL|wYktO9pGCY>
 
 
 # Initialize Model
@@ -152,32 +195,26 @@ optimizer = optim.Adam(vae.parameters(), lr=1e-3)
 
 
 # Training Loop
-def train():
-    vae.train()
-    for epoch in range(epochs):
-        for x, _ in train_loader:
-            x = x.to(device)
-            x_recon, z_mean, z_log_var, z_prior_mean, y = vae(x)
-            loss = vae_loss(x, x_recon, z_mean, z_log_var, z_prior_mean, y)
+vae.train()
+for epoch in range(epochs):
+    for x, _ in train_loader:
+        x = x.to(device)
+        x_recon, z_mean, z_log_var, z_prior_mean, y = vae(x)
+        # print(x.shape, x_recon.shape)
+        # print(z_mean.shape, z_log_var.shape, z_prior_mean.shape, y.shape)
+        loss = vae_loss(x, x_recon, z_mean, z_log_var, z_prior_mean, y)
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-        print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item():.4f}")
+    print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item():.4f}")
 
-        # # Save reconstructed images for visualization
-        # with torch.no_grad():
-        #     sample = x_recon[:64].cpu()
-        #     save_image(sample, f"./samples/reconstruction_epoch_{epoch + 1}.png")
+# |%%--%%| <wYktO9pGCY|po01dGWU3r>
 
 
 # Ensure output directory exists
 os.makedirs("./samples", exist_ok=True)
-
-train()
-# |%%--%%| <nqqFegd7gL|po01dGWU3r>
-
 
 def cluster_sample(path, category, x_train, y_train_pred):
     """Visualize samples clustered into a specific category."""
@@ -219,7 +256,7 @@ def random_sample(path, category, means, std=1.0):
     save_image(figure.unsqueeze(0), path)
 
 
-# |%%--%%| <po01dGWU3r|93fODz0go5>
+#|%%--%%| <po01dGWU3r|ihaVn7EYVk>
 
 # Get the latent space means from the Gaussian layer
 means = vae.gaussian_layer.means.data.cpu()
@@ -229,6 +266,7 @@ vae.eval()
 x_train_tensor = torch.stack([data[0] for data in train_dataset]).to(
     "cuda" if torch.cuda.is_available() else "cpu"
 )
+print(x_train_tensor.shape)
 z_mean, _ = vae.encoder(x_train_tensor)
 y_train_pred = vae.classifier(z_mean).argmax(dim=1).cpu()
 
@@ -240,3 +278,69 @@ for i in range(num_classes):
         f"./samples/cluster_category_{i}.png", i, x_train_tensor.cpu(), y_train_pred
     )
     random_sample(f"./samples/random_category_{i}.png", i, means)
+
+
+#|%%--%%| <ihaVn7EYVk|NwHHY3FQJz>
+
+# Cluster Sampling
+def cluster_sample(vae, category, num_samples=64):
+    """
+    Generate samples based on the Gaussian mean of a specific category (cluster).
+    """
+    vae.eval()
+    with torch.no_grad():
+        # Generate latent vectors around the mean of the specified category
+        z_mean = vae.gaussian_layer.means[category].unsqueeze(0).repeat(num_samples, 1)
+        z_sample = z_mean + torch.randn_like(z_mean) * 0.1  # Add small noise
+        x_recon = vae.decoder(z_sample).cpu()
+
+        # Save the generated images
+        save_image(x_recon, f'./samples/cluster_category_{category}.png')
+        print(f"Cluster samples for category {category} saved.")
+
+# Random Sampling
+def random_sample(vae, loader, num_classes, std=1.0, num_samples=64):
+    """
+    Generate random samples and calculate train/test accuracy based on classifier predictions.
+    """
+    vae.eval()
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        # Loop over the dataset to calculate accuracy
+        for x, labels in loader:
+            x = x.to('cuda' if torch.cuda.is_available() else 'cpu')
+            labels = labels.to('cuda' if torch.cuda.is_available() else 'cpu')
+
+            # Forward pass through VAE
+            _, _, _, _, y_pred = vae(x)
+
+            # Predicted labels
+            predicted = torch.argmax(y_pred, dim=1)
+
+            # Accuracy calculation
+            correct += (predicted == labels).sum().item()
+            total += labels.size(0)
+
+        accuracy = 100.0 * correct / total
+        print(f"Accuracy: {accuracy:.2f}%")
+
+        # Generate samples for each class
+        for category in range(num_classes):
+            z_mean = vae.gaussian_layer.means[category].unsqueeze(0).repeat(num_samples, 1)
+            z_sample = z_mean + torch.randn_like(z_mean) * std
+            x_recon = vae.decoder(z_sample).cpu()
+
+            # Save the generated images
+            save_image(x_recon, f'./samples/random_category_{category}.png')
+            print(f"Random samples for category {category} saved.")
+
+# Usage Example
+print("Generating random samples and calculating accuracy on the test set...")
+random_sample(vae, test_loader, num_classes)
+
+
+# |%%--%%| <NwHHY3FQJz|93fODz0go5>
+
+cluster_sample(vae, category=0, num_samples=64)
