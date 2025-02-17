@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex Cluster"] 1730899980.58271 "Cluster.aux" "Cluster.bbl" "Cluster" 1735922016.28091 0
+["bibtex Cluster"] 1730899980.58271 "Cluster.aux" "Cluster.bbl" "Cluster" 1738414807.18585 0
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/ieeetr.bst" 1292289607 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
-  "Cluster.aux" 1735922016.04202 5909 0600d0dccd7590d7677fd252143cfdd0 "pdflatex"
+  "Cluster.aux" 1738414806.94301 5909 0600d0dccd7590d7677fd252143cfdd0 "pdflatex"
   "Zotero.bib" 0 -1 0 ""
   (generated)
   "Cluster.bbl"
   "Cluster.blg"
   (rewritten before read)
-["pdflatex"] 1735922013.73557 "Cluster.tex" "Cluster.pdf" "Cluster" 1735922016.28103 0
+["pdflatex"] 1738414804.50574 "Cluster.tex" "Cluster.pdf" "Cluster" 1738414807.18597 0
   "../fig-mask-collection/ID_2968_Original_Reconstructed_Patch_1.png" 1735222696.1364 225003 5d759405fc8a50bccc03e1f07f1025dc ""
   "../fig-mask-collection/ID_8558_Original_Reconstructed_Patch_1.png" 1735222696.13697 218297 e3e512e159c0f8604cb7705f38444a21 ""
   "../fig-mask-collection/ID_8631_Original_Reconstructed_Patch_1.png" 1735222696.13756 221713 54706507484e82e9a6bed6bd05ce1b27 ""
@@ -156,13 +156,13 @@
   "/usr/local/texlive/2024/texmf-dist/tex/latex/url/url.sty" 1388531844 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty" 1700082560 55487 80a65caedd3722f4c20a14a69e785d8f ""
   "/usr/local/texlive/2024/texmf-dist/web2c/texmf.cnf" 1708706663 41649 5d6ae549fbbcb850a863f69aa41f3d10 ""
-  "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1735168827.25419 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
-  "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1735168741 8221441 477f54b8509eee74a476b5c24f852e29 ""
+  "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1738344847.06916 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
+  "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1738344783 8221451 3d28fdae78fefd014a84d1ff03be072e ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "Cluster.aux" 1735922016.04202 5909 0600d0dccd7590d7677fd252143cfdd0 "pdflatex"
+  "Cluster.aux" 1738414806.94301 5909 0600d0dccd7590d7677fd252143cfdd0 "pdflatex"
   "Cluster.bbl" 1735222696.1238 1775 174db781caff20dc5dac952bc8de5f29 "bibtex Cluster"
-  "Cluster.out" 1735922016.04498 1192 20c372b032409423086bac4c1ec13101 "pdflatex"
-  "Cluster.tex" 1735227095.46752 23031 7bf74ef0835232e93e4993cea9e2a67c ""
+  "Cluster.out" 1738414806.94573 1192 20c372b032409423086bac4c1ec13101 "pdflatex"
+  "Cluster.tex" 1738414803.66118 23061 38272d75ca64bef8966713115a5b0c7f ""
   (generated)
   "Cluster.aux"
   "Cluster.log"

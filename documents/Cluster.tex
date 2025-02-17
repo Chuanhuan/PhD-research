@@ -123,8 +123,10 @@ y  & \sim CNN
 
 ELBO function:
 \begin{align}
+  \begin{split}
 ELBO & = E_q[log~p(x,\hat{z})] - E_q[log~q(\hat{z})]\\
  &= E_q[log~p(x,z,c,y) - log~q(z,c,y)]
+  \end{split}
 \end{align}
 
 Encoder $q(.)$:

@@ -267,8 +267,11 @@ for i in range(2000):
     model.zero_grad()
     y0 = model(img.unsqueeze(0).unsqueeze(0))
     y1 = model(wx.reshape(1, 1, 28, 28))
+
     loss = F.mse_loss(y0, y1) + w.norm(1) + torch.sum(w)
+    # loss = F.cross_entropy(y0, y1)+w.norm(1) + torch.sum(w)
     # loss = -torch.sum(w*torch.log(w+1e-6))
+
     loss.backward()
     optimizer_patch.step()
     # print(f"Loss: {loss.item()}")
@@ -290,9 +293,8 @@ for i in range(2000):
         plt.scatter(x_coords, y_coords, c=colors, cmap="viridis", edgecolor="red")
         plt.colorbar()  # Add a color bar to show the weight values
         plt.show()
-        plt.clf()
 
-#|%%--%%| <SI0zhI7YHo|sZQNDDuS8n>
+# |%%--%%| <SI0zhI7YHo|sZQNDDuS8n>
 
 input_height = 28
 input_width = 28
@@ -325,7 +327,9 @@ for epoch in range(10):  # Number of epochs
             plt.title(f"Epoch {epoch}, Batch {batch_idx}")
 
             # Plot w points with different colors
-            y_coords, x_coords = np.where(w_image > 0)  # Get coordinates of positive weights
+            y_coords, x_coords = np.where(
+                w_image > 0
+            )  # Get coordinates of positive weights
             colors = w_image[y_coords, x_coords]  # Use weights as colors
 
             plt.scatter(x_coords, y_coords, c=colors, cmap="viridis", edgecolor="red")
@@ -379,7 +383,7 @@ for epoch in range(num_epochs):
             y0 = model(X)
             y1 = model(wx)
             # loss_patch = F.mse_loss(y0, y1) + w.norm(1) + torch.sum(w)
-            loss_patch = F.mse_loss(y0, y1) + w.norm(1) 
+            loss_patch = F.mse_loss(y0, y1) + w.norm(1)
             loss_patch.backward(retain_graph=True)
             optimizer_patch.step()
 
