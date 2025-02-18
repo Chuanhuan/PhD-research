@@ -261,8 +261,8 @@ def loss_fn_critic(x, z_mean, c, data, model):
     cat_loss = c * torch.log(c + 1e-8)
     cat_loss = cat_loss.sum(dim=(1, 2, 3)).mean()
 
-    # total_loss = critic_loss + Config.lamb * cat_loss + gaussian_loss
-    total_loss = critic_loss + gaussian_loss
+    total_loss = critic_loss + Config.lamb * cat_loss + gaussian_loss
+    # total_loss = gaussian_loss
 
     return total_loss
 
