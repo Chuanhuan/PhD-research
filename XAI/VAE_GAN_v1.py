@@ -214,10 +214,10 @@ class Critic(nn.Module):
         super(Critic, self).__init__()
         self.main = nn.Sequential(
             nn.Linear(input_dim, 512),
+            # nn.LeakyReLU(0.2),
+            # nn.Linear(512, 256),
             nn.LeakyReLU(0.2),
-            nn.Linear(512, 256),
-            nn.LeakyReLU(0.2),
-            nn.Linear(256, 784),
+            nn.Linear(512, 784),
             nn.Sigmoid(),
         )
 
@@ -239,6 +239,7 @@ def loss_fn_vae(recon_x, x, z_mean, c, data):
 
     gaussian_loss = (z_mean - data) ** 2
     gaussian_loss = c * gaussian_loss
+    guassian_loss = gaussian_loss.sum(1)
     gaussian_loss = gaussian_loss.mean()
 
     total_loss = Config.lamb * recon_loss + gaussian_loss
@@ -255,11 +256,13 @@ def loss_fn_critic(x, z_mean, c, data, model):
 
     gaussian_loss = (z_mean - data) ** 2
     gaussian_loss = c * gaussian_loss
+    guassian_loss = gaussian_loss.sum(1)
     gaussian_loss = gaussian_loss.mean()
 
-    cat_loss = torch.mean(c * torch.log(c + 1e-8))
+    cat_loss = - torch.mean(c * torch.log(c + 1e-8))
 
-    total_loss = Config.lamb * critic_loss + cat_loss + gaussian_loss
+    # total_loss =  critic_loss + Config.lamb *cat_loss + gaussian_loss
+    total_loss =  critic_loss  + gaussian_loss
 
     return total_loss
 
@@ -300,7 +303,13 @@ for epoch in range(Config.epochs):
         with torch.no_grad():
             x = model(data)
             _, pred_base = x.max(1)
+            if torch.isnan(x).any():
+                print("NaN detected in model output x. Stopping training.")
+                break
             c = critic(x)
+            if torch.isnan(c).any():
+                print("NaN detected in critic output c. Stopping training.")
+                break
 
         output = c_vae(x)
         loss_vae = loss_fn_vae(output["recon"], x, output["z_mean"], c, data)
@@ -325,6 +334,7 @@ for epoch in range(Config.epochs):
         loss_critic = loss_fn_critic(x, output["z_mean"], c, data, model)
 
         loss_critic.backward()
+        torch.nn.utils.clip_grad_norm_(critic.parameters(), max_norm=1.0) # Gradient clipping
         critic_optimizer.step()
         total_loss_critic += loss_critic.item()
 
