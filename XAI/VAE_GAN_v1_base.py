@@ -115,7 +115,7 @@ Define parameters for the model
 class Config:
     batch_size = 100
     latent_dim = 20
-    epochs = 5
+    epochs = 10
     num_classes = 10
     img_dim = 28
     output_dim = 28 * 28
@@ -170,13 +170,12 @@ class Decoder(nn.Module):
         )
         self.flatten = nn.Flatten()
         self.fc = nn.Linear(64 * 7 * 7, Config.num_classes)
-        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         x = self.conv(x)
         x = self.flatten(x)
         x = self.fc(x)
-        return self.softmax(x)
+        return x
 
 
 class ClusterVAE(nn.Module):
@@ -214,10 +213,10 @@ class Critic(nn.Module):
         super(Critic, self).__init__()
         self.main = nn.Sequential(
             nn.Linear(input_dim, 512),
-            # nn.LeakyReLU(0.2),
-            # nn.Linear(512, 256),
             nn.LeakyReLU(0.2),
-            nn.Linear(512, 784),
+            nn.Linear(512, 256),
+            nn.LeakyReLU(0.2),
+            nn.Linear(256, 784),
             nn.Sigmoid(),
         )
 
@@ -239,7 +238,7 @@ def loss_fn_vae(recon_x, x, z_mean, c, data):
 
     gaussian_loss = (z_mean - data) ** 2
     gaussian_loss = c * gaussian_loss
-    guassian_loss = gaussian_loss.sum(1)
+    gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
 
     total_loss = Config.lamb * recon_loss + gaussian_loss
@@ -256,13 +255,14 @@ def loss_fn_critic(x, z_mean, c, data, model):
 
     gaussian_loss = (z_mean - data) ** 2
     gaussian_loss = c * gaussian_loss
-    guassian_loss = gaussian_loss.sum(1)
+    gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
 
-    cat_loss = - torch.mean(c * torch.log(c + 1e-8))
+    cat_loss = c * torch.log(c + 1e-8)
+    cat_loss = cat_loss.sum(dim=(1, 2, 3)).mean()
 
-    # total_loss =  critic_loss + Config.lamb *cat_loss + gaussian_loss
-    total_loss =  critic_loss  + gaussian_loss
+    total_loss = critic_loss + Config.lamb * cat_loss + gaussian_loss
+    # total_loss = gaussian_loss
 
     return total_loss
 
@@ -303,15 +303,18 @@ for epoch in range(Config.epochs):
         with torch.no_grad():
             x = model(data)
             _, pred_base = x.max(1)
-            if torch.isnan(x).any():
-                print("NaN detected in model output x. Stopping training.")
-                break
             c = critic(x)
             if torch.isnan(c).any():
                 print("NaN detected in critic output c. Stopping training.")
-                break
+                # break
 
         output = c_vae(x)
+        recon_x, z, z_mean, z_logvar = (
+            output["recon"],
+            output["z"],
+            output["z_mean"],
+            output["z_logvar"],
+        )
         loss_vae = loss_fn_vae(output["recon"], x, output["z_mean"], c, data)
         total_loss_vae += loss_vae.item()
 
@@ -334,7 +337,6 @@ for epoch in range(Config.epochs):
         loss_critic = loss_fn_critic(x, output["z_mean"], c, data, model)
 
         loss_critic.backward()
-        torch.nn.utils.clip_grad_norm_(critic.parameters(), max_norm=1.0) # Gradient clipping
         critic_optimizer.step()
         total_loss_critic += loss_critic.item()
 
