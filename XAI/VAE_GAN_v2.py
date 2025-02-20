@@ -125,7 +125,7 @@ Define parameters for the model
 class Config:
     batch_size = 100
     latent_dim = 20
-    epochs = 10
+    epochs = 50
     num_classes = 10
     img_dim = 28
     output_dim = 28 * 28
@@ -245,10 +245,10 @@ loss function
 # |%%--%%| <eqx0LfDGeH|83f6l2Dw3G>
 
 
-def loss_fn_vae(recon_x, x, z_mean, c, data):
+def loss_fn_vae(recon_x, x, z, z_logvar, c, data):
     recon_loss = F.mse_loss(recon_x, x)
 
-    gaussian_loss = (z_mean - data) ** 2
+    gaussian_loss = (z - data) ** 2 -0.5*z_logvar
     gaussian_loss = c * gaussian_loss
     gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
@@ -257,7 +257,7 @@ def loss_fn_vae(recon_x, x, z_mean, c, data):
     return total_loss
 
 
-def loss_fn_critic(x, z_mean, c, data, model):
+def loss_fn_critic(x, z, z_logvar, c, data, model):
     model.eval()  # Ensure model is in eval mode (affects dropout, batchnorm, etc.)
     with torch.no_grad():  # Prevent gradients from flowing through the main model
         perturbed_data = c * data
@@ -265,7 +265,7 @@ def loss_fn_critic(x, z_mean, c, data, model):
 
     critic_loss = F.mse_loss(pred, x)
 
-    gaussian_loss = (z_mean - data) ** 2
+    gaussian_loss = (z - data) ** 2 -0.5*z_logvar
     gaussian_loss = c * gaussian_loss
     gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
@@ -329,7 +329,7 @@ for epoch in range(Config.epochs):
             output["z_mean"],
             output["z_logvar"],
         )
-        loss_vae = loss_fn_vae(output["recon"], x, output["z_mean"], c, data)
+        loss_vae = loss_fn_vae(recon_x, x, z, z_logvar, c, data)
         total_loss_vae += loss_vae.item()
 
         loss_vae.backward()
@@ -346,16 +346,22 @@ for epoch in range(Config.epochs):
         # Detach the VAE output so that gradients do NOT flow into c_vae.
         with torch.no_grad():
             output = c_vae(x)
+            recon_x, z, z_mean, z_logvar = (
+                output["recon"],
+                output["z"],
+                output["z_mean"],
+                output["z_logvar"],
+            )
 
         # Compute the critic loss using the detached z_mean from c_vae.
-        loss_critic = loss_fn_critic(x, output["z_mean"], c, data, model)
+        loss_critic = loss_fn_critic(x,z, z_logvar, c, data, model)
 
         loss_critic.backward()
         critic_optimizer.step()
         total_loss_critic += loss_critic.item()
 
         with torch.no_grad():
-            _, pred_z = model(z_mean).max(1)
+            _, pred_z = model(z).max(1)
             acc = (pred_base == pred_z).float().mean().item()
             acc_list.append(acc)
 
@@ -386,6 +392,7 @@ def visualize_results(test_loader, model, c_vae, critic, device):
         x = model(data)
         output = c_vae(x)
         c = critic(x)
+        _, pred_z = model(output["z"]).max(1)
 
         # Convert to numpy arrays
         # Using "recon" or "z_mean" as your reconstructed image depends on your architecture.
@@ -425,7 +432,7 @@ def visualize_comparison_results(test_loader, model, c_vae, critic, device):
         x = model(data)
         output = c_vae(x)
         c = critic(x)
-        _, pred_z = model(output["z_mean"]).max(1)
+        _, pred_z = model(output["z"]).max(1)
 
         # Convert to numpy arrays
         recon_imgs = output["z_mean"].cpu().numpy()

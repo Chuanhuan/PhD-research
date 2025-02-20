@@ -6,13 +6,17 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import tqdm
+import os
 
 
 # |%%--%%| <0KiVc3DKq9|45FbLi3jh9>
 r"""°°°
 CNN model
 °°°"""
-# |%%--%%| <45FbLi3jh9|4cYhBtzvcP>
+#|%%--%%| <45FbLi3jh9|vdkIA87H1I>
+
+
+os.chdir(os.path.abspath("./XAI"))
 
 # Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -42,6 +46,10 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 
+# |%%--%%| <vdkIA87H1I|4cYhBtzvcP>
+
+
+
 # Define CNN model
 class CNN(nn.Module):
     def __init__(self):
@@ -66,30 +74,32 @@ class CNN(nn.Module):
 # Initialize model
 model = CNN().to(device)
 
+model.load_state_dict(torch.load("CNN_MNIST_-1_1.ckpt"))
+
 # Loss and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
-# Training loop
-total_step = len(train_loader)
-for epoch in range(num_epochs):
-    for i, (images, labels) in enumerate(train_loader):
-        images = images.to(device)
-        labels = labels.to(device)
-
-        # Forward pass
-        outputs = model(images)
-        loss = criterion(outputs, labels)
-
-        # Backward and optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        if (i + 1) % 100 == 0:
-            print(
-                f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{total_step}], Loss: {loss.item():.4f}"
-            )
+# criterion = nn.CrossEntropyLoss()
+# optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+#
+# # Training loop
+# total_step = len(train_loader)
+# for epoch in range(num_epochs):
+#     for i, (images, labels) in enumerate(train_loader):
+#         images = images.to(device)
+#         labels = labels.to(device)
+#
+#         # Forward pass
+#         outputs = model(images)
+#         loss = criterion(outputs, labels)
+#
+#         # Backward and optimize
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
+#
+#         if (i + 1) % 100 == 0:
+#             print(
+#                 f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{total_step}], Loss: {loss.item():.4f}"
+#             )
 
 # Test the model
 model.eval()
@@ -124,6 +134,8 @@ class Config:
     lamb = 2.5  # 重构损失权重
     sample_std = 0.5  # 采样标准差
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    temperature = 1.0
+    anneal_rate = 0.001
 
 
 # |%%--%%| <k5YWyyqgo7|lMC32SbEnu>
@@ -241,7 +253,7 @@ def loss_fn_vae(recon_x, x, z_mean, c, data):
     gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
 
-    total_loss = Config.lamb * recon_loss + gaussian_loss
+    total_loss =  Config.lamb *recon_loss + gaussian_loss
     return total_loss
 
 
@@ -261,8 +273,8 @@ def loss_fn_critic(x, z_mean, c, data, model):
     cat_loss = c * torch.log(c + 1e-8)
     cat_loss = cat_loss.sum(dim=(1, 2, 3)).mean()
 
-    total_loss = critic_loss + Config.lamb * cat_loss + gaussian_loss
-    # total_loss = gaussian_loss
+    total_loss = Config.lamb *critic_loss +  cat_loss + gaussian_loss
+    # total_loss = cat_loss + gaussian_loss
 
     return total_loss
 
@@ -309,6 +321,8 @@ for epoch in range(Config.epochs):
                 # break
 
         output = c_vae(x)
+        # output['z_mean'] = gumbel_softmax(output['z_mean'], Config.temperature, hard=True)
+        # temperature = max(Config.temperature * (1 - Config.anneal_rate), Config.sample_std)
         recon_x, z, z_mean, z_logvar = (
             output["recon"],
             output["z"],
@@ -401,8 +415,55 @@ def visualize_results(test_loader, model, c_vae, critic, device):
     plt.show()
 
 
+def visualize_comparison_results(test_loader, model, c_vae, critic, device):
+    # Get test batch
+    data, labels = next(iter(test_loader))
+    data = data.to(device)
+
+    with torch.no_grad():
+        # Get model outputs
+        x = model(data)
+        output = c_vae(x)
+        c = critic(x)
+
+        # Convert to numpy arrays
+        recon_imgs = output["z_mean"].cpu().numpy()
+        true_imgs = data.cpu().numpy()
+        # Ensure critic output has shape (batch, 28, 28)
+        c_values = c.cpu().numpy().reshape(-1, 28, 28)
+        labels = labels.cpu().numpy()
+
+    # Create figure with a grid of 3 rows x 9 columns
+    plt.figure(figsize=(18, 6))
+    
+    num_samples = 9  # number of samples to display
+
+    for idx in range(num_samples):
+        # True image in row 1
+        ax1 = plt.subplot(3, num_samples, idx + 1)
+        plt.imshow(true_imgs[idx].reshape(28, 28), cmap="gray")
+        plt.title(f"True: {labels[idx]}", fontsize=8)
+        plt.axis("off")
+        
+        # Reconstructed image in row 2
+        ax2 = plt.subplot(3, num_samples, idx + 1 + num_samples)
+        plt.imshow(recon_imgs[idx].reshape(28, 28), cmap="gray")
+        plt.title("Reconstructed", fontsize=8)
+        plt.axis("off")
+        
+        # Critic heatmap in row 3
+        ax3 = plt.subplot(3, num_samples, idx + 1 + 2*num_samples)
+        im = plt.imshow(c_values[idx].reshape(28, 28), cmap="jet", alpha=0.5)
+        plt.title("Critic Heatmap", fontsize=8)
+        plt.axis("off")
+        plt.colorbar(im, ax=ax3, fraction=0.046, pad=0.04)
+
+    plt.tight_layout()
+    plt.savefig("comparison_images.png")
+    plt.show()
 # Usage
 model.eval()
 c_vae.eval()
 critic.eval()
 visualize_results(test_loader, model, c_vae, critic, Config.device)
+visualize_comparison_results(train_loader, model, c_vae, critic, Config.device)
