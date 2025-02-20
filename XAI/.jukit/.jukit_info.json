@@ -1,1 +1,1 @@
-{"cmd": "model.eval()\nc_vae.eval()\ncritic.eval()\nvisualize_results(test_loader, model, c_vae, critic, Config.device)\nvisualize_comparison_results(train_loader, model, c_vae, critic, Config.device)", "cmd_opts": "", "import_complete": 1, "terminal": "tmux"}
+{"cmd": "loss_critic ", "cmd_opts": "", "import_complete": 1, "terminal": "tmux"}

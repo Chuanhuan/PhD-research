@@ -16,7 +16,7 @@ CNN model
 #|%%--%%| <45FbLi3jh9|vdkIA87H1I>
 
 
-os.chdir(os.path.abspath("./XAI"))
+os.chdir(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
 
 # Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -145,56 +145,56 @@ Define VAE model
 # |%%--%%| <lMC32SbEnu|GLMDo7DbS2>
 
 
+
 class Encoder(nn.Module):
-    def __init__(self, input_dim):
+    def __init__(self, z_dim):
         super().__init__()
-        # Linear layer to expand 10 features to 64*7*7
-        self.fc = nn.Linear(input_dim, 64 * 7 * 7)
-        # First transposed convolution: 7x7 -> 14x14
-        self.deconv1 = nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1)
-        # Second transposed convolution: 14x14 -> 28x28
-        self.deconv2 = nn.ConvTranspose2d(32, 2, kernel_size=4, stride=2, padding=1)
-        # Activation
-        self.leaky_relu = nn.LeakyReLU()
+        # Convolutional layers to downsample the 28x28 image
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=3, stride=2, padding=1),  # Output: (batch, 32, 14, 14)
+            nn.LeakyReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # Output: (batch, 64, 7, 7)
+            nn.LeakyReLU(),
+        )
+        # Flatten the feature map
+        self.flatten = nn.Flatten()  # Output: (batch, 64*7*7)
+        # Fully connected layers to produce mu and logvar
+        self.fc_mu = nn.Linear(64 * 7 * 7, z_dim)      # Output: (batch, z_dim)
+        self.fc_logvar = nn.Linear(64 * 7 * 7, z_dim)  # Output: (batch, z_dim)
 
     def forward(self, x):
-        # Input shape: (batch, 10)
-        x = self.fc(x)  # Shape: (batch, 64*7*7)
-        x = x.view(-1, 64, 7, 7)  # Reshape to (batch, 64, 7, 7)
-        x = self.leaky_relu(self.deconv1(x))  # Shape: (batch, 32, 14, 14)
-        x = self.deconv2(x)  # Shape: (batch, 1, 28, 28)
-        mu, logvar = x.chunk(2, dim=1)
+        # Input shape: (batch, 1, 28, 28)
+        x = self.conv(x)        # Shape: (batch, 64, 7, 7)
+        x = self.flatten(x)     # Shape: (batch, 64*7*7)
+        mu = self.fc_mu(x)      # Shape: (batch, z_dim)
+        logvar = self.fc_logvar(x)  # Shape: (batch, z_dim)
         return mu, logvar
 
-
 class Decoder(nn.Module):
-    def __init__(self):
+    def __init__(self, z_dim):
         super().__init__()
-        self.conv = nn.Sequential(
-            nn.Conv2d(1, 32, 3, stride=2, padding=1),
-            nn.LeakyReLU(0.2),
-            nn.Conv2d(32, 32, 3, padding=1),
-            nn.LeakyReLU(0.2),
-            nn.Conv2d(32, 64, 3, stride=2, padding=1),
-            nn.LeakyReLU(0.2),
-            nn.Conv2d(64, 64, 3, padding=1),
-            nn.LeakyReLU(0.2),
+        # Fully connected layer to map z_dim to a feature map size
+        self.fc = nn.Linear(z_dim, 64 * 7 * 7)  # Output: (batch, 64*7*7)
+        # Transposed convolutional layers to upsample to 28x28
+        self.deconv = nn.Sequential(
+            nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1),  # Output: (batch, 32, 14, 14)
+            nn.LeakyReLU(),
+            nn.ConvTranspose2d(32, 1, kernel_size=4, stride=2, padding=1),   # Output: (batch, 1, 28, 28)
+            nn.Sigmoid()  # Output range [0,1], suitable for normalized images like MNIST
         )
-        self.flatten = nn.Flatten()
-        self.fc = nn.Linear(64 * 7 * 7, Config.num_classes)
 
-    def forward(self, x):
-        x = self.conv(x)
-        x = self.flatten(x)
-        x = self.fc(x)
+    def forward(self, z):
+        # Input shape: (batch, z_dim)
+        x = self.fc(z)              # Shape: (batch, 64*7*7)
+        x = x.view(-1, 64, 7, 7)    # Shape: (batch, 64, 7, 7)
+        x = self.deconv(x)          # Shape: (batch, 1, 28, 28)
         return x
 
-
 class ClusterVAE(nn.Module):
-    def __init__(self, input_dim):
+    def __init__(self, z_dim):
         super().__init__()
-        self.encoder = Encoder(input_dim)
-        self.decoder = Decoder()
+        self.encoder = Encoder(z_dim)
+        self.decoder = Decoder(z_dim)
 
     def reparameterize(self, mean, logvar):
         std = torch.exp(0.5 * logvar)
@@ -233,6 +233,7 @@ class Critic(nn.Module):
         )
 
     def forward(self, x):
+        x = x.view(-1, 784)
         x = self.main(x)
         x = x.view(-1, 1, 28, 28)
         return x
@@ -245,36 +246,29 @@ loss function
 # |%%--%%| <eqx0LfDGeH|83f6l2Dw3G>
 
 
-def loss_fn_vae(recon_x, x, z_mean, c, data):
-    recon_loss = F.mse_loss(recon_x, x)
+def loss_fn_vae(recon_x,  z_mean, z_logvar, data, model):
+    recon_loss = F.mse_loss(recon_x, data)
 
-    gaussian_loss = (z_mean - data) ** 2
-    gaussian_loss = c * gaussian_loss
-    gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
-    gaussian_loss = gaussian_loss.mean()
+    model.eval()  # Ensure model is in eval mode (affects dropout, batchnorm, etc.)
+    with torch.no_grad():  # Prevent gradients from flowing through the main model
+        pred = model(data)
+
+    gaussian_loss = -0.5 * torch.mean(1 + z_logvar - ( z_mean - pred)**2 - z_logvar.exp())
 
     total_loss =  Config.lamb *recon_loss + gaussian_loss
     return total_loss
 
 
-def loss_fn_critic(x, z_mean, c, data, model):
-    model.eval()  # Ensure model is in eval mode (affects dropout, batchnorm, etc.)
-    with torch.no_grad():  # Prevent gradients from flowing through the main model
-        perturbed_data = c * data
-        pred = model(perturbed_data)
+def loss_fn_critic( recon_x, z_mean,c, data, model):
 
-    critic_loss = F.mse_loss(pred, x)
+    recon_loss = F.mse_loss(recon_x *c , data *c)
+    z_loss = F.mse_loss(z_mean, model(data))
+    cat_sum = torch.sum(c, dim=(1, 2, 3)).mean()
+    
 
-    gaussian_loss = (z_mean - data) ** 2
-    gaussian_loss = c * gaussian_loss
-    gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
-    gaussian_loss = gaussian_loss.mean()
+    total_loss = recon_loss * Config.lamb * z_loss
 
-    cat_loss = c * torch.log(c + 1e-8)
-    cat_loss = cat_loss.sum(dim=(1, 2, 3)).mean()
-
-    total_loss = Config.lamb *critic_loss +  cat_loss + gaussian_loss
-    # total_loss = cat_loss + gaussian_loss
+    # total_loss = recon_loss +z_loss + cat_sum
 
     return total_loss
 
@@ -286,7 +280,7 @@ Training
 # |%%--%%| <iRScmHTlMW|tQqyQelokQ>
 
 c_vae = ClusterVAE(Config.num_classes).to(Config.device)
-critic = Critic(Config.num_classes).to(Config.device)
+critic = Critic(Config.img_dim * Config.img_dim).to(Config.device)
 
 vae_optimizer = optim.Adam(c_vae.parameters(), lr=learning_rate)
 critic_optimizer = optim.Adam(critic.parameters(), lr=learning_rate)
@@ -315,12 +309,8 @@ for epoch in range(Config.epochs):
         with torch.no_grad():
             x = model(data)
             _, pred_base = x.max(1)
-            c = critic(x)
-            if torch.isnan(c).any():
-                print("NaN detected in critic output c. Stopping training.")
-                # break
 
-        output = c_vae(x)
+        output = c_vae(data)
         # output['z_mean'] = gumbel_softmax(output['z_mean'], Config.temperature, hard=True)
         # temperature = max(Config.temperature * (1 - Config.anneal_rate), Config.sample_std)
         recon_x, z, z_mean, z_logvar = (
@@ -329,7 +319,7 @@ for epoch in range(Config.epochs):
             output["z_mean"],
             output["z_logvar"],
         )
-        loss_vae = loss_fn_vae(output["recon"], x, output["z_mean"], c, data)
+        loss_vae = loss_fn_vae(recon_x, z_mean, z_logvar, data, model)
         total_loss_vae += loss_vae.item()
 
         loss_vae.backward()
@@ -341,14 +331,20 @@ for epoch in range(Config.epochs):
 
         critic_optimizer.zero_grad()
         # c: output of the critic from x (x was computed earlier using model(data))
-        c = critic(x)
+        c = critic(data)
 
         # Detach the VAE output so that gradients do NOT flow into c_vae.
         with torch.no_grad():
-            output = c_vae(x)
+            output = c_vae(c*data)
+            recon_x, z, z_mean, z_logvar = (
+                output["recon"],
+                output["z"],
+                output["z_mean"],
+                output["z_logvar"],
+            )
 
         # Compute the critic loss using the detached z_mean from c_vae.
-        loss_critic = loss_fn_critic(x, output["z_mean"], c, data, model)
+        loss_critic = loss_fn_critic(recon_x, z_mean, c, data, model)
 
         loss_critic.backward()
         critic_optimizer.step()
