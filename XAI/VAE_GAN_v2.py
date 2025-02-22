@@ -1,3 +1,8 @@
+r"""°°°
+Use VAE to generate images and use GAN to improve the quality of the generated images.
+V1 is better than V2
+°°°"""
+#|%%--%%| <QBJ6sauJ13|0KiVc3DKq9>
 import torch
 import torch.nn as nn
 import torch.optim as optim

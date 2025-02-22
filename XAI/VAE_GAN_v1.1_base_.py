@@ -233,6 +233,7 @@ class Critic(nn.Module):
         )
 
     def forward(self, x):
+        x = x.view(-1, 784)
         x = self.main(x)
         x = x.view(-1, 1, 28, 28)
         return x
@@ -316,7 +317,7 @@ for epoch in range(Config.epochs):
         with torch.no_grad():
             x = model(data)
             _, pred_base = x.max(1)
-            c = critic(x)
+            # c = critic(x)
 
         output = c_vae(x)
         # output['z_mean'] = gumbel_softmax(output['z_mean'], Config.temperature, hard=True)
@@ -327,6 +328,8 @@ for epoch in range(Config.epochs):
             output["z_mean"],
             output["z_logvar"],
         )
+        with torch.no_grad():
+            c = critic(z_mean)
 
         loss_vae = loss_fn_vae(output["recon"], x, output["z_mean"], c, data)
         total_loss_vae += loss_vae.item()
@@ -350,7 +353,7 @@ for epoch in range(Config.epochs):
             output["z_logvar"],
         )
 
-        c = critic(x)
+        c = critic(z_mean)
 
         # Compute the critic loss using the detached z_mean from c_vae.
         loss_critic = loss_fn_critic(x, output["z_mean"], c, data, model)
@@ -473,17 +476,3 @@ c_vae.eval()
 critic.eval()
 visualize_results(train_loader, model, c_vae, critic, Config.device)
 visualize_comparison_results(train_loader, model, c_vae, critic, Config.device)
-#|%%--%%| <Pv1qVZYTpt|yqMjLTmSIw>
-
-
-# Generate random input and pass it through the encoder
-random_input = torch.randn(Config.batch_size, Config.num_classes).to(Config.device)
-c_vae.eval() # Set c_vae to evaluation mode
-with torch.no_grad(): # Disable gradient calculation
-    mu, logvar = c_vae.encoder(random_input)
-
-print("Mean (mu) output from encoder:")
-print(mu)
-print("\nLog variance (logvar) output from encoder:")
-print(logvar)
-

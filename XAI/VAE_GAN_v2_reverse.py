@@ -1,3 +1,9 @@
+r"""°°°
+NOTE: unfinished code
+°°°"""
+#|%%--%%| <l4ZjJdb0Yv|0KiVc3DKq9>
+
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -221,21 +227,20 @@ define Critic model
 
 # Critic
 class Critic(nn.Module):
-    def __init__(self, input_dim):
+    def __init__(self, input_dim, output_dim):
         super(Critic, self).__init__()
         self.main = nn.Sequential(
             nn.Linear(input_dim, 512),
             nn.LeakyReLU(0.2),
             nn.Linear(512, 256),
             nn.LeakyReLU(0.2),
-            nn.Linear(256, 784),
+            nn.Linear(256, output_dim),
             nn.Sigmoid(),
         )
 
     def forward(self, x):
         x = x.view(-1, 784)
         x = self.main(x)
-        x = x.view(-1, 1, 28, 28)
         return x
 
 
@@ -245,31 +250,43 @@ loss function
 °°°"""
 # |%%--%%| <eqx0LfDGeH|83f6l2Dw3G>
 
+class multiply(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(multiply, self).__init__()
+        self.fc = nn.Linear(input_dim, output_dim, )
+    def forward(self, x, y):
+        x = x.view(-1, 784)
+        y = self.fc(y)
+        outout = x * y
+        return output
 
-def loss_fn_vae(recon_x,  z_mean, z_logvar, data, model):
+
+def loss_fn_vae(recon_x,  z_mean, data, c):
     recon_loss = F.mse_loss(recon_x, data)
 
-    model.eval()  # Ensure model is in eval mode (affects dropout, batchnorm, etc.)
-    with torch.no_grad():  # Prevent gradients from flowing through the main model
-        pred = model(data)
-
-    gaussian_loss = -0.5 * torch.mean(1 + z_logvar - ( z_mean - pred)**2 - z_logvar.exp())
+    # gaussian_loss = -0.5 * torch.mean(1 + z_logvar - ( z_mean - pred)**2 - z_logvar.exp())
+    gaussian_loss = (z_mean - data) ** 2
+    gaussian_loss = multiply(Config.num_classes, Config.img_dim * Config.img_dim)(gaussian_loss, c)
+    gaussian_loss = gaussian_loss.mean()
 
     total_loss =  Config.lamb *recon_loss + gaussian_loss
     return total_loss
 
 
-def loss_fn_critic( recon_x, z_mean,c, data, model):
-
+def loss_fn_critic( pred, z_mean,c, data):
     recon_loss = F.mse_loss(recon_x *c , data *c)
-    z_loss = F.mse_loss(z_mean, model(data))
-    cat_sum = torch.sum(c, dim=(1, 2, 3)).mean()
-    
 
-    total_loss = recon_loss * Config.lamb * z_loss
+    gaussian_loss = (z_mean - data) ** 2
+    gaussian_loss = multiply(Config.num_classes, Config.img_dim * Config.img_dim)(gaussian_loss, c)
+    gaussian_loss = gaussian_loss.mean()
 
+    z_loss = c*(c- pred)**2
+    z_loss = z_loss.sum(dim=1).mean()
+
+    cat_sum = torch.sum(z_mean, dim=(1, 2, 3)).mean()
+
+    total_loss = recon_loss  * z_loss
     # total_loss = recon_loss +z_loss + cat_sum
-
     return total_loss
 
 
@@ -280,7 +297,7 @@ Training
 # |%%--%%| <iRScmHTlMW|tQqyQelokQ>
 
 c_vae = ClusterVAE(Config.num_classes).to(Config.device)
-critic = Critic(Config.img_dim * Config.img_dim).to(Config.device)
+critic = Critic(Config.img_dim * Config.img_dim,Config.num_classes).to(Config.device)
 
 vae_optimizer = optim.Adam(c_vae.parameters(), lr=learning_rate)
 critic_optimizer = optim.Adam(critic.parameters(), lr=learning_rate)
@@ -311,15 +328,16 @@ for epoch in range(Config.epochs):
             _, pred_base = x.max(1)
 
         output = c_vae(data)
-        # output['z_mean'] = gumbel_softmax(output['z_mean'], Config.temperature, hard=True)
-        # temperature = max(Config.temperature * (1 - Config.anneal_rate), Config.sample_std)
         recon_x, z, z_mean, z_logvar = (
             output["recon"],
             output["z"],
             output["z_mean"],
             output["z_logvar"],
         )
-        loss_vae = loss_fn_vae(recon_x, z_mean, z_logvar, data, model)
+        with torch.no_grad():
+            c = critic(z_mean)
+
+        loss_vae = loss_fn_vae(recon_x, z_mean, data, c)
         total_loss_vae += loss_vae.item()
 
         loss_vae.backward()
@@ -330,21 +348,20 @@ for epoch in range(Config.epochs):
         critic.train()
 
         critic_optimizer.zero_grad()
-        # c: output of the critic from x (x was computed earlier using model(data))
-        c = critic(data)
 
         # Detach the VAE output so that gradients do NOT flow into c_vae.
         with torch.no_grad():
-            output = c_vae(c*data)
+            output = c_vae(data)
             recon_x, z, z_mean, z_logvar = (
                 output["recon"],
                 output["z"],
                 output["z_mean"],
                 output["z_logvar"],
             )
+        c = critic(z_mean)
 
         # Compute the critic loss using the detached z_mean from c_vae.
-        loss_critic = loss_fn_critic(recon_x, z_mean, c, data, model)
+        loss_critic = loss_fn_critic( pred_base, z_mean, c, data)
 
         loss_critic.backward()
         critic_optimizer.step()
