@@ -364,7 +364,7 @@ for epoch in range(Config.epochs):
             acc = (pred_base == pred_z).float().mean().item()
             acc_list.append(acc)
 
-        pbar.set_postfix(loss=total_loss_critic / (pbar.n + 1))
+        pbar.set_postfix(loss=total_loss_critic / (pbar.n + 1), acc=acc)
 
     print(
         f"Epoch {epoch+1}/{Config.epochs}, Loss VAE: {total_loss_vae/len(train_loader):.4f}, Loss Critic: {total_loss_critic/len(train_loader):.4f}, Acc: {sum(acc_list)/len(acc_list):.4f}"

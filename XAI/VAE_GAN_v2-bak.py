@@ -1,3 +1,8 @@
+r"""°°°
+Use VAE to generate images and use GAN to improve the quality of the generated images.
+V1 is better than V2
+°°°"""
+#|%%--%%| <QBJ6sauJ13|0KiVc3DKq9>
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -125,7 +130,7 @@ Define parameters for the model
 class Config:
     batch_size = 100
     latent_dim = 20
-    epochs = 10
+    epochs = 100
     num_classes = 10
     img_dim = 28
     output_dim = 28 * 28
@@ -201,11 +206,11 @@ class ClusterVAE(nn.Module):
         eps = torch.randn_like(std)
         return mean + eps * std
 
-    def forward(self, x):
+    def forward(self, x, c):
         z_mean, z_logvar = self.encoder(x)
         z = self.reparameterize(z_mean, z_logvar)
         return {
-            "recon": self.decoder(z),
+            "recon": self.decoder(c),
             "z": z,
             "z_mean": z_mean,
             "z_logvar": z_logvar,
@@ -233,7 +238,6 @@ class Critic(nn.Module):
         )
 
     def forward(self, x):
-        x = x.view(-1, 784)
         x = self.main(x)
         x = x.view(-1, 1, 28, 28)
         return x
@@ -245,20 +249,48 @@ loss function
 °°°"""
 # |%%--%%| <eqx0LfDGeH|83f6l2Dw3G>
 
+def js_divergence(q, eps=1e-10):
+    """
+    Compute Jensen-Shannon divergence between q(x) and a uniform p(x) with same dimensions.
+    
+    Args:
+        q (torch.Tensor): Probability distribution q(x) (e.g., softmax output)
+        eps (float): Small value to avoid log(0)
+    
+    Returns:
+        torch.Tensor: JS divergence
+    """
+    # Ensure q is normalized (sums to 1 along the appropriate dimension)
+    q = q / (q.sum(dim=-1, keepdim=True) + eps)
+    
+    # Create p as a uniform distribution with the same shape as q
+    p = torch.ones_like(q) / q.shape[-1]  # Uniform distribution: 1/n where n is the last dim size
+    
+    # Compute the mixture distribution m(x) = 0.5 * (q(x) + p(x))
+    m = 0.5 * (q + p)
+    
+    # Compute KL divergences
+    kl_qm = F.kl_div(torch.log(q + eps), m, reduction='sum')
+    kl_pm = F.kl_div(torch.log(p + eps), m, reduction='sum')
+    
+    # JS divergence is the average of the two KL divergences
+    js = 0.5 * kl_qm + 0.5 * kl_pm
+    
+    return js
 
-def loss_fn_vae(recon_x, x, z_mean, c, data):
+def loss_fn_vae(recon_x, x, z, z_logvar, c, data):
     recon_loss = F.mse_loss(recon_x, x)
 
-    gaussian_loss = (z_mean - data) ** 2
-    gaussian_loss = c * 0.5 * gaussian_loss
+    gaussian_loss = 0.5*(z - data) ** 2 - 0.5*z_logvar
+    gaussian_loss = c * gaussian_loss
     gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
 
-    total_loss =  Config.lamb *recon_loss + gaussian_loss
+    total_loss =  recon_loss + Config.lamb *gaussian_loss
     return total_loss
 
 
-def loss_fn_critic(x, z_mean, c, data, model):
+def loss_fn_critic(x, z, z_logvar, c, data, model):
     model.eval()  # Ensure model is in eval mode (affects dropout, batchnorm, etc.)
     with torch.no_grad():  # Prevent gradients from flowing through the main model
         perturbed_data = c * data
@@ -266,17 +298,20 @@ def loss_fn_critic(x, z_mean, c, data, model):
 
     critic_loss = F.mse_loss(pred, x)
 
-    gaussian_loss = (z_mean - data) ** 2
-    gaussian_loss = c * 0.5* gaussian_loss
+    gaussian_loss = 0.5*(z - data) ** 2 - 0.5*z_logvar
+    gaussian_loss = c * gaussian_loss
     gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
 
     cat_loss = c * torch.log(c + 1e-8)
     cat_loss = cat_loss.sum(dim=(1, 2, 3)).mean()
 
+    # cat_loss = js_divergence(c)
+
     cat_sum = c.sum(dim=(1, 2, 3)).mean()
+
     # total_loss = Config.lamb *critic_loss +  cat_loss + gaussian_loss
-    total_loss = cat_loss + gaussian_loss + cat_sum
+    total_loss = cat_loss + Config.lamb *gaussian_loss + cat_sum
 
     return total_loss
 
@@ -317,9 +352,12 @@ for epoch in range(Config.epochs):
         with torch.no_grad():
             x = model(data)
             _, pred_base = x.max(1)
-            # c = critic(x)
+            c = critic(x)
+            if torch.isnan(c).any():
+                print("NaN detected in critic output c. Stopping training.")
+                # break
 
-        output = c_vae(x)
+        output = c_vae(x, c)
         # output['z_mean'] = gumbel_softmax(output['z_mean'], Config.temperature, hard=True)
         # temperature = max(Config.temperature * (1 - Config.anneal_rate), Config.sample_std)
         recon_x, z, z_mean, z_logvar = (
@@ -328,10 +366,7 @@ for epoch in range(Config.epochs):
             output["z_mean"],
             output["z_logvar"],
         )
-        with torch.no_grad():
-            c = critic(z_mean)
-
-        loss_vae = loss_fn_vae(output["recon"], x, output["z_mean"], c, data)
+        loss_vae = loss_fn_vae(recon_x, x, z, z_logvar, c, data)
         total_loss_vae += loss_vae.item()
 
         loss_vae.backward()
@@ -342,32 +377,32 @@ for epoch in range(Config.epochs):
         critic.train()
 
         critic_optimizer.zero_grad()
+        # c: output of the critic from x (x was computed earlier using model(data))
+        c = critic(x)
 
         # Detach the VAE output so that gradients do NOT flow into c_vae.
         with torch.no_grad():
-            output = c_vae(x)
-        recon_x, z, z_mean, z_logvar = (
-            output["recon"],
-            output["z"],
-            output["z_mean"],
-            output["z_logvar"],
-        )
-
-        c = critic(z_mean)
+            output = c_vae(x, c)
+            recon_x, z, z_mean, z_logvar = (
+                output["recon"],
+                output["z"],
+                output["z_mean"],
+                output["z_logvar"],
+            )
 
         # Compute the critic loss using the detached z_mean from c_vae.
-        loss_critic = loss_fn_critic(x, output["z_mean"], c, data, model)
+        loss_critic = loss_fn_critic(x,z, z_logvar, c, data, model)
 
         loss_critic.backward()
         critic_optimizer.step()
         total_loss_critic += loss_critic.item()
 
         with torch.no_grad():
-            _, pred_z = model(z_mean).max(1)
+            _, pred_z = model(z).max(1)
             acc = (pred_base == pred_z).float().mean().item()
             acc_list.append(acc)
 
-        pbar.set_postfix(loss=total_loss_critic / (pbar.n + 1))
+        pbar.set_postfix(loss=total_loss_critic / (pbar.n + 1), acc=acc)
 
     print(
         f"Epoch {epoch+1}/{Config.epochs}, Loss VAE: {total_loss_vae/len(train_loader):.4f}, Loss Critic: {total_loss_critic/len(train_loader):.4f}, Acc: {sum(acc_list)/len(acc_list):.4f}"
@@ -394,6 +429,7 @@ def visualize_results(test_loader, model, c_vae, critic, device):
         x = model(data)
         output = c_vae(x)
         c = critic(x)
+        _, pred_z = model(output["z"]).max(1)
 
         # Convert to numpy arrays
         # Using "recon" or "z_mean" as your reconstructed image depends on your architecture.
@@ -433,7 +469,7 @@ def visualize_comparison_results(test_loader, model, c_vae, critic, device):
         x = model(data)
         output = c_vae(x)
         c = critic(x)
-        _, pred_z = model(output["z_mean"]).max(1)
+        _, pred_z = model(output["z"]).max(1)
 
         # Convert to numpy arrays
         recon_imgs = output["z_mean"].cpu().numpy()
@@ -474,5 +510,5 @@ def visualize_comparison_results(test_loader, model, c_vae, critic, device):
 model.eval()
 c_vae.eval()
 critic.eval()
-visualize_results(train_loader, model, c_vae, critic, Config.device)
+visualize_results(test_loader, model, c_vae, critic, Config.device)
 visualize_comparison_results(train_loader, model, c_vae, critic, Config.device)

@@ -151,164 +151,112 @@ Define VAE model
 
 
 class Encoder(nn.Module):
-    def __init__(self, input_dim):
+    def __init__(self, input_dim=10, latent_channels=1):  # latent_channels=1 to match desired output
         super().__init__()
-        # Linear layer to expand 10 features to 64*7*7
         self.fc = nn.Linear(input_dim, 64 * 7 * 7)
-        # First transposed convolution: 7x7 -> 14x14
-        self.deconv1 = nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1)
-        # Second transposed convolution: 14x14 -> 28x28
-        self.deconv2 = nn.ConvTranspose2d(32, 2, kernel_size=4, stride=2, padding=1)
-        # Activation
-        self.leaky_relu = nn.LeakyReLU()
+        self.deconv1 = nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1)  # 7x7 -> 14x14
+        self.deconv2 = nn.ConvTranspose2d(32, latent_channels * 2, kernel_size=4, stride=2, padding=1)  # 14x14 -> 28x28, 2 for mu and logvar
+        self.leaky_relu = nn.LeakyReLU(0.2)
 
     def forward(self, x):
-        # Input shape: (batch, 10)
-        x = self.fc(x)  # Shape: (batch, 64*7*7)
-        x = x.view(-1, 64, 7, 7)  # Reshape to (batch, 64, 7, 7)
-        x = self.leaky_relu(self.deconv1(x))  # Shape: (batch, 32, 14, 14)
-        x = self.deconv2(x)  # Shape: (batch, 1, 28, 28)
-        mu, logvar = x.chunk(2, dim=1)
+        x = self.fc(x)  # (batch_size, 64*7*7)
+        x = x.view(-1, 64, 7, 7)  # (batch_size, 64, 7, 7)
+        x = self.leaky_relu(self.deconv1(x))  # (batch_size, 32, 14, 14)
+        x = self.deconv2(x)  # (batch_size, 2, 28, 28)
+        mu, logvar = x.chunk(2, dim=1)  # Each (batch_size, 1, 28, 28)
         return mu, logvar
 
-
-class Decoder(nn.Module):
+class Critic(nn.Module):
     def __init__(self):
         super().__init__()
+        self.main = nn.Sequential(
+            nn.Conv2d(1, 32, 3, stride=2, padding=1),  # (batch_size, 32, 14, 14)
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(32, 64, 3, stride=2, padding=1),  # (batch_size, 64, 7, 7)
+            nn.LeakyReLU(0.2),
+            nn.Flatten(),
+            nn.Linear(64 * 7 * 7, 256),
+            nn.LeakyReLU(0.2),
+            nn.Linear(256, 784),
+            nn.Sigmoid()
+        )
+
+    def forward(self, z):
+        c = self.main(z)  # (batch_size, 784)
+        c = c.view(-1, 1, 28, 28)  # (batch_size, 1, 28, 28)
+        return c
+
+class Decoder(nn.Module):
+    def __init__(self, num_classes=10):
+        super().__init__()
         self.conv = nn.Sequential(
-            nn.Conv2d(1, 32, 3, stride=2, padding=1),
+            nn.Conv2d(2, 32, 3, stride=2, padding=1),  # Input: 2 channels (z and c), Output: (batch_size, 32, 14, 14)
             nn.LeakyReLU(0.2),
-            nn.Conv2d(32, 32, 3, padding=1),
+            nn.Conv2d(32, 32, 3, padding=1),  # (batch_size, 32, 14, 14)
             nn.LeakyReLU(0.2),
-            nn.Conv2d(32, 64, 3, stride=2, padding=1),
+            nn.Conv2d(32, 64, 3, stride=2, padding=1),  # (batch_size, 64, 7, 7)
             nn.LeakyReLU(0.2),
-            nn.Conv2d(64, 64, 3, padding=1),
+            nn.Conv2d(64, 64, 3, padding=1),  # (batch_size, 64, 7, 7)
             nn.LeakyReLU(0.2),
         )
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(64 * 7 * 7, Config.num_classes)
+        self.fc = nn.Linear(64 * 7 * 7, num_classes)  # Output: class logits
 
-    def forward(self, x):
-        x = self.conv(x)
-        x = self.flatten(x)
-        x = self.fc(x)
+    def forward(self, z, c):
+        x = torch.cat([z, c], dim=1)  # (batch_size, 2, 28, 28)
+        x = self.conv(x)  # (batch_size, 64, 7, 7)
+        x = self.flatten(x)  # (batch_size, 64*7*7)
+        x = self.fc(x)  # (batch_size, num_classes)
         return x
 
-
 class ClusterVAE(nn.Module):
-    def __init__(self, input_dim):
+    def __init__(self, input_dim=10, num_classes=10):
         super().__init__()
         self.encoder = Encoder(input_dim)
-        self.decoder = Decoder()
+        self.critic = Critic()
+        self.decoder = Decoder(num_classes)
 
     def reparameterize(self, mean, logvar):
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
         return mean + eps * std
 
-    def forward(self, x, c):
+    def forward(self, x):
         z_mean, z_logvar = self.encoder(x)
         z = self.reparameterize(z_mean, z_logvar)
+        c = self.critic(z)
+        recon = self.decoder(z, c)  # Class logits
         return {
-            "recon": self.decoder(c*z),
+            "recon": recon,
             "z": z,
             "z_mean": z_mean,
             "z_logvar": z_logvar,
+            "c": c
         }
 
 
-# |%%--%%| <GLMDo7DbS2|zRr2XpaDJo>
-r"""°°°
-define Critic model
-°°°"""
-# |%%--%%| <zRr2XpaDJo|bKaOFAsJO1>
-
-
-# Critic
-class Critic(nn.Module):
-    def __init__(self, input_dim):
-        super(Critic, self).__init__()
-        self.main = nn.Sequential(
-            nn.Linear(input_dim, 512),
-            nn.LeakyReLU(0.2),
-            nn.Linear(512, 256),
-            nn.LeakyReLU(0.2),
-            nn.Linear(256, 784),
-            nn.Sigmoid(),
-        )
-
-    def forward(self, x):
-        # x = x.view(-1, 784)
-        x = self.main(x)
-        x = x.view(-1, 1, 28, 28)
-        return x
-
-
-# |%%--%%| <bKaOFAsJO1|eqx0LfDGeH>
+# |%%--%%| <GLMDo7DbS2|eqx0LfDGeH>
 r"""°°°
 loss function
 °°°"""
 # |%%--%%| <eqx0LfDGeH|83f6l2Dw3G>
 
-def js_divergence(q, eps=1e-10):
-    """
-    Compute Jensen-Shannon divergence between q(x) and a uniform p(x) with same dimensions.
-    
-    Args:
-        q (torch.Tensor): Probability distribution q(x) (e.g., softmax output)
-        eps (float): Small value to avoid log(0)
-    
-    Returns:
-        torch.Tensor: JS divergence
-    """
-    # Ensure q is normalized (sums to 1 along the appropriate dimension)
-    q = q / (q.sum(dim=-1, keepdim=True) + eps)
-    
-    # Create p as a uniform distribution with the same shape as q
-    p = torch.ones_like(q) / q.shape[-1]  # Uniform distribution: 1/n where n is the last dim size
-    
-    # Compute the mixture distribution m(x) = 0.5 * (q(x) + p(x))
-    m = 0.5 * (q + p)
-    
-    # Compute KL divergences
-    kl_qm = F.kl_div(torch.log(q + eps), m, reduction='sum')
-    kl_pm = F.kl_div(torch.log(p + eps), m, reduction='sum')
-    
-    # JS divergence is the average of the two KL divergences
-    js = 0.5 * kl_qm + 0.5 * kl_pm
-    
-    return js
-
 def loss_fn_vae(recon_x, x, z, z_logvar, c, data):
     recon_loss = F.mse_loss(recon_x, x)
 
-    # gaussian_loss = 0.5*(z - data) ** 2 - 0.5*z_logvar
-    gaussian_loss = 0.5*(z - data) ** 2 
+    gaussian_loss = 0.5*(z - data) ** 2 - 0.5*z_logvar
+    # gaussian_loss = 0.5*(z - data) ** 2 
     gaussian_loss = c * gaussian_loss
     gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
 
     cat_sum = c.sum(dim=(1, 2, 3)).mean()
 
-    total_loss =  recon_loss + Config.lamb *gaussian_loss + cat_sum
-    
+    total_loss =  recon_loss + Config.lamb *gaussian_loss 
     return total_loss
 
-
-def loss_fn_critic( c):
-
-    cat_loss = c * torch.log(c + 1e-8)
-    cat_loss = cat_loss.sum(dim=(1, 2, 3)).mean()
-
-    # cat_loss = js_divergence(c)
-
-    cat_sum = c.sum(dim=(1, 2, 3)).mean()
-
-    # total_loss = Config.lamb *critic_loss +  cat_loss + gaussian_loss
-    total_loss = cat_loss + cat_sum
-
-    return total_loss
-
+def loss_fn_critic(c):
+    return F.mse_loss(c, torch.ones_like(c))
 
 # |%%--%%| <83f6l2Dw3G|iRScmHTlMW>
 r"""°°°
@@ -317,12 +265,14 @@ Training
 # |%%--%%| <iRScmHTlMW|tQqyQelokQ>
 
 c_vae = ClusterVAE(Config.num_classes).to(Config.device)
-critic = Critic(Config.num_classes).to(Config.device)
+# critic = Critic(Config.num_classes).to(Config.device)
 # critic = Critic(Config.img_dim*Config.img_dim).to(Config.device)
 
-vae_optimizer = optim.Adam(c_vae.parameters(), lr=learning_rate)
-critic_optimizer = optim.Adam(critic.parameters(), lr=learning_rate)
-
+# vae_optimizer = optim.Adam(c_vae.parameters(), lr=learning_rate)
+# critic_optimizer = optim.Adam(critic.parameters(), lr=learning_rate)
+# Separate optimizers
+optimizer_vae = optim.Adam(list(c_vae.encoder.parameters()) + list(c_vae.decoder.parameters()), lr=1e-3)
+optimizer_critic = optim.Adam(c_vae.critic.parameters(), lr=1e-4)
 
 
 model.eval()
@@ -342,22 +292,24 @@ for epoch in range(Config.epochs):
 
         # train the VAE
         c_vae.train()
-        critic.eval()
+        # critic.eval()
 
-        vae_optimizer.zero_grad()
+        optimizer_vae.zero_grad()
 
         with torch.no_grad():
             x = model(data)
             _, pred_base = x.max(1)
 
-        with torch.no_grad():
-            c = critic(x)
-        output = c_vae(x, c)
-        recon_x, z, z_mean, z_logvar = (
+        # with torch.no_grad():
+        #     c = critic(x)
+
+        output = c_vae(x)
+        recon_x, z, z_mean, z_logvar ,c= (
             output["recon"],
             output["z"],
             output["z_mean"],
             output["z_logvar"],
+            output["c"],
         )
 
 
@@ -365,38 +317,15 @@ for epoch in range(Config.epochs):
         total_loss_vae += loss_vae.item()
 
         loss_vae.backward()
-        vae_optimizer.step()
+        optimizer_vae.step()
 
-        # ------------------------------------------------
-        # train the critic
-        # c_vae.eval()
-        # critic.train()
-        #
-        # critic_optimizer.zero_grad()
-        # # c: output of the critic from x (x was computed earlier using model(data))
-        #
-        # # Detach the VAE output so that gradients do NOT flow into c_vae.
-        # with torch.no_grad():
-        #     output = c_vae(x, c)
-        #     recon_x, z, z_mean, z_logvar = (
-        #         output["recon"],
-        #         output["z"],
-        #         output["z_mean"],
-        #         output["z_logvar"],
-        #     )
-        #     x_given_z_c = model(z*c)
-        #
-        # c = critic(x)
-        #
-        # # Compute the critic loss using the detached z_mean from c_vae.
-        # loss_critic = (x_given_z_c - x).pow(2).mean()
-        # loss_critic = loss_critic + c.sum(dim=(1, 2, 3)).mean()
-        #
-        # # loss_critic = loss_fn_critic(c)
-        #
-        # loss_critic.backward()
-        # critic_optimizer.step()
-        # total_loss_critic += loss_critic.item()
+
+        optimizer_critic.zero_grad()
+        z = output["z"].detach()  # Detach z to isolate Critic training
+        c = c_vae.critic(z)        # Compute c with Critic
+        loss_critic = loss_fn_critic(c)
+        loss_critic.backward()
+        optimizer_critic.step()
 
         with torch.no_grad():
             _, pred_z_c = model(z *c ).max(1)

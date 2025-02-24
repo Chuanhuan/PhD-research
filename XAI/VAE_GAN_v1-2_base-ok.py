@@ -1,8 +1,3 @@
-r"""°°°
-Use VAE to generate images and use GAN to improve the quality of the generated images.
-V1 is better than V2
-°°°"""
-#|%%--%%| <QBJ6sauJ13|0KiVc3DKq9>
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -130,7 +125,7 @@ Define parameters for the model
 class Config:
     batch_size = 100
     latent_dim = 20
-    epochs = 100
+    epochs = 10
     num_classes = 10
     img_dim = 28
     output_dim = 28 * 28
@@ -195,40 +190,15 @@ class Decoder(nn.Module):
         return x
 
 
+# Define the integrated ClusterVAE
+# -------------------------
 class ClusterVAE(nn.Module):
     def __init__(self, input_dim):
         super().__init__()
         self.encoder = Encoder(input_dim)
         self.decoder = Decoder()
-
-    def reparameterize(self, mean, logvar):
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-        return mean + eps * std
-
-    def forward(self, x, c):
-        z_mean, z_logvar = self.encoder(x)
-        z = self.reparameterize(z_mean, z_logvar)
-        return {
-            "recon": self.decoder(c*z),
-            "z": z,
-            "z_mean": z_mean,
-            "z_logvar": z_logvar,
-        }
-
-
-# |%%--%%| <GLMDo7DbS2|zRr2XpaDJo>
-r"""°°°
-define Critic model
-°°°"""
-# |%%--%%| <zRr2XpaDJo|bKaOFAsJO1>
-
-
-# Critic
-class Critic(nn.Module):
-    def __init__(self, input_dim):
-        super(Critic, self).__init__()
-        self.main = nn.Sequential(
+        # Integrate the Critic as a submodule
+        self.critic = nn.Sequential(
             nn.Linear(input_dim, 512),
             nn.LeakyReLU(0.2),
             nn.Linear(512, 256),
@@ -237,77 +207,47 @@ class Critic(nn.Module):
             nn.Sigmoid(),
         )
 
+    def reparameterize(self, mean, logvar):
+        std = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std)
+        return mean + eps * std
+
     def forward(self, x):
-        # x = x.view(-1, 784)
-        x = self.main(x)
-        x = x.view(-1, 1, 28, 28)
-        return x
+        # Encoder: obtain latent distribution parameters
+        z_mean, z_logvar = self.encoder(x)
+        # Reparameterization trick
+        z = self.reparameterize(z_mean, z_logvar)
+        # Decoder: reconstruct output from latent sample
+        recon = self.decoder(z)
+        # Critic branch: use the same input x (as in your original code)
+        c = self.critic(x)
+        c = c.view(-1, 1, 28, 28)  # reshape to match image dimensions if needed
+        return {"recon": recon, "z": z, "z_mean": z_mean, "z_logvar": z_logvar, "c": c}
 
 
-# |%%--%%| <bKaOFAsJO1|eqx0LfDGeH>
+# |%%--%%| <GLMDo7DbS2|eqx0LfDGeH>
 r"""°°°
 loss function
 °°°"""
 # |%%--%%| <eqx0LfDGeH|83f6l2Dw3G>
 
-def js_divergence(q, eps=1e-10):
-    """
-    Compute Jensen-Shannon divergence between q(x) and a uniform p(x) with same dimensions.
-    
-    Args:
-        q (torch.Tensor): Probability distribution q(x) (e.g., softmax output)
-        eps (float): Small value to avoid log(0)
-    
-    Returns:
-        torch.Tensor: JS divergence
-    """
-    # Ensure q is normalized (sums to 1 along the appropriate dimension)
-    q = q / (q.sum(dim=-1, keepdim=True) + eps)
-    
-    # Create p as a uniform distribution with the same shape as q
-    p = torch.ones_like(q) / q.shape[-1]  # Uniform distribution: 1/n where n is the last dim size
-    
-    # Compute the mixture distribution m(x) = 0.5 * (q(x) + p(x))
-    m = 0.5 * (q + p)
-    
-    # Compute KL divergences
-    kl_qm = F.kl_div(torch.log(q + eps), m, reduction='sum')
-    kl_pm = F.kl_div(torch.log(p + eps), m, reduction='sum')
-    
-    # JS divergence is the average of the two KL divergences
-    js = 0.5 * kl_qm + 0.5 * kl_pm
-    
-    return js
 
-def loss_fn_vae(recon_x, x, z, z_logvar, c, data):
+def loss_fn_vae(recon_x, x, z_mean, c, data):
     recon_loss = F.mse_loss(recon_x, x)
 
-    # gaussian_loss = 0.5*(z - data) ** 2 - 0.5*z_logvar
-    gaussian_loss = 0.5*(z - data) ** 2 
-    gaussian_loss = c * gaussian_loss
+    gaussian_loss = (z_mean - data) ** 2
+    gaussian_loss = c * 0.5 * gaussian_loss
     gaussian_loss = gaussian_loss.sum(dim=(1, 2, 3))
     gaussian_loss = gaussian_loss.mean()
-
-    cat_sum = c.sum(dim=(1, 2, 3)).mean()
-
-    total_loss =  recon_loss + Config.lamb *gaussian_loss + cat_sum
-    
-    return total_loss
-
-
-def loss_fn_critic( c):
 
     cat_loss = c * torch.log(c + 1e-8)
     cat_loss = cat_loss.sum(dim=(1, 2, 3)).mean()
 
-    # cat_loss = js_divergence(c)
-
     cat_sum = c.sum(dim=(1, 2, 3)).mean()
 
-    # total_loss = Config.lamb *critic_loss +  cat_loss + gaussian_loss
-    total_loss = cat_loss + cat_sum
-
+    total_loss =  Config.lamb *recon_loss + gaussian_loss + cat_loss + cat_sum
     return total_loss
+
 
 
 # |%%--%%| <83f6l2Dw3G|iRScmHTlMW>
@@ -317,18 +257,13 @@ Training
 # |%%--%%| <iRScmHTlMW|tQqyQelokQ>
 
 c_vae = ClusterVAE(Config.num_classes).to(Config.device)
-critic = Critic(Config.num_classes).to(Config.device)
-# critic = Critic(Config.img_dim*Config.img_dim).to(Config.device)
 
 vae_optimizer = optim.Adam(c_vae.parameters(), lr=learning_rate)
-critic_optimizer = optim.Adam(critic.parameters(), lr=learning_rate)
-
-
 
 model.eval()
 model.requires_grad_(False)  # Freeze main model parameters
 
-c = torch.ones(batch_size, 1, Config.img_dim, Config.img_dim).to(Config.device)
+# c = torch.ones(batch_size, 1, Config.img_dim, Config.img_dim).to(Config.device)
 
 for epoch in range(Config.epochs):
     total_loss_vae = 0
@@ -340,9 +275,9 @@ for epoch in range(Config.epochs):
         data = data.to(Config.device)
         labels = labels.to(Config.device)
 
+        # -------------------------
         # train the VAE
         c_vae.train()
-        critic.eval()
 
         vae_optimizer.zero_grad()
 
@@ -350,57 +285,27 @@ for epoch in range(Config.epochs):
             x = model(data)
             _, pred_base = x.max(1)
 
-        with torch.no_grad():
-            c = critic(x)
-        output = c_vae(x, c)
-        recon_x, z, z_mean, z_logvar = (
+        output = c_vae(x)
+        # output['z_mean'] = gumbel_softmax(output['z_mean'], Config.temperature, hard=True)
+        # temperature = max(Config.temperature * (1 - Config.anneal_rate), Config.sample_std)
+        recon_x, z, z_mean, z_logvar ,c= (
             output["recon"],
             output["z"],
             output["z_mean"],
             output["z_logvar"],
+            output["c"],
         )
 
-
-        loss_vae = loss_fn_vae(recon_x, x, z, z_logvar, c, data)
+        loss_vae = loss_fn_vae(output["recon"], x, output["z_mean"], c, data)
         total_loss_vae += loss_vae.item()
 
         loss_vae.backward()
         vae_optimizer.step()
 
-        # ------------------------------------------------
-        # train the critic
-        # c_vae.eval()
-        # critic.train()
-        #
-        # critic_optimizer.zero_grad()
-        # # c: output of the critic from x (x was computed earlier using model(data))
-        #
-        # # Detach the VAE output so that gradients do NOT flow into c_vae.
-        # with torch.no_grad():
-        #     output = c_vae(x, c)
-        #     recon_x, z, z_mean, z_logvar = (
-        #         output["recon"],
-        #         output["z"],
-        #         output["z_mean"],
-        #         output["z_logvar"],
-        #     )
-        #     x_given_z_c = model(z*c)
-        #
-        # c = critic(x)
-        #
-        # # Compute the critic loss using the detached z_mean from c_vae.
-        # loss_critic = (x_given_z_c - x).pow(2).mean()
-        # loss_critic = loss_critic + c.sum(dim=(1, 2, 3)).mean()
-        #
-        # # loss_critic = loss_fn_critic(c)
-        #
-        # loss_critic.backward()
-        # critic_optimizer.step()
-        # total_loss_critic += loss_critic.item()
 
         with torch.no_grad():
-            _, pred_z_c = model(z *c ).max(1)
-            acc = (pred_base == pred_z_c).float().mean().item()
+            _, pred_z = model(z_mean).max(1)
+            acc = (pred_base == pred_z).float().mean().item()
             acc_list.append(acc)
 
         pbar.set_postfix(loss=total_loss_vae / (pbar.n + 1), acc=acc)
@@ -420,7 +325,9 @@ import numpy as np
 from sklearn.manifold import TSNE
 
 
-def visualize_results(test_loader, model, c_vae, critic, device):
+
+
+def visualize_comparison_results(test_loader, model, c_vae, device):
     # Get test batch
     data, labels = next(iter(test_loader))
     data = data.to(device)
@@ -429,48 +336,8 @@ def visualize_results(test_loader, model, c_vae, critic, device):
         # Get model outputs
         x = model(data)
         output = c_vae(x)
-        c = critic(output["z"])
-        _, pred_z = model(output["z"]).max(1)
-
-        # Convert to numpy arrays
-        # Using "recon" or "z_mean" as your reconstructed image depends on your architecture.
-        # Here we follow your original code:
-        recon_imgs = output["z_mean"].cpu().numpy()
-        true_imgs = data.cpu().numpy()
-        # Reshape critic output to (batch, 28*28) then later to (28,28)
-        c_values = c.cpu().numpy().reshape(-1, 28 * 28)
-        labels = labels.cpu().numpy()
-
-    # Create figure
-    plt.figure(figsize=(12, 8))
-
-    # Plot a grid of 3x3 images with the critic heatmap overlay
-    for idx in range(9):
-        ax = plt.subplot(3, 3, idx + 1)
-        # Show the reconstructed image (grayscale)
-        plt.imshow(recon_imgs[idx].reshape(28, 28), cmap="gray")
-        # Overlay the critic's output as a heatmap (using 'jet' colormap)
-        plt.imshow(c_values[idx].reshape(28, 28), cmap="jet", alpha=0.5)
-        plt.colorbar()
-        plt.title(f"True Label: {labels[idx]}", fontsize=8)
-        plt.axis("off")
-
-    plt.tight_layout()
-    plt.savefig("reconstructed_images.png")
-    plt.show()
-
-
-def visualize_comparison_results(test_loader, model, c_vae, critic, device):
-    # Get test batch
-    data, labels = next(iter(test_loader))
-    data = data.to(device)
-
-    with torch.no_grad():
-        # Get model outputs
-        x = model(data)
-        output = c_vae(x)
-        c = critic(output["z"])
-        _, pred_z = model(output["z"]).max(1)
+        c = output["c"]
+        _, pred_z = model(output["z_mean"]).max(1)
 
         # Convert to numpy arrays
         recon_imgs = output["z_mean"].cpu().numpy()
@@ -481,7 +348,6 @@ def visualize_comparison_results(test_loader, model, c_vae, critic, device):
 
     # Create figure with a grid of 3 rows x 9 columns
     plt.figure(figsize=(18, 6))
-    
     num_samples = 9  # number of samples to display
 
     for idx in range(num_samples):
@@ -490,13 +356,13 @@ def visualize_comparison_results(test_loader, model, c_vae, critic, device):
         plt.imshow(true_imgs[idx].reshape(28, 28), cmap="gray")
         plt.title(f"True: {labels[idx]}", fontsize=8)
         plt.axis("off")
-        
+
         # Reconstructed image in row 2
         ax2 = plt.subplot(3, num_samples, idx + 1 + num_samples)
         plt.imshow(recon_imgs[idx].reshape(28, 28), cmap="gray")
         plt.title(f"Reconstructed Prediction = {pred_z[idx]}", fontsize=8)
         plt.axis("off")
-        
+
         # Critic heatmap in row 3
         ax3 = plt.subplot(3, num_samples, idx + 1 + 2*num_samples)
         im = plt.imshow(c_values[idx].reshape(28, 28), cmap="jet", alpha=0.5)
@@ -510,6 +376,5 @@ def visualize_comparison_results(test_loader, model, c_vae, critic, device):
 # Usage
 model.eval()
 c_vae.eval()
-critic.eval()
-visualize_results(test_loader, model, c_vae, critic, Config.device)
-visualize_comparison_results(train_loader, model, c_vae, critic, Config.device)
+visualize_comparison_results(train_loader, model, c_vae, Config.device)
+
