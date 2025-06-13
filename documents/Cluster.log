@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.21)  21 FEB 2025 17:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.2.21)  1 MAR 2025 10:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -447,6 +447,10 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 43.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
+
+Package natbib Warning: Citation `Achanta2012' on page 1 undefined on input line 46.
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 52--54
 
  []
@@ -728,7 +732,11 @@ File: ../fig/Sharingan-evo.png Graphic file (type png)
 <use ../fig/Sharingan-evo.png>
 Package pdftex.def Info: ../fig/Sharingan-evo.png  used on input line 644.
 (pdftex.def)             Requested size: 338.58632pt x 541.74136pt.
-[19 <../fig-mask-collection/t-SNE_vs_UMAP.png> <../fig/ID 3-Digit 8 pred 5.png>] [20 <../fig/Sharingan-evo.png>] (./Cluster.bbl) [21] (./Cluster.aux)
+[19 <../fig-mask-collection/t-SNE_vs_UMAP.png> <../fig/ID 3-Digit 8 pred 5.png>] [20 <../fig/Sharingan-evo.png>] (./Cluster.bbl)
+
+Package natbib Warning: There were undefined citations.
+
+[21] (./Cluster.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -749,7 +757,7 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  75i,16n,79p,500b,2169s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Cluster.pdf (21 pages, 1937247 bytes).
+Output written on Cluster.pdf (21 pages, 1937662 bytes).
 PDF statistics:
  540 PDF objects out of 1000 (max. 8388607)
  407 compressed objects within 5 object streams

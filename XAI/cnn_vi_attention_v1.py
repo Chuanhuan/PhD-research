@@ -8,7 +8,7 @@ import sys
 
 # Add the directory containing helper.py to the Python path
 # sys.path.append(os.path.abspath("/home/jack/Documents/PhD-research/XAI"))
-os.chdir(os.path.abspath("./XAI"))
+# os.chdir(os.path.abspath("./XAI"))
 # Explicitly import the required functions from helper
 from helper import *
 
@@ -41,12 +41,12 @@ transform = transforms.Compose(
 )
 
 trainset = MNIST(
-    root="~/Documents//data", train=True, download=True, transform=transform
+    root="~/Documents/data", train=True, download=True, transform=transform
 )
 trainloader = DataLoader(trainset, batch_size=64, shuffle=True)
 
 testset = MNIST(
-    root="~/Documents//data", train=False, download=True, transform=transform
+    root="~/Documents/data", train=False, download=True, transform=transform
 )
 testloader = DataLoader(testset, batch_size=1000, shuffle=True)
 

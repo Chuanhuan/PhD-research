@@ -1,5 +1,5 @@
 # Fdb version 4
-["bibtex Report"] 0 "Report.aux" "Report.bbl" "Report" 1740296865.51533 0
+["bibtex Report"] 0 "Report.aux" "Report.bbl" "Report" 1740534163.01132 0
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/ieeetr.bst" 1292289607 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
   "Report.aux" 0 -1 0 "pdflatex"
   "Zotero.bib" 0 -1 0 ""
@@ -7,7 +7,7 @@
   "Report.bbl"
   "Report.blg"
   (rewritten before read)
-["pdflatex"] 1740296864.38755 "Report.tex" "Report.pdf" "Report" 1740296865.51545 0
+["pdflatex"] 1740534161.84946 "Report.tex" "Report.pdf" "Report" 1740534163.01145 0
   "../fig/comparison_images_v1_cat_sum.png" 1740285257.53959 77142 3c4f9efd1485324a86e170ad412cfa60 ""
   "../fig/comparison_images_v1_cat_sum_training1.png" 1740285257.54134 79074 146bf5035c566dce4e5d4150b2689b24 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
@@ -34,6 +34,7 @@
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1248133631 32080 340ef9bf63678554ee606688e7b5339d ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1248133631 30251 6afa5cb1d0204815a708a080681d4674 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb" 1248133631 36741 fa121aac0049305630cf160b86157ee4 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb" 1248133631 37166 8ab3487cbe3ab49ebce74c29ea2418db ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1248133631 35469 70d41d2b9ea31d5d813066df7c99281c ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1248133631 32722 d7379af29a190c3f453aba36302ff5a9 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb" 1248133631 32362 179c33bbf43f19adbb3825bb4e36e57a ""
@@ -179,10 +180,10 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1740124846.03401 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1740124787 8221424 2ad0f04d26e0307fc19725b9288bb346 ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "Report.aux" 1740296865.30777 4570 0f23b3e0e55f4124a9ffd135c5b02379 "pdflatex"
+  "Report.aux" 1740534162.78545 6068 6830a296a451765273de2a6c66be9f52 "pdflatex"
   "Report.bbl" 0 -1 0 "bibtex Report"
-  "Report.out" 1740296865.31173 4308 a2cfabf1bcca231e68f07e6b034bb7bd "pdflatex"
-  "Report.tex" 1740296863.45603 18337 ee0305047fd6307583bc6a27d212b633 ""
+  "Report.out" 1740534162.78822 6457 8e53e545456844ce1346f4646f222251 "pdflatex"
+  "Report.tex" 1740534161.19179 26232 84ddd4027f845e81180a61951623cf27 ""
   (generated)
   "Report.aux"
   "Report.log"

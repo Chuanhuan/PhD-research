@@ -386,7 +386,83 @@ Since \( q(c|x) = \mathbb{E}_{q(z|x)} [q(c|z)] \), apply Jensen's inequality to 
 
 Thus, \( - \mathbb{E}_{q(z | x)} [D_{\text{KL}}(q(c | z) \| p(c))] \leq - D_{\text{KL}}(q(c | x) \| p(c)) \). The first two terms involve expectations of \( \log p(x | z, c) \) under different distributions, and the next two involve \( \log p(z | c) \), both potentially reducing \( \hat{\mathcal{L}}(x) \) if \( q(c|z) \) better captures dependencies. Generally, \( \mathcal{L}(x) \geq \hat{\mathcal{L}}(x) \), with equality only if \( q(c|z) = q(c|x) \) for all \( z \).
 
+\section{Introduction to Gaussian Mixture Models (GMMs)}
+A Gaussian Mixture Model (GMM) represents data as a weighted combination of \(K\) Gaussian distributions. It assumes each data point \(x\) is generated from one of \(K\) components, with a latent variable \(z\) indicating the component assignment.
+
+\subsection{Key GMM Formulas}
+The joint distribution of \(x\) and \(z\) is given by:
+\[
+p(x, z) = p(z) p(x \mid z)
+\]
+where:
+- \(p(z)\) is the marginal distribution of \(z\), using a 1-of-\(K\) representation:
+  \[
+  p(z) = \prod_{k=1}^{K} \pi_k^{z_k}
+  \]
+  with mixing coefficients \(\pi_k\) satisfying \(0 \leq \pi_k \leq 1\) and \(\sum_{k=1}^{K} \pi_k = 1\).
+- \(p(x \mid z)\) is the conditional distribution, where if \(z_k = 1\), \(x\) follows a Gaussian:
+  \[
+  p(x \mid z_k = 1) = \mathcal{N}(x \mid \mu_k, \Sigma_k)
+  \]
+  and generally:
+  \[
+  p(x \mid z) = \prod_{k=1}^{K} \mathcal{N}(x \mid \mu_k, \Sigma_k)^{z_k}
+  \]
+- The marginal distribution of \(x\) is:
+  \[
+  p(x) = \sum_{z} p(z) p(x \mid z) = \sum_{k=1}^{K} \pi_k \mathcal{N}(x \mid \mu_k, \Sigma_k)
+  \]
+- The posterior responsibility \(\gamma(z_k)\) of component \(k\) for \(x\) is:
+  \[
+  \gamma(z_k) = p(z_k = 1 \mid x) = \frac{\pi_k \mathcal{N}(x \mid \mu_k, \Sigma_k)}{\sum_{j=1}^{K} \pi_j \mathcal{N}(x \mid \mu_j, \Sigma_j)}
+  \]
+  This represents the probability that \(x\) belongs to component \(k\).
+
+\subsection{Estimation Methods: MLE and MAP}
+
+\subsubsection{Maximum Likelihood Estimation (MLE)}
+MLE maximizes the likelihood \(p(x \mid \theta)\), where \(\theta = \{\pi_k, \mu_k, \Sigma_k\}\), using the marginal distribution:
+\[
+p(x) = \sum_{k=1}^{K} \pi_k \mathcal{N}(x \mid \mu_k, \Sigma_k)
+\]
+The Expectation-Maximization (EM) algorithm is used:
+- \textbf{E-step}: Compute \(\gamma(z_k)\) for each \(x\).
+- \textbf{M-step}: Update \(\theta\) to maximize the expected complete-data log-likelihood.
+MLE assumes no prior knowledge, focusing solely on the data, but can overfit with complex models or small datasets.
+
+\subsubsection{Maximum A Posteriori (MAP) Estimation}
+MAP maximizes the posterior \(p(\theta \mid x) \propto p(x \mid \theta) p(\theta)\), incorporating priors \(p(\theta)\) (e.g., Dirichlet for \(\pi_k\), Gaussian for \(\mu_k\)):
+\[
+p(\theta \mid x) = \frac{p(x \mid \theta) p(\theta)}{p(x)}
+\]
+The EM algorithm adapts to maximize this posterior:
+- \textbf{E-step}: Compute \(\gamma(z_k)\) as in MLE.
+- \textbf{M-step}: Update \(\theta\) by balancing the likelihood and prior information.
+MAP reduces overfitting by regularizing with priors, but requires careful prior specification.
+
+\subsection{Comparison}
+- \textbf{MLE} is data-driven, simpler, but prone to overfitting without priors.
+- \textbf{MAP} incorporates prior knowledge, iproving robustness, but depends on prior choice.
+Both use \(\gamma(z_k)\) in EM, but MAP adds regularization via priors on \(\theta\).
+
 \section{Workflow}
+
+For \( q(z,c|x) = q(c|x) q(z|x) \) and \( p(x,z,c) = p(x|z,c) p(z|c) p(c) \), the ELBO is:
+\[
+\mathcal{L}(x) = \mathbb{E}_{q(c|x) q(z|x)} \left[ \log p(x|z,c) \right] + \mathbb{E}_{q(c|x)} \left[ \mathbb{E}_{q(z|x)} \left[ \log p(z|c) \right] \right] - D_{\text{KL}}(q(c|x) \| p(c)) - \mathbb{E}_{q(z|x)} \left[ \log q(z|x) \right]
+\]
+
+Derivation:
+\begin{equation}
+\begin{aligned}
+  \mathcal{L}(x) &= \mathbb{E}_{q(c|x) q(z|x)} \left[ \log \frac{p(x|z,c) p(z|c) p(c)}{q(c|x) q(z|x)} \right] \\
+  &= \mathbb{E}_{q(c|x) q(z|x)} [\log p(x|z,c)] + \mathbb{E}_{q(c|x)} [\mathbb{E}_{q(z|x)} [\log p(z|c)]] \\
+  &\quad + \mathbb{E}_{q(c|x)} [\log p(c)]  - \mathbb{E}_{q(c|x)} [\log q(c|x)] - \mathbb{E}_{q(z|x)} [\log q(z|x)] \\
+  &= \mathbb{E}_{q(c|x) q(z|x)} [\log p(x|z,c)] + \mathbb{E}_{q(c|x)} [\mathbb{E}_{q(z|x)} [\log p(z|c)]] \\
+  &\quad - D_{\text{KL}}(q(c|x) \| p(c)) - \mathbb{E}_{q(z|x)} [\log q(z|x)]
+\end{aligned}
+\end{equation}
+
 
 
 \begin{figure}[H]
@@ -404,15 +480,77 @@ Thus, \( - \mathbb{E}_{q(z | x)} [D_{\text{KL}}(q(c | z) \| p(c))] \leq - D_{\te
 
 % Edges with plain-text labels
 \draw[->] (X) -- node[midway, right, draw=none, fill=none] {\( q(z|x) \)} (Z);
-\draw[->] (Z) -- node[pos=0.5, yshift=-10pt, draw=none, fill=none] {\( q(c|z) \)} (C); % Slightly below
-\draw[->, dashed] (X) -- node[midway, left, draw=none, fill=none] {\( q(c|x) \)} (C);
+\draw[->, dashed] (C) -- node[pos=0.5, yshift=-10pt, draw=none, fill=none] {\( p(c|z) \)} (Z); % Slightly below
+\draw[->] (X) -- node[midway, left, draw=none, fill=none] {\( q(c|x) \)} (C);
 
 \end{tikzpicture}
     \caption{Directed Graphical Model}
     \label{fig:graphical_model}
 \end{figure}
 
+\subsection{Model Formulation}
+We consider a Variational Autoencoder (VAE) with latent variables \( z \) and cluster assignments \( c \). The joint variational distribution is factorized as \( q(z, c|x) = q(c|x) q(z|x) \), where \( x \) denotes the observed data, assumed to be images of shape \( (1, 28, 28) \).
+The ELBO for this model is derived as:
+\[
+\mathcal{L}(x) = \mathbb{E}_{q(c|x) q(z|x)} \left[ \log p(x|z, c) \right] + \mathbb{E}_{q(c|x)} \left[ \mathbb{E}_{q(z|x)} \left[ \log p(z|c) \right] \right] - D_{\text{KL}}(q(c|x) \| p(c)) - \mathbb{E}_{q(z|x)} \left[ \log q(z|x) \right].
+\]
+we analyze each term:
 
+\begin{itemize}
+    \item \textbf{Reconstruction Error}: 
+    \[
+    \mathbb{E}_{q(c|x) q(z|x)} \left[ \log p(x|z, c) \right]
+    \]
+    This term represents the reconstruction error, measuring how well the decoder reconstructs the MNIST image \( x \) (shape \( (1, 28, 28) \)) from \( z \) and \( c \). Here, \( p(x|z, c) \) is typically a Gaussian or Bernoulli distribution over pixel intensities.
+
+    \item \textbf{Latent Prior Alignment}: 
+    \[
+    \mathbb{E}_{q(c|x)} \left[ \mathbb{E}_{q(z|x)} \left[ \log p(z|c) \right] \right]
+    \]
+    For \( p(z|c) = \mathcal{N}(z | \hat{\mu}_c, \sigma_c^2 I) \), where \( \hat{\mu}_c \) represents cluster-specific image data, we have:
+    \[
+    \log p(z|c) \propto -\frac{1}{2\sigma_c^2} \| z - \hat{\mu}_c \|^2.
+    \]
+    The posterior \( q(c|x) \approx \gamma_c \), resembling GMM weights, classifies \( x \) and weighs contributions from image data. This term aligns \( z \) with cluster centroids.
+
+    \item \textbf{Cluster Posterior Regularization}: 
+    \[
+    -D_{\text{KL}}(q(c|x) \| p(c))
+    \]
+    Ideally, \( q(c|x) \approx p(c) = \frac{1}{K} \), but maximization of \( \mathcal{L}(x) \) drives \( q(c|x) \) to adapt to image pixel perturbations, especially in non-significant pixels (e.g., background), enhancing clustering sensitivity.
+
+    \item \textbf{Latent Entropy}: 
+    \[
+    -\mathbb{E}_{q(z|x)} \left[ \log q(z|x) \right]
+    \]
+    This entropy term ensures \( q(z|x) \) spreads \( z \) evenly across the latent space, preventing collapse to a single class and promoting diversity in latent representations.
+\end{itemize}
+\subsubsection{Prior Distributions}
+The prior over cluster assignments \( p(c) \) is a uniform categorical distribution:
+\[
+p(c) = \frac{1}{K}, \quad c \in \{1, \dots, K\},
+\]
+where \( K \) is the number of clusters. The conditional prior \( p(z|c) \) models the latent representation for each cluster \( c \), parameterized as a distribution over images of shape \( (1, 28, 28) \). Specifically, \( z \) is a latent embedding that, through the generative model, corresponds to a reconstructed image:
+\[
+p(z|c) = \mathcal{N}(z | \mu_c, \sigma_c^2 I),
+\]
+where \( \mu_c \) and \( \sigma_c \) are cluster-specific parameters learned to represent the image distribution.
+
+\subsubsection{Evidence Lower Bound (ELBO)}
+The ELBO for this model is derived as:
+\[
+\mathcal{L}(x) = \mathbb{E}_{q(c|x) q(z|x)} \left[ \log p(x|z, c) \right] + \mathbb{E}_{q(c|x)} \left[ \mathbb{E}_{q(z|x)} \left[ \log p(z|c) \right] \right] - D_{\text{KL}}(q(c|x) \| p(c)) - \mathbb{E}_{q(z|x)} \left[ \log q(z|x) \right].
+\]
+Here, \( p(x|z, c) \) is the likelihood of reconstructing \( x \) given \( z \) and \( c \), typically modeled as a Bernoulli or Gaussian distribution over the \( (1, 28, 28) \) image.
+
+\subsubsection{Optimization Insight}
+When maximizing \( \mathcal{L}(x) \), the KL divergence term \( D_{\text{KL}}(q(c|x) \| p(c)) \) measures the divergence between the variational posterior \( q(c|x) \) and the uniform prior \( p(c) \). Since \( D_{\text{KL}} \geq 0 \) and achieves its minimum of 0 when \( q(c|x) = p(c) \), the optimal \( q(c|x) \) under unconstrained maximization of the ELBO is:
+\[
+q(c|x) = p(c) = \frac{1}{K}.
+\]
+This implies that \( q(c|x) \) collapses to the uniform prior, rendering the clustering uninformative unless additional constraints (e.g., regularization or clustering-specific losses) are introduced.
+
+\section{Experimental Results}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../fig/comparison_images_v1_cat_sum_training1.png}

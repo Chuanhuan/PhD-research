@@ -1,0 +1,40 @@
+# Fdb version 4
+["bibtex text"] 1740846890.24577 "text.aux" "text.bbl" "text" 1740846890.73732 0
+  "/Users/jack/Library/texmf/bibtex/bib/Zotero.bib" 1740846004.58947 158832 0b9c73f9ca39bf002176cb135afe6046 ""
+  "/usr/local/texlive/2024/texmf-dist/bibtex/bst/ieeetran/IEEEtran.bst" 1440712899 57748 7c8250ecf02814ce6ddc0cdbb63df1dd ""
+  "text.aux" 1740846890.59709 245 ce1cfd31a4bd92035d9c4d1542ac85ae "pdflatex"
+  (generated)
+  "text.bbl"
+  "text.blg"
+  (rewritten before read)
+["pdflatex"] 1740846890.32247 "text.tex" "text.pdf" "text" 1740846890.73745 0
+  "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/times/ptmb7t.tfm" 1136768653 2172 fd0c924230362ff848a33632ed45dc23 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/times/ptmbi7t.tfm" 1136768653 2228 e564491c42a4540b5ebb710a75ff306c ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/times/ptmr7t.tfm" 1136768653 2124 2601a75482e9426d33db523edf23570a ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm" 1136768653 4408 25b74d011a4c66b7f212c0cc3c90061b ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/times/ptmrc7t.tfm" 1136768653 2680 312a2d12b1f1df8ee0212e7ba1962402 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/times/ptmri7t.tfm" 1136768653 2288 f478fc8fed18759effb59f3dad7f3084 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/times/ptmri8r.tfm" 1136768653 4640 532ca3305aad10cc01d769f3f91f1029 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmr8a.pfb" 1136849748 46026 6dab18b61c907687b520c72847215a68 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmri8a.pfb" 1136849748 45458 a3faba884469519614ca56ba5f6b1de1 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf" 1136768653 1380 0ea3a3370054be6da6acd929ec569f06 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/vf/adobe/times/ptmrc7t.vf" 1136768653 1948 7330aeef3af211edff3b35fb2c12a0fd ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/vf/adobe/times/ptmri7t.vf" 1136768653 1384 a9d8adaf491ce34e5fba99dc7bbe5f39 ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/ieeetran/IEEEtran.cls" 1440712899 281957 5b2e4fa15b0f7eabb840ebf67df4c0f7 ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1708463273 30006 3d512c0edd558928ddea1690180ef77e ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/natbib/natbib.sty" 1291685959 45456 1c8843383c0bd05870c45fa0ebea6cc2 ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/psnfss/ot1ptm.fd" 1137110629 961 15056f4a61917ceed3a44e4ac11fcc52 ""
+  "/usr/local/texlive/2024/texmf-dist/web2c/texmf.cnf" 1708706663 41649 5d6ae549fbbcb850a863f69aa41f3d10 ""
+  "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1740124846.03401 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
+  "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1740124787 8221424 2ad0f04d26e0307fc19725b9288bb346 ""
+  "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
+  "text.aux" 1740846890.59709 245 ce1cfd31a4bd92035d9c4d1542ac85ae "pdflatex"
+  "text.bbl" 1740846890.3215 1331 89210d580a94594f6486c2e290390527 "bibtex text"
+  "text.tex" 1740846886.28389 413 0d239c2cba90b70e0502351c3cbb5b13 ""
+  (generated)
+  "text.aux"
+  "text.log"
+  "text.pdf"
+  (rewritten before read)
